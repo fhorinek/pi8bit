@@ -21,6 +21,28 @@ class module(cell.Cell):
         
         return o, o_pin    
         
+    def get_rect(self):
+        rect = cell.Cell.get_rect(self)
+        for k in self.objects_ref:
+            o = self.objects_ref[k]
+            rect = rect.union(o.get_rect())
+
+        rect[2] += 10 + self.parent.d_input +  + self.parent.d_output
+        rect[3] += 10   
+        
+        return rect
+            
+    def set_pos(self, pos):
+        dx = pos[0] - self.x 
+        dy = pos[1] - self.y 
+        self.x = pos[0]
+        self.y = pos[1]
+        
+        for k in self.objects_ref:
+            o = self.objects_ref[k]
+            rect = o.get_rect()
+            o.set_pos((rect[0] + dx, rect[1] + dy))
+            
     def draw_text(self, text, rect):
         self.parent.draw_text(text, rect)
         
@@ -50,6 +72,14 @@ class module(cell.Cell):
             if o.type == "input":
                 self.inputs.append(k)    
                 o.set_module(self)            
+                
+        dx = self.x + self.parent.d_input
+        dy = self.y 
+        
+        for k in self.objects_ref:
+            o = self.objects_ref[k]
+            rect = o.get_rect()
+            o.set_pos((rect[0] + dx, rect[1] + dy))
 
         
         for i in range(len(arr) - 5):
