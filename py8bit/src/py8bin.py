@@ -267,4 +267,4 @@ canvas = Canvas()
 
 canvas.read_file("net.txt")
 canvas.run()
-# canvas.write_file("net.txt")
+canvas.write_file("net.txt")

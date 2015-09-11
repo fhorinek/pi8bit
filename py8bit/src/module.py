@@ -62,8 +62,14 @@ class module(cell.Cell):
         
         return 0
         
+    def get_params(self):
+        arr = []
+        arr.append(self.filename)
+        return arr + cell.Cell.get_params(self)
+        
     def parse(self, arr):
-        self.parent.read_file(arr[4] + ".txt", self)
+        self.filename = arr[4]
+        self.parent.read_file(self.filename + ".txt", self)
         
         for k in self.objects:
             o = self.objects_ref[k]

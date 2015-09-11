@@ -1,4 +1,3 @@
 d_in	input
-d_out	output	?	?	not
-
 not	not	?	?	d_in
+d_out	output	?	?	not

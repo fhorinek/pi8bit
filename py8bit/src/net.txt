@@ -1,4 +1,6 @@
-module	module	?	?	test	tgl
-
-tgl tgl
-led led ? ? module.d_out
+module	module	210	270	test tgl.Y
+tgl	tgl	50	260	
+led	led	470	280	module.d_out
+module1	module	210	100	test tgl1.Y
+tgl1	tgl	60	110	
+led1	led	470	110	module1.d_out
