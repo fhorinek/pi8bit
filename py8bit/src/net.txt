@@ -1,0 +1,4 @@
+module	module	?	?	test	tgl
+
+tgl tgl
+led led ? ? module.d_out

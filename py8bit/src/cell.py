@@ -9,13 +9,20 @@ class Cell():
         self.inputs_ref = {}
         self.outputs = []
         self.res = {}
-        self.res_old = {}
-        self.recursion = False
+        self.name = False
+        self.type = False
         
     def set_pos(self, pos):
         self.x = pos[0]
         self.y = pos[1]
         
+    def set_name(self, name):
+        self.name = name
+
+    def set_type(self, name):
+        self.type = name
+
+       
     def get_rect(self):
         w = self.parent.d_width
         
@@ -60,41 +67,75 @@ class Cell():
         return (x, y)        
         
     def set_input(self, pin, in_cell, in_pin):
-        self.inputs_ref[pin] = [in_cell, in_pin]
+        if pin in self.inputs:
+            self.inputs_ref[pin] = [in_cell, in_pin]
+
+    def set_free_input(self, in_cell, in_pin):
+        for pin in self.inputs:
+            if pin not in self.inputs_ref:
+                self.set_input(pin, in_cell, in_pin)
+                return
+    
+    def parse(self, arr):
+        for i in range(len(arr) - 4):
+            name =  arr[4 + i]
+            if name == "GND":
+                conn = None, 0
+            elif name == "VCC":
+                conn = None, 1
+            else:
+                conn = self.parent.find_cell_pin(name)
+            self.set_free_input(*conn)
+            
+    def get_params(self):
+        p = [] 
+        for k in self.inputs:
+            if k in self.inputs_ref:
+                o, o_pin = self.inputs_ref[k]
+                if o is None:
+                    if o_pin == 0:
+                        p.append("GND")
+                    else:
+                        p.append("VCC")
+                else:
+                    p.append("%s.%s" % (o.name, o_pin))
+            else:
+                p.append("GND")
+        
+        return p
     
     def reset(self):
-        self.res_old = self.res
         self.res = {}
     
-    def calc(self):
+    def calc(self, pin):
         return 0
     
+    def tick(self):
+        for i in self.outputs:
+            self.res[i] = self.calc(i) 
+    
     def output(self, pin):
-        if self.recursion:
-            if pin in self.res_old: 
-                return self.res_old[pin]
-            else:
-                return 0
-        
         if pin not in self.res:
-            self.recursion = True
-            self.res[pin] = self.calc(pin)
-            self.recursion = False
+            return 0
         return self.res[pin]
-        
     
     def input(self, pin):
         if pin not in self.inputs_ref:
             return 0
             
         in_obj, in_pin = self.inputs_ref[pin]
-        return in_obj.output(in_pin)
+        if in_obj is None:
+            return in_pin
+        else:
+            return in_obj.output(in_pin)
            
     def click(self):
         pass       
            
-    def draw(self):
-        pygame.draw.rect(self.parent.screen, self.parent.c_fill, self.get_rect())
+    def draw(self, bck_col = False):
+        if (not bck_col):
+            bck_col = self.parent.c_fill
+        pygame.draw.rect(self.parent.screen, bck_col, self.get_rect())
         pygame.draw.rect(self.parent.screen, self.parent.c_border, self.get_rect(), 2)
         
         if len(self.inputs) > 0:
@@ -121,9 +162,10 @@ class Cell():
             
             if c in self.inputs_ref:
                 in_obj, in_pin = self.inputs_ref[c]
-                start = (x, y)
-                end = in_obj.get_output_xy(in_pin)
-                self.parent.draw_line(start, end, color) 
+                if in_obj is not None:
+                    start = (x, y)
+                    end = in_obj.get_output_xy(in_pin)
+                    self.parent.draw_line(start, end, color) 
             
         for c in self.outputs:
             rect = self.get_output_rect(c)

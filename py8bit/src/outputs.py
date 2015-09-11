@@ -1,4 +1,5 @@
 import cell
+import pygame
 
 class HexDisplay(cell.Cell):
     def __init__(self, parent, rect):
@@ -24,4 +25,17 @@ class HexDisplay(cell.Cell):
         val += self.input("A6") * 64
         val += self.input("A7") * 128
                 
-        self.parent.draw_text("%02X" % val, self.get_rect())    
+        self.parent.draw_text("%02X" % val, self.get_rect())
+        
+class Led(cell.Cell):
+    def __init__(self, parent, rect):
+        cell.Cell.__init__(self, parent, rect)
+        self.inputs.append("A")
+        
+    def draw(self):
+        if (self.input("A")):
+            color = self.parent.c_high
+        else:
+            color = self.parent.c_low
+        cell.Cell.draw(self, color)
+        self.parent.draw_text("%d" % self.input("A"), self.get_rect())
