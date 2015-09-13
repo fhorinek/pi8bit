@@ -1,0 +1,10 @@
+A	input	10	10	
+B	input	10	45	
+C_in	input	10	110	
+S	output	310	50	xor2.Y
+C_out	output	430	160	or
+xor1	xor	110	10	A.Y B.Y
+xor2	xor	210	50	xor1.Y C_in.Y
+and1	and	210	120	xor1.Y C_in.Y
+and2	and	210	190	A.Y B.Y
+or	or	330	160	and1.Y and2.Y

@@ -1,11 +1,15 @@
 import cell
-from wx.lib.agw.aui.aui_constants import pin_bits
 
 class module(cell.Cell):
     def __init__(self, parent, rect):
         cell.Cell.__init__(self, parent, rect)
         self.objects = []
         self.objects_ref = {}
+        self.module = True
+        self.rect = False
+
+    def read_file(self, filename, owner):
+        self.parent.read_file(filename, owner)
 
     def find_cell_pin(self, name):
         arr = name.split(".")
@@ -21,7 +25,7 @@ class module(cell.Cell):
         
         return o, o_pin    
         
-    def get_rect(self):
+    def update_rect(self):
         rect = cell.Cell.get_rect(self)
         for k in self.objects_ref:
             o = self.objects_ref[k]
@@ -30,7 +34,7 @@ class module(cell.Cell):
         rect[2] += 10 + self.parent.d_input +  + self.parent.d_output
         rect[3] += 10   
         
-        return rect
+        self.rect = rect
             
     def set_pos(self, pos):
         dx = pos[0] - self.x 
@@ -49,11 +53,21 @@ class module(cell.Cell):
     def draw_line(self, start, end, color):
         self.parent.draw_line(start, end, color)
         
+    def __str__(self):
+        return 
+            
     def __getattr__(self, key):
         if key == "__nonzero__":
             return True
-        
-        return self.parent.__dict__[key]
+
+        root = self.parent
+        while (True):
+            if root.module == False:
+                break
+            root = root.parent
+    
+        return root.__dict__[key]
+
         
     def calc(self, pin):
         if pin in self.objects_ref:
@@ -98,6 +112,8 @@ class module(cell.Cell):
                 conn = self.parent.find_cell_pin(name)
             self.set_free_input(*conn)
             
+        self.update_rect()
+            
     def draw(self):
         cell.Cell.draw(self)
         for k in self.objects:
@@ -112,28 +128,33 @@ class module(cell.Cell):
         for k in self.objects:
             self.objects_ref[k].reset()     
 
+
 class module_input(cell.Cell):
     def __init__(self, parent, rect):
         cell.Cell.__init__(self, parent, rect)
         self.outputs.append("Y")
+        self.module = False
 
     def set_module(self, module):
         self.module = module
     
     def calc(self, pin):
-        return self.module.input(self.name)
+        if self.module is False:
+            return 0
+        else:
+            return self.module.input(self.name)
     
     def draw(self):
         cell.Cell.draw(self)
-        self.parent.draw_text("IN", self.get_rect())     
+        self.parent.draw_text(self.name, self.get_rect())     
+
 
 class module_output(cell.Cell):
     def __init__(self, parent, rect):
         cell.Cell.__init__(self, parent, rect)
         self.inputs.append("A")
-
     
     def draw(self):
         cell.Cell.draw(self)
-        self.parent.draw_text("OUT", self.get_rect())     
+        self.parent.draw_text(self.name, self.get_rect())     
         

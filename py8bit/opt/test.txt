@@ -1,0 +1,4 @@
+a	input	0x0
+b	input	0x35
+y	output	190x0 and.Y
+and	and	90x0 a.Y b.Y

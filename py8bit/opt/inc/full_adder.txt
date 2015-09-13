@@ -1,0 +1,10 @@
+A	input	10x10	
+B	input	10x45	
+C_in	input	10x110	
+S	output	310x50	xor2.Y
+C_out	output	430x160	or
+xor1	xor	110x10	A.Y B.Y
+xor2	xor	210x50	xor1.Y C_in.Y
+and1	and	210x120	xor1.Y C_in.Y
+and2	and	210x190	A.Y B.Y
+or	or	330x160	and1.Y and2.Y

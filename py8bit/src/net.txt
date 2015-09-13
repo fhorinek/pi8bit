@@ -1,6 +1,17 @@
-module	module	210	270	test tgl.Y
-tgl	tgl	50	260	
-led	led	470	280	module.d_out
-module1	module	210	100	test tgl1.Y
-tgl1	tgl	60	110	
-led1	led	470	110	module1.d_out
+a0	tgl	10	20	
+a1	tgl	10	50	
+a2	tgl	10	80	
+a3	tgl	10	110	
+b0	tgl	10	210	
+b1	tgl	10	240	
+b2	tgl	10	270	
+b3	tgl	10	300	
+fa0	module	170	-100	inc/full_adder a0.Y b0.Y GND
+fa1	module	170	160	inc/full_adder a1.Y b1.Y fa0.C_out
+fa2	module	540	250	inc/full_adder a2.Y b2.Y fa1.C_out
+fa3	module	550	330	inc/full_adder a3.Y b3.Y fa2.C_out
+c0	led	1310	80	fa0.S
+c1	led	1310	110	fa1.S
+c2	led	1310	140	fa2.S
+c3	led	1310	170	fa3.S
+carry	led	1310	220	fa3.C_out

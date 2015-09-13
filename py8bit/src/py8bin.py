@@ -12,7 +12,8 @@ class Canvas():
     
     def __init__(self):
         self.size = (800, 600)
-        self.screen = pygame.display.set_mode(self.size, pygame.DOUBLEBUF | pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode(self.size, pygame.DOUBLEBUF | pygame.RESIZABLE | pygame.HWSURFACE)
+        self.module = False
         
         pygame.font.init()
         self.font = pygame.font.Font(pygame.font.get_default_font(), 10)        
@@ -27,6 +28,7 @@ class Canvas():
         self.d_input = 20
         self.d_output = 20
         self.d_line = 25
+        self.d_label = 20
         
         self.g_hor = 10
         self.g_ver= 10
@@ -64,7 +66,6 @@ class Canvas():
             fcs = o.type
             pos_x = str(o.x)
             pos_y = str(o.y)
-            print o.get_params()
             params = " ".join(o.get_params())
             line = name, fcs, pos_x, pos_y, params
             lines += "%s\n" % "\t".join(line)
@@ -87,7 +88,6 @@ class Canvas():
         params = self.create_objects(data, owner)
         self.connect_objects(params, owner)
 
-        print self.objects
         print "done", filename
         
     def create_objects(self, data, owner):
@@ -95,7 +95,6 @@ class Canvas():
         params = []
         params_ref = {}
         line_n = 0
-            
 
         for line in data:
             if line == "":
@@ -146,8 +145,14 @@ class Canvas():
                 o.set_type(fcs)
                 y += o.get_rect()[3] + 10
         
-        print
         return params, params_ref
+   
+    def connect_objects(self, data, owner):
+        for name in data[0]:
+            arr = data[1][name]
+
+            o = owner.objects_ref[name]
+            o.parse(arr)   
    
     def find_cell_pin(self, name):
         arr = name.split(".")
@@ -162,16 +167,6 @@ class Canvas():
             o_pin = o.outputs[0]
         
         return o, o_pin    
-        
-    def connect_objects(self, data, owner):
-        print data
-        for name in data[0]:
-            arr = data[1][name]
-            print arr
-
-            o = owner.objects_ref[name]
-            o.parse(arr)
-        
         
         
     def draw_text(self, text, rect):
@@ -207,7 +202,9 @@ class Canvas():
             self.objects_ref[k].reset()        
         
     def get_object_pos(self, pos):
-        for k in self.objects:
+        object_list = list(self.objects)
+        object_list.reverse()
+        for k in object_list:
             o = self.objects_ref[k]
             if (o.get_rect().collidepoint(pos)):
                 return o

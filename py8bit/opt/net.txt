@@ -1,0 +1,17 @@
+a0	tgl	10x20
+a1	tgl	10x50
+a2	tgl	10x80
+a3	tgl	10x110
+b0	tgl	10x210
+b1	tgl	10x240
+b2	tgl	10x270
+b3	tgl	10x300
+fa0	module	170x-100 inc/full_adder.txt a0.Y b0.Y LOW.Y
+fa1	module	170x160 inc/full_adder.txt a1.Y b1.Y fa0.C_out
+fa2	module	170x420 inc/full_adder.txt a2.Y b2.Y fa1.C_out
+fa3	module	170x680 inc/full_adder.txt a3.Y b3.Y fa2.C_out
+c0	led	1310x80 fa0.S
+c1	led	1310x110 fa1.S
+c2	led	1310x140 fa2.S
+c3	led	1310x170 fa3.S
+carry	led	1310x220 fa3.C_out

@@ -1,3 +1,0 @@
-d_in	input
-not	not	?	?	d_in
-d_out	output	?	?	not

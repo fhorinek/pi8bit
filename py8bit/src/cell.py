@@ -11,6 +11,8 @@ class Cell():
         self.res = {}
         self.name = False
         self.type = False
+        self.update_rect()
+        self.rect = False
         
     def set_pos(self, pos):
         self.x = pos[0]
@@ -23,18 +25,23 @@ class Cell():
         self.type = name
 
        
-    def get_rect(self):
+    def update_rect(self):
         w = self.parent.d_width
         
-        if len(self.inputs) > 0:
+        if len(self.inputs) > 1:
             w += self.parent.d_input            
-        if len(self.outputs) > 0:
+        if len(self.outputs) > 1:
             w += self.parent.d_output 
             
         i = max(len(self.outputs), len(self.inputs))
         h = i * self.parent.d_line           
         
-        return pygame.Rect((self.x, self.y, w, h))
+        self.rect = pygame.Rect((self.x, self.y, w, h))
+    
+    def get_rect(self):
+        if self.rect is False:
+            self.update_rect()
+        return self.rect
         
     def get_input_xy(self, pin):
         i = self.inputs.keys().index(pin)
@@ -86,6 +93,7 @@ class Cell():
             else:
                 conn = self.parent.find_cell_pin(name)
             self.set_free_input(*conn)
+        self.update_rect()
             
     def get_params(self):
         p = [] 
@@ -138,20 +146,22 @@ class Cell():
         pygame.draw.rect(self.parent.screen, bck_col, self.get_rect())
         pygame.draw.rect(self.parent.screen, self.parent.c_border, self.get_rect(), 2)
         
-        if len(self.inputs) > 0:
+        if len(self.inputs) > 1:
             rect = self.get_rect()
             rect[2] = self.parent.d_input  
             pygame.draw.rect(self.parent.screen, self.parent.c_border, rect, 1)
             
-        if len(self.outputs) > 0:
+        if len(self.outputs) > 1:
             rect = self.get_rect()
             rect[0] += rect[2] - self.parent.d_output 
             rect[2] = self.parent.d_output 
             pygame.draw.rect(self.parent.screen, self.parent.c_border, rect, 1)
-            
+        
+
         for c in self.inputs:
             rect = self.get_input_rect(c)
-            self.parent.draw_text(c, rect)
+            if (len(self.inputs) > 1):
+                self.parent.draw_text(c, rect)
             x = rect[0]
             y = rect[1] + rect[3] / 2
             if (self.input(c)):
@@ -166,10 +176,12 @@ class Cell():
                     start = (x, y)
                     end = in_obj.get_output_xy(in_pin)
                     self.parent.draw_line(start, end, color) 
-            
+        
+
         for c in self.outputs:
             rect = self.get_output_rect(c)
-            self.parent.draw_text(c, rect)
+            if (len(self.outputs) > 1):
+                self.parent.draw_text(c, rect)
             x = rect[0] + rect[2]
             y = rect[1] + rect[3] / 2
             if (self.output(c)):
