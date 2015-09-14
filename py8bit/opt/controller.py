@@ -15,8 +15,6 @@ class Controller():
         self.objects["LOW"] = Low(self)
         self.objects["HIGH"] = High(self)
         
-
-        
         self.move = False
         self.move_offest = False
         
@@ -24,9 +22,10 @@ class Controller():
     
     def assign_pos(self, name):
         o = self.objects[name]
-        o.set_pos(10, self.default_y)
-        self.default_y += 10 + o.rect.h
+        o.set_pos(self.canvas.style["d_space"], self.default_y)
+        self.default_y += self.canvas.style["d_space"] + o.rect.h
         
+       
     def write_file(self, filename):
         lines = ""
         for k in self.objects:
@@ -66,6 +65,10 @@ class Controller():
             arr = line.split()
             
             print "%5d: %s" % (line_n, " ".join(arr))
+            
+            if (len(arr) < 2):
+                continue
+            
             
             name = arr[0]
             fcs = arr[1]
@@ -108,7 +111,7 @@ class Controller():
         else:
             color = self.canvas.style["c_low"]
 
-        pygame.draw.circle(self.canvas.screen, color, pos, self.canvas.style["d_point"]) 
+        self.canvas.draw_circle(color, pos) 
         
     def draw_line(self, start, end, state):       
         if (state):
@@ -131,6 +134,13 @@ class Controller():
         for k in self.objects:
             self.objects[k].reset()     
             
+    def request_update(self):
+        pass
+            
+    def clear_io_cache(self):
+        for k in self.objects:
+            self.objects[k].clear_io_cache()              
+            
     def get_object_pos(self, pos):
         object_list = list(self.objects.keys())
         object_list.reverse()
@@ -138,7 +148,17 @@ class Controller():
             o = self.objects[k]
             if (o.rect.collidepoint(pos)):
                 return o
-        return False            
+        return False        
+    
+    def get_line_pos(self, pos):
+        object_list = list(self.objects.keys())
+        object_list.reverse()
+        for k in object_list:
+            o = self.objects[k]
+            pair = o.check_input_line_collision(pos)
+            if (pair):
+                return pair
+        return False   
             
     def event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
@@ -147,6 +167,9 @@ class Controller():
                 o.click()
         
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == RIGHT:
+            line = self.get_line_pos(event.pos)
+            if line:
+                print line
             self.move = self.get_object_pos(event.pos)
             if self.move is not False:
                 self.move_offest = [event.pos[0] - self.move.rect[0], event.pos[1] - self.move.rect[1]]
@@ -159,6 +182,7 @@ class Controller():
                 x = int(round((event.pos[0] - self.move_offest[0]) / float(g_hor)) * g_hor)
                 y = int(round((event.pos[1] - self.move_offest[1]) / float(g_ver)) * g_ver)
                 self.move.set_pos(x, y)
+                self.canvas.request_io_redraw()
             self.move = False
         
         if event.type == pygame.MOUSEMOTION:
@@ -166,3 +190,4 @@ class Controller():
                 x = event.pos[0] - self.move_offest[0]
                 y = event.pos[1] - self.move_offest[1]
                 self.move.set_pos(x, y)
+                self.canvas.request_io_redraw()

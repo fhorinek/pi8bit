@@ -8,6 +8,7 @@ class module(Cell, Controller):
         Controller.__init__(self, self.parent.canvas, parent)
         self.offset_x = 0
         self.offset_y = 0
+        self.update_request = False
         
     def get_params(self):
         arr = Cell.get_params(self)
@@ -60,13 +61,30 @@ class module(Cell, Controller):
         self.rect_rel.y = 0
         self.update_io_xy()
     
+    def draw_line(self, start, end, state):
+        start = [self.rect.x + start[0] + self.offset_x, self.rect.y + start[1] + self.offset_y]
+        end = [self.rect.x + end[0] + self.offset_x, self.rect.y + end[1] + self.offset_y]
+        self.parent.draw_line(start, end, state)
+    
+    def draw_circle(self, pos, state):
+        pos = [self.rect.x + pos[0] + self.offset_x, self.rect.y + pos[1] + self.offset_y]
+        self.parent.draw_circle(pos, state) 
+    
     def blit(self, surface, rect):
+        rect = Rect(rect)
         rect.x += self.offset_x
         rect.y += self.offset_y
         self.surface.blit(surface, rect)
     
     def draw(self):
+        if (self.update_request):
+            self.update_request = False
+            self.update()
+            
         Cell.draw(self)
+        
+    def draw_io(self):
+        Cell.draw_io(self)
         for k in self.objects:
             self.objects[k].draw_io()
     
@@ -74,37 +92,54 @@ class module(Cell, Controller):
         Cell.update_body(self, state=state)
         for k in self.objects:
             self.objects[k].draw()
+            
+    def request_update(self):
+        self.update_request = True
     
     def set_pos(self, x, y):
-        dx = x - self.rect.x
-        dy = y - self.rect.y
         Cell.set_pos(self, x, y)
-        for k in self.objects:
-            o = self.objects[k]
-            x = o.rect.x + dx
-            y = o.rect.y + dy  
-            o.set_pos(x, y)
+        self.update_rect()
+        
+    def clear_io_cache(self):
+        Cell.clear_io_cache(self)
+        Controller.clear_io_cache(self)
         
 class minput(Cell):
     def __init__(self, parent):
         Cell.__init__(self, parent)
         self.add_output("Y")
+        self.val = 0
+        self.module = None
         
     def set_module(self, module):
         self.module = module
         
     def calc(self, pin):
-        return self.module.input(self.name)
+        if self.module is not None:
+            return self.module.input(self.name)
+        else:
+            return self.val
+        
+    def click(self):
+        if self.module is None:
+            self.val = not self.val
+            self.update_body()       
         
     def update_body(self, state=None):
-        Cell.update_body(self, state=state)
+        Cell.update_body(self, state=self.val)
         self.draw_text(self.name, self.rect_rel)
         
 class moutput(Cell):
     def __init__(self, parent):
         Cell.__init__(self, parent)
         self.add_input("A")
+        self.old_value = 0
         
+    def tick(self):
+        if (self.old_value is not self.input("A")):
+            self.old_value = self.input("A")
+            self.update_body()
+                    
     def update_body(self, state=None):
-        Cell.update_body(self, state=state)
+        Cell.update_body(self, state=self.input("A"))
         self.draw_text(self.name, self.rect_rel)        

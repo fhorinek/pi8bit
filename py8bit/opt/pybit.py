@@ -1,4 +1,5 @@
 import pygame
+import cProfile
 from controller import Controller
 from collections import OrderedDict
 
@@ -13,7 +14,10 @@ RIGHT = 3
 class Canvas():
     def __init__(self):
         self.size = (800, 600)
-        self.screen = pygame.display.set_mode(self.size, pygame.DOUBLEBUF | pygame.RESIZABLE | pygame.HWSURFACE)
+        self.screen_flags = pygame.DOUBLEBUF | pygame.RESIZABLE | pygame.HWSURFACE
+        self.surface_flags = pygame.HWSURFACE
+        
+        self.update_surfaces()
         
         pygame.font.init()
         self.font = pygame.font.Font(pygame.font.get_default_font(), 10)
@@ -28,11 +32,12 @@ class Canvas():
             "d_width": 60,
             "d_input": 20,
             "d_output": 20,
-            "d_line": 25,
+            "d_line": 20,
             "d_label": 20,
-            "d_point": 6,
+            "d_point": 4,
             "d_line_height": 2,
             "d_space": 10,
+            "d_line_col": 4,
         
             "g_hor" : 10,
             "g_ver": 10,
@@ -59,6 +64,12 @@ class Canvas():
         self.add_cell("input", module.minput)        
         self.add_cell("output", module.moutput)        
   
+    def update_surfaces(self):
+        self.screen = pygame.display.set_mode(self.size, self.screen_flags)
+        self.surface_io = pygame.Surface(self.size, self.surface_flags)
+        self.surface_io.set_colorkey((0, 0, 0))
+  
+  
     def add_cell(self, name, cell):
         self.cells[name] = cell          
         
@@ -79,26 +90,37 @@ class Canvas():
         
         lines = (start, end)
 #         lines = (start, (xm, y1), (xm, ym), (xm, y2), end)
-        pygame.draw.lines(self.screen, color, False, lines, self.style["d_line_height"])
+        pygame.draw.lines(self.surface_io, color, False, lines, self.style["d_line_height"])
+        
+    def draw_circle(self, color, pos):
+        pygame.draw.circle(self.surface_io, color, pos, self.style["d_point"])
         
         
     def events(self):
-        event = pygame.event.poll()
-        if event.type == pygame.QUIT:
-            self.running = False
-            return
-            
-        if event.type == pygame.VIDEORESIZE:
-            self.screen = pygame.display.set_mode(event.dict['size'], pygame.DOUBLEBUF | pygame.RESIZABLE)
-            return
-         
-        self.controller.event(event)
-            
+        for event in pygame.event.get():
+#             event = pygame.event.poll()
+            if event.type == pygame.QUIT:
+                self.running = False
+                return
+                
+            if event.type == pygame.VIDEORESIZE:
+                self.size = event.dict['size']
+                self.update_surfaces()
+                self.request_io_redraw()
+                return
+             
+            self.controller.event(event)
+        
+    def request_io_redraw(self):
+        self.surface_io.fill((0, 0, 0))
+        self.controller.clear_io_cache()
+
     def loop(self):
         self.screen.fill((0, 0, 0))
         self.events()
         self.controller.tick()
         self.controller.draw()
+        self.screen.blit(self.surface_io, [0, 0])
         pygame.display.flip()
         
     def run(self):
@@ -108,8 +130,15 @@ class Canvas():
             self.loop()    
 
 filename = "net.txt"
+filename = "inc/test.txt"
+# filename = "inc/full_adder.txt"
+
+profile = True
 
 a = Canvas()
 a.controller.read_file(filename)
-a.run()
+if profile:
+    cProfile.run("a.run()", sort="tottime")
+else:
+    a.run()
 a.controller.write_file(filename)

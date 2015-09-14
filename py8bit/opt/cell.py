@@ -7,13 +7,17 @@ class Cell():
         self.parent = parent
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.rect_rel = pygame.Rect(0, 0, 0, 0)
+        
         self.input_xy = OrderedDict()
         self.output_xy = OrderedDict()
         
         self.inputs = OrderedDict()
         self.outputs = []
         
+        self.output_cache = {}
+        self.input_cache = {}
         self.res = {}
+        
         self.name = "cell"    
         self.fcs = "cell"    
             
@@ -118,6 +122,10 @@ class Cell():
     def reset(self):
         self.res = {}
     
+    def clear_io_cache(self):
+        self.input_cache = {}
+        self.output_cache = {}
+        
     def calc(self, pin):
         return 0
     
@@ -161,7 +169,7 @@ class Cell():
         size = [self.rect.w + 1, self.rect.h + 1]
         rect = Rect(0, 0, self.rect.w, self.rect.h)
         
-        self.surface = pygame.Surface(size)
+        self.surface = pygame.Surface(size, self.parent.canvas.surface_flags)
         if state is None:
             color = "c_fill"
         else:
@@ -192,15 +200,20 @@ class Cell():
                 rect = self.get_output_rect(c)
                 self.draw_text(c, rect)
  
- 
-     
+        self.parent.request_update()
     
     def draw(self):
         self.parent.blit(self.surface, self.rect)
     
-    def draw_io(self):    
+    def draw_io(self):   
         for c in self.inputs:
             state = self.input(c)
+            if c in self.input_cache:
+                if self.input_cache[c] == state:
+                    continue
+            
+            self.input_cache[c] = state
+                
             pos_xy = self.input_xy[c]
             self.parent.draw_circle(pos_xy, state)
               
@@ -213,12 +226,43 @@ class Cell():
         
         for c in self.outputs:
             state = self.output(c)
+            if c in self.output_cache:
+                if self.output_cache[c] == state:
+                    continue
+            
+            self.output_cache[c] = state       
+                 
             pos_xy = self.output_xy[c]
             self.parent.draw_circle(pos_xy, state)
               
-     
-        
-        
+    def check_input_line_collision(self, pos):
+        for p in self.inputs:
+            if self.inputs[p]:
+                obj, pin = self.inputs[p]
+                if isinstance(obj, Invisible):
+                    continue
+
+                start = self.input_xy[p]
+                end = obj.output_xy[pin]
+                #basic rect TODO
+                offset = self.parent.canvas.style["d_line_col"]
+                
+                x = min((start[0], end[0])) - offset
+                y = min((start[1], end[1])) - offset
+                w = abs(start[0] - end[0]) + offset * 2
+                h = abs(start[1] - end[1]) + offset * 2
+                
+                basic = Rect(x, y, w, h)
+                if basic.collidepoint(pos):
+                
+                    dx = end[0] - start[0]
+                    dy = end[1] - start[1]
+                    k = float(dy) / float(dx)
+                    y = y + k * (pos[0] - x)
+                    if abs(y - pos[1]) < offset:
+                        return self, p
+        return False 
+                 
     
 class Invisible(Cell):
     def __init__(self, parent):
@@ -246,3 +290,4 @@ class Low(Invisible):
         
     def calc(self, pin):
         return 0    
+    
