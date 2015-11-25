@@ -3,13 +3,19 @@ import cProfile
 from controller import Controller
 from collections import OrderedDict
 
+import os
+
 import basic_logic
-import inputs
 import outputs
 import module
+import cell
+import inputs
 
-LEFT = 1
-RIGHT = 3
+from pgu import gui
+
+from controller import MODE_IDLE, MODE_MOVE, MODE_ADD, MODE_DEL, MODE_WIRE
+from controller import LEFT, MID, RIGHT
+from utils import file_opendialog
 
 class Canvas():
     def __init__(self):
@@ -21,11 +27,13 @@ class Canvas():
         
         pygame.font.init()
         self.font = pygame.font.Font(pygame.font.get_default_font(), 10)
+        self.status_font = pygame.font.Font(pygame.font.get_default_font(), 20)
         
         self.style = {
             "c_border": (0, 0, 255),
             "c_fill": (255, 255, 255),
             "c_text": (10, 10, 10),
+            "c_status": (255, 255, 255),
             "c_low": (200, 200, 200),
             "c_high": (0, 255, 0),
         
@@ -37,7 +45,9 @@ class Canvas():
             "d_point": 4,
             "d_line_height": 2,
             "d_space": 10,
-            "d_line_col": 4,
+            
+            "d_line_col": 10,
+            "d_wire_col": 20,
         
             "g_hor" : 10,
             "g_ver": 10,
@@ -47,6 +57,8 @@ class Canvas():
         
         self.cells = OrderedDict()
         
+        self.add_cell("wire", cell.Wire)
+        
         self.add_cell("and", basic_logic.And)
         self.add_cell("or", basic_logic.Or)
         self.add_cell("nand", basic_logic.Nand)
@@ -54,16 +66,28 @@ class Canvas():
         self.add_cell("xor", basic_logic.Xor)
         self.add_cell("not", basic_logic.Not)
         
-        self.add_cell("tgl", inputs.Toggle)
-        self.add_cell("const", inputs.Constant)
-        
         self.add_cell("led", outputs.Led)
         self.add_cell("hex", outputs.HexDisplay)
+ 
+        self.add_cell("tgl", inputs.Toggle)        
         
         self.add_cell("module", module.module)        
         self.add_cell("input", module.minput)        
-        self.add_cell("output", module.moutput)        
-  
+        self.add_cell("output", module.moutput)    
+        
+        self.mode = MODE_IDLE
+        self.add_cell_index = 0
+          
+    def inc_cell_index(self):
+        self.add_cell_index = (self.add_cell_index + 1) % len(self.cells)
+
+    def dec_cell_index(self):
+        if self.add_cell_index == 0:
+            self.add_cell_index = len(self.cells) - 1
+        else:
+            self.add_cell_index = self.add_cell_index - 1
+
+           
     def update_surfaces(self):
         self.screen = pygame.display.set_mode(self.size, self.screen_flags)
         self.surface_io = pygame.Surface(self.size, self.surface_flags)
@@ -96,9 +120,15 @@ class Canvas():
         pygame.draw.circle(self.surface_io, color, pos, self.style["d_point"])
         
         
+    def draw_status(self, text):
+        tmp = self.status_font.render(text, True, self.style["c_status"])
+        rect2 = tmp.get_rect();
+        rect = [0, self.size[1] - rect2.h]
+        
+        self.screen.blit(tmp,  rect)        
+        
     def events(self):
         for event in pygame.event.get():
-#             event = pygame.event.poll()
             if event.type == pygame.QUIT:
                 self.running = False
                 return
@@ -109,7 +139,24 @@ class Canvas():
                 self.request_io_redraw()
                 return
              
-            self.controller.event(event)
+            if event.type == pygame.KEYDOWN:
+                if event.key == ord('m'):
+                    self.mode = MODE_MOVE
+                if event.key == ord('n'):
+                    self.mode = MODE_IDLE
+                if event.key == ord('a'):
+                    self.mode = MODE_ADD           
+                if event.key == ord('d'):
+                    self.mode = MODE_DEL  
+                if event.key == ord('w'):
+                    self.mode = MODE_WIRE   
+                if event.key == pygame.K_ESCAPE:
+                    self.reset_mode()
+                            
+            self.controller.event(event, self.mode)
+        
+    def reset_mode(self):
+        self.mode = MODE_IDLE
         
     def request_io_redraw(self):
         self.surface_io.fill((0, 0, 0))
@@ -121,6 +168,16 @@ class Canvas():
         self.controller.tick()
         self.controller.draw()
         self.screen.blit(self.surface_io, [0, 0])
+        
+        if self.mode == MODE_MOVE:
+            self.draw_status("move")
+        if self.mode == MODE_ADD:
+            self.draw_status("add %s" % self.cells.keys()[self.add_cell_index])
+        if self.mode == MODE_DEL:
+            self.draw_status("delete")
+        if self.mode == MODE_WIRE:
+            self.draw_status("wire")        
+        
         pygame.display.flip()
         
     def run(self):
@@ -129,9 +186,8 @@ class Canvas():
         while (self.running):
             self.loop()    
 
-filename = "net.txt"
-filename = "inc/test.txt"
-# filename = "inc/full_adder.txt"
+
+filename = file_opendialog(os.getcwd())
 
 profile = True
 

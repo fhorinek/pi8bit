@@ -1,0 +1,225 @@
+op0	input	0x440
+op1	input	0x460
+op2	input	0x480
+A0	input	650x360
+A1	input	650x1060
+A2	input	650x1780
+A3	input	640x2500
+A4	input	640x3220
+A5	input	640x3940
+A6	input	640x4660
+A7	input	640x5380
+B0	input	650x380
+B1	input	650x1080
+B2	input	650x1800
+B3	input	640x2520
+B4	input	640x3240
+B5	input	640x3960
+B6	input	640x4680
+B7	input	640x5400
+C0	output	2850x200 __wire_272.Y
+C1	output	2850x220 __wire_273.Y
+C2	output	2850x240 __wire_274.Y
+C3	output	2850x260 __wire_275.Y
+C4	output	2850x280 __wire_276.Y
+C5	output	2850x300 __wire_277.Y
+C6	output	2850x320 __wire_278.Y
+C7	output	2850x340 __wire_279.Y
+__module_1	module	80x440 inc/3to8decoder.txt op0.Y op1.Y op2.Y
+__module_7	module	910x360 inc/single_bit_alu.txt __wire_144.Y B0.Y one.Y LOW.Y __wire_12.Y __wire_14.Y __wire_16.Y __wire_18.Y __wire_23.Y __wire_24.Y
+__module_9	module	1970x360 inc/enable.txt __module_7.O __wire_53.Y __wire_76.Y __wire_99.Y __wire_112.Y __wire_139.Y __wire_178.Y __wire_197.Y __wire_204.Y
+__module_10	module	1970x0 inc/enable.txt __wire_195.Y __wire_145.Y __wire_147.Y __wire_149.Y __wire_151.Y __wire_153.Y __wire_176.Y __wire_174.Y __wire_220.Y
+__wire_12	wire	720x440 __module_1.Y0
+__wire_13	wire	720x5460 __wire_157.Y
+__wire_14	wire	730x460 __module_1.Y1
+__wire_15	wire	730x5480 __wire_158.Y
+__wire_16	wire	740x480 __module_1.Y2
+__wire_17	wire	740x5500 __wire_159.Y
+__wire_18	wire	750x500 __module_1.Y3
+__wire_22	wire	750x5520 __wire_160.Y
+__wire_23	wire	760x520 __module_1.Y4
+__wire_24	wire	770x540 __module_1.Y5
+__wire_25	wire	760x5540 __wire_161.Y
+one	tgl	650x400 1
+__wire_31	wire	1830x380 __module_7.C_out
+__wire_32	wire	1830x1040 __wire_31.Y
+__wire_33	wire	890x1040 __wire_32.Y
+__module_35	module	910x1060 inc/single_bit_alu.txt __wire_146.Y B1.Y LOW.Y __wire_36.Y __wire_40.Y __wire_41.Y __wire_42.Y __wire_43.Y __wire_44.Y __wire_45.Y
+__wire_36	wire	890x1120 __wire_33.Y
+__wire_40	wire	720x1140 __wire_12.Y
+__wire_41	wire	730x1160 __wire_14.Y
+__wire_42	wire	740x1180 __wire_16.Y
+__wire_43	wire	750x1200 __wire_18.Y
+__wire_44	wire	760x1220 __wire_23.Y
+__wire_45	wire	770x1240 __wire_24.Y
+__wire_52	wire	1850x1060 __module_35.O
+__wire_53	wire	1850x380 __wire_52.Y
+__wire_55	wire	1830x1080 __module_35.C_out
+__wire_56	wire	1830x1750 __wire_55.Y
+__wire_57	wire	890x1750 __wire_56.Y
+__module_58	module	910x1780 inc/single_bit_alu.txt __wire_148.Y B2.Y LOW.Y __wire_59.Y __wire_61.Y __wire_62.Y __wire_63.Y __wire_64.Y __wire_65.Y __wire_66.Y
+__wire_59	wire	890x1840 __wire_57.Y
+__wire_61	wire	720x1860 __wire_40.Y
+__wire_62	wire	730x1880 __wire_41.Y
+__wire_63	wire	740x1900 __wire_42.Y
+__wire_64	wire	750x1920 __wire_43.Y
+__wire_65	wire	760x1940 __wire_44.Y
+__wire_66	wire	770x1960 __wire_45.Y
+__wire_75	wire	1830x1800 __module_58.C_out
+__wire_76	wire	1860x400 __wire_77.Y
+__wire_77	wire	1860x1780 __module_58.O
+__wire_79	wire	1830x2470 __wire_75.Y
+__wire_80	wire	890x2470 __wire_79.Y
+__module_81	module	910x2500 inc/single_bit_alu.txt __wire_150.Y B3.Y LOW.Y __wire_82.Y __wire_86.Y __wire_84.Y __wire_88.Y __wire_89.Y __wire_90.Y __wire_91.Y
+__wire_82	wire	890x2560 __wire_80.Y
+__wire_84	wire	730x2600 __wire_62.Y
+__wire_86	wire	720x2580 __wire_61.Y
+__wire_88	wire	740x2620 __wire_63.Y
+__wire_89	wire	750x2640 __wire_64.Y
+__wire_90	wire	760x2660 __wire_65.Y
+__wire_91	wire	770x2680 __wire_66.Y
+__wire_98	wire	1870x2500 __module_81.O
+__wire_99	wire	1870x420 __wire_98.Y
+__wire_101	wire	780x560 __module_1.Y6
+__wire_102	wire	780x330 __wire_101.Y
+__wire_103	wire	1830x2520 __module_81.C_out
+__wire_104	wire	1830x3190 __wire_103.Y
+__wire_105	wire	890x3190 __wire_104.Y
+__module_106	module	910x3220 inc/single_bit_alu.txt __wire_152.Y B4.Y LOW.Y __wire_107.Y __wire_335.Y __wire_336.Y __wire_337.Y __wire_338.Y __wire_345.Y __wire_339.Y
+__wire_107	wire	890x3280 __wire_105.Y
+__wire_111	wire	1880x3220 __module_106.O
+__wire_112	wire	1880x440 __wire_111.Y
+__wire_116	wire	1830x3240 __module_106.C_out
+__wire_117	wire	1830x3910 __wire_116.Y
+__wire_118	wire	890x3910 __wire_117.Y
+__module_119	module	910x3940 inc/single_bit_alu.txt __wire_175.Y B5.Y LOW.Y __wire_120.Y __wire_124.Y __wire_125.Y __wire_126.Y __wire_127.Y __wire_134.Y __wire_136.Y
+__wire_120	wire	890x4000 __wire_118.Y
+__wire_124	wire	720x4020 __wire_335.Y
+__wire_125	wire	730x4040 __wire_336.Y
+__wire_126	wire	740x4060 __wire_337.Y
+__wire_127	wire	750x4080 __wire_338.Y
+__wire_129	wire	770x5560 __wire_162.Y
+__wire_134	wire	760x4100 __wire_345.Y
+__wire_136	wire	770x4120 __wire_339.Y
+__wire_138	wire	1890x3940 __module_119.O
+__wire_139	wire	1890x460 __wire_138.Y
+__wire_141	wire	1830x3960 __module_119.C_out
+__wire_142	wire	1830x4630 __wire_141.Y
+__wire_143	wire	890x4630 __wire_142.Y
+__wire_144	wire	800x360 A0.Y
+__wire_145	wire	800x20 __wire_144.Y
+__wire_146	wire	810x1060 A1.Y
+__wire_147	wire	810x40 __wire_146.Y
+__wire_148	wire	820x1780 A2.Y
+__wire_149	wire	820x60 __wire_148.Y
+__wire_150	wire	830x2500 A3.Y
+__wire_151	wire	830x80 __wire_150.Y
+__wire_152	wire	840x3220 A4.Y
+__wire_153	wire	840x100 __wire_152.Y
+__module_154	module	910x4660 inc/single_bit_alu.txt __wire_171.Y B6.Y LOW.Y __wire_155.Y __wire_157.Y __wire_158.Y __wire_159.Y __wire_160.Y __wire_161.Y __wire_162.Y
+__wire_155	wire	890x4720 __wire_143.Y
+__wire_157	wire	720x4740 __wire_124.Y
+__wire_158	wire	730x4760 __wire_125.Y
+__wire_159	wire	740x4780 __wire_126.Y
+__wire_160	wire	750x4800 __wire_127.Y
+__wire_161	wire	760x4820 __wire_134.Y
+__wire_162	wire	770x4840 __wire_136.Y
+__wire_171	wire	860x4660 A6.Y
+__wire_174	wire	860x140 __wire_171.Y
+__wire_175	wire	850x3940 A5.Y
+__wire_176	wire	850x120 __wire_175.Y
+__wire_177	wire	1900x4660 __module_154.O
+__wire_178	wire	1900x480 __wire_177.Y
+__module_180	module	910x5380 inc/single_bit_alu.txt __wire_194.Y B7.Y LOW.Y __wire_184.Y __wire_13.Y __wire_15.Y __wire_17.Y __wire_22.Y __wire_25.Y __wire_129.Y
+__wire_181	wire	1830x4680 __module_154.C_out
+__wire_182	wire	890x5350 __wire_183.Y
+__wire_183	wire	1830x5350 __wire_181.Y
+__wire_184	wire	890x5440 __wire_182.Y
+__wire_194	wire	870x5380 A7.Y
+__wire_195	wire	870x0 __wire_194.Y
+__wire_196	wire	1910x5380 __module_180.O
+__wire_197	wire	1910x500 __wire_196.Y
+carry	output	1950x5400 __module_180.C_out
+__wire_201	wire	1830x330 __wire_102.Y
+__not_202	not	1860x330 __wire_201.Y
+__wire_203	wire	1940x330 __not_202.Y
+__wire_204	wire	1940x520 __wire_203.Y
+__wire_220	wire	1830x160 __wire_201.Y
+__module_222	module	2410x200 inc/8bit_or.txt __wire_225.Y __wire_248.Y __wire_245.Y __wire_239.Y __wire_236.Y __wire_233.Y __wire_230.Y __wire_228.Y __module_9.o0 __module_9.o1 __module_9.o2 __module_9.o3 __module_9.o4 __module_9.o5 __module_9.o6 __module_9.o7
+__wire_224	wire	2380x0 __module_10.o0
+__wire_225	wire	2380x200 __wire_224.Y
+__wire_227	wire	2310x140 __module_10.o7
+__wire_228	wire	2310x340 __wire_227.Y
+__wire_229	wire	2320x120 __module_10.o6
+__wire_230	wire	2320x320 __wire_229.Y
+__wire_232	wire	2330x100 __module_10.o5
+__wire_233	wire	2330x300 __wire_232.Y
+__wire_235	wire	2340x80 __module_10.o4
+__wire_236	wire	2340x280 __wire_235.Y
+__wire_238	wire	2350x60 __module_10.o3
+__wire_239	wire	2350x260 __wire_238.Y
+__wire_244	wire	2360x40 __module_10.o2
+__wire_245	wire	2360x240 __wire_244.Y
+__wire_247	wire	2370x20 __module_10.o1
+__wire_248	wire	2370x220 __wire_247.Y
+__or_266	or	2830x380 __wire_280.Y __wire_292.Y
+__or_267	or	2830x440 __wire_285.Y __wire_295.Y
+__or_268	or	2830x500 __wire_290.Y __wire_297.Y
+__or_269	or	2830x560 __wire_302.Y __wire_304.Y
+__or_270	or	2830x620 __wire_313.Y __wire_308.Y
+__or_271	or	2830x680 __wire_318.Y __wire_306.Y
+__wire_272	wire	2730x200 __module_222.0
+__wire_273	wire	2740x220 __module_222.1
+__wire_274	wire	2750x240 __module_222.2
+__wire_275	wire	2760x260 __module_222.3
+__wire_276	wire	2770x280 __module_222.4
+__wire_277	wire	2780x300 __module_222.5
+__wire_278	wire	2790x320 __module_222.6
+__wire_279	wire	2800x340 __module_222.7
+__wire_280	wire	2730x380 __wire_272.Y
+__wire_281	wire	2920x380 __or_266.Y
+__wire_283	wire	2920x420 __wire_281.Y
+__wire_284	wire	2810x420 __wire_283.Y
+__wire_285	wire	2810x440 __wire_284.Y
+__wire_287	wire	2920x440 __or_267.Y
+__wire_288	wire	2920x480 __wire_287.Y
+__wire_289	wire	2810x480 __wire_288.Y
+__wire_290	wire	2810x500 __wire_289.Y
+__wire_292	wire	2740x400 __wire_273.Y
+__wire_295	wire	2750x460 __wire_274.Y
+__wire_297	wire	2760x520 __wire_275.Y
+__wire_299	wire	2920x500 __or_268.Y
+__wire_300	wire	2920x540 __wire_299.Y
+__wire_301	wire	2810x540 __wire_300.Y
+__wire_302	wire	2810x560 __wire_301.Y
+__wire_304	wire	2770x580 __wire_276.Y
+__wire_306	wire	2790x700 __wire_278.Y
+__wire_308	wire	2780x640 __wire_277.Y
+__wire_310	wire	2920x560 __or_269.Y
+__wire_311	wire	2920x600 __wire_310.Y
+__wire_312	wire	2810x600 __wire_311.Y
+__wire_313	wire	2810x620 __wire_312.Y
+__wire_315	wire	2920x620 __or_270.Y
+__wire_316	wire	2920x660 __wire_315.Y
+__wire_317	wire	2810x660 __wire_316.Y
+__wire_318	wire	2810x680 __wire_317.Y
+__wire_320	wire	2800x760 __wire_279.Y
+__or_321	or	2830x740 __wire_325.Y __wire_320.Y
+__wire_322	wire	2920x680 __or_271.Y
+__wire_323	wire	2920x720 __wire_322.Y
+__wire_324	wire	2810x720 __wire_323.Y
+__wire_325	wire	2810x740 __wire_324.Y
+zero	output	2930x800 __not_327.Y
+__not_327	not	2850x800 __wire_331.Y
+__wire_328	wire	2920x740 __or_321.Y
+__wire_329	wire	2920x780 __wire_328.Y
+__wire_330	wire	2820x780 __wire_329.Y
+__wire_331	wire	2820x800 __wire_330.Y
+__wire_333	wire	2800x830 __wire_320.Y
+sign	output	2930x830 __wire_333.Y
+__wire_335	wire	720x3300 __wire_86.Y
+__wire_336	wire	730x3320 __wire_84.Y
+__wire_337	wire	740x3340 __wire_88.Y
+__wire_338	wire	750x3360 __wire_89.Y
+__wire_339	wire	770x3400 __wire_91.Y
+__wire_345	wire	760x3380 __wire_90.Y

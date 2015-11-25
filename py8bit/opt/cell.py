@@ -21,6 +21,9 @@ class Cell():
         self.name = "cell"    
         self.fcs = "cell"    
             
+    def done_drag(self):
+        pass
+            
     def add_input(self, name):
         self.inputs[name] = False
     
@@ -77,6 +80,9 @@ class Cell():
         self.rect.x = x
         self.rect.y = y
         self.update_io_xy()
+        
+    def clear_input(self, name):
+        self.inputs[name] = False
         
     def assign_input(self, name, in_cell, in_pin):
         if name in self.inputs:
@@ -160,7 +166,7 @@ class Cell():
 
     def draw_text(self, text, rect):
         tmp = self.parent.canvas.font.render(text, True, self.parent.canvas.style["c_text"])
-        rect2 = tmp.get_rect();
+        rect2 = tmp.get_rect()
         rect = [rect.x + rect.w / 2 - rect2.w / 2, rect.y + rect.h / 2 - rect2.h / 2]
         
         self.surface.blit(tmp,  rect)
@@ -234,7 +240,27 @@ class Cell():
                  
             pos_xy = self.output_xy[c]
             self.parent.draw_circle(pos_xy, state)
-              
+             
+    def check_output_collision(self, pos):
+        for pin in self.outputs:
+            if pin in self.output_xy:
+                out_pos = self.output_xy[pin]
+                p = self.parent.canvas.style["d_point"]
+                rect = pygame.Rect(out_pos[0] - p, out_pos[1] - p, p * 2, p * 2)
+                if (rect.collidepoint(pos)):
+                    return pin
+        return False
+    
+    def check_input_collision(self, pos):
+        for pin in self.inputs:
+            if pin in self.input_xy:
+                out_pos = self.input_xy[pin]
+                p = self.parent.canvas.style["d_point"]
+                rect = pygame.Rect(out_pos[0] - p, out_pos[1] - p, p * 2, p * 2)
+                if (rect.collidepoint(pos)):
+                    return pin
+        return False    
+     
     def check_input_line_collision(self, pos):
         for p in self.inputs:
             if self.inputs[p]:
@@ -253,21 +279,83 @@ class Cell():
                 h = abs(start[1] - end[1]) + offset * 2
                 
                 basic = Rect(x, y, w, h)
+                
                 if basic.collidepoint(pos):
                 
                     dx = end[0] - start[0]
                     dy = end[1] - start[1]
-                    k = float(dy) / float(dx)
-                    y = y + k * (pos[0] - x)
-                    if abs(y - pos[1]) < offset:
-                        return self, p
+                    if abs(dx) < abs(dy):
+                        k = float(dx) / float(dy)
+                        x = start[0] + k * (pos[1] - start[1])
+                
+                        if abs(x - pos[0]) < offset:
+                            return self, p, obj, pin                      
+                    else:
+                        k = float(dy) / float(dx)
+                        y = start[1] + k * (pos[0] - start[0])
+                        
+                        if abs(y - pos[1]) < offset:
+                            return self, p, obj, pin
         return False 
-                 
+    
+    def disconnect(self):
+        for wire_output in self.outputs:
+            print wire_output
+            while True:
+                target = self.parent.find_output(self, wire_output)
+                if target:
+                    target[0].clear_input(target[1])
+                else:
+                    break
+        
+      
+class Wire(Cell):
+    def __init__(self, parent):
+        Cell.__init__(self, parent)
+        self.add_input("A")
+        self.add_output("Y")
+        
+    def get_parent(self):
+        obj, pin = self.inputs["A"]
+#         while (obj.fcs == "wire"):
+#             obj, pin = obj.inputs["A"]
+            
+        return obj, pin
+        
+    def update_rect(self):
+        self.rect.w = self.parent.canvas.style["d_wire_col"]
+        self.rect.h = self.parent.canvas.style["d_wire_col"]
+        
+    def update_io_xy(self):
+        x = self.rect.x + self.parent.canvas.style["d_wire_col"] / 2
+        y = self.rect.y + self.parent.canvas.style["d_wire_col"] / 2
+        self.input_xy["A"] = [x, y]
+        self.output_xy["Y"] = [x, y]
+        
+    def done_drag(self):
+        Cell.done_drag(self)
+        
+    def set_pos(self, x, y):
+        Cell.set_pos(self, x, y)
+        
+    def update_body(self, state=None):
+        pass
+     
+    def draw(self):
+        pass  
+    
+    def calc(self, pin):
+        return self.input("A")
+        
+               
     
 class Invisible(Cell):
     def __init__(self, parent):
         Cell.__init__(self, parent)
         self.add_output("Y")
+    
+    def update_body(self, state=None):
+        pass
     
     def draw(self):
         pass

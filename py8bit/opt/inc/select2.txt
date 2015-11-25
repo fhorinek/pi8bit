@@ -1,0 +1,10 @@
+A	input	0x0
+B	input	0x50
+S	input	0x70
+__and_4	and	180x0 A.Y __not_23.Y
+__and_5	and	180x50 B.Y __wire_31.Y
+__or_6	or	290x0 __and_4.Y __and_5.Y
+__output_21	output	390x0 __or_6.Y
+__not_23	not	100x20 __wire_28.Y
+__wire_28	wire	70x20 __wire_31.Y
+__wire_31	wire	70x70 S.Y

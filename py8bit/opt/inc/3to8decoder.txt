@@ -1,0 +1,62 @@
+A0	input	0x0
+A1	input	0x20
+A2	input	0x160
+Y0	output	510x0 and_000.Y
+Y1	output	510x40 and_001.Y
+Y2	output	510x80 and_010.Y
+Y3	output	510x120 and_011.Y
+Y4	output	510x180 and_100.Y
+Y5	output	510x220 and_101.Y
+Y6	output	510x260 and_110.Y
+Y7	output	510x300 and_111.Y
+not_A0	not	120x0 A0.Y
+not_A1	not	120x20 A1.Y
+not_A2	not	120x160 A2.Y
+and_00	and	240x0 not_A0.Y not_A1.Y
+and_01	and	240x40 __w_42.Y __w_31.Y
+and_10	and	240x80 __w_30.Y __w_47.Y
+and_11	and	240x120 __w_44.Y __w_45.Y
+and_000	and	410x0 and_00.Y __w_49.Y
+and_001	and	410x40 and_01.Y __w_56.Y
+and_010	and	410x80 and_10.Y __w_55.Y
+and_011	and	410x120 and_11.Y __w_54.Y
+and_100	and	410x180 __w_66.Y __w_33.Y
+and_101	and	410x220 __w_64.Y __w_23.Y
+and_110	and	410x260 __w_65.Y __w_21.Y
+and_111	and	410x300 __w_69.Y __w_19.Y
+__w_19	wire	70x320 __w_38.Y
+__w_21	wire	70x280 __w_34.Y
+__w_23	wire	70x240 __w_36.Y
+__w_29	wire	190x0 not_A0.Y
+__w_30	wire	190x80 __w_29.Y
+__w_31	wire	210x60 __w_32.Y
+__w_32	wire	210x20 not_A1.Y
+__w_33	wire	70x200 __w_37.Y
+__w_34	wire	70x160 A2.Y
+__w_36	wire	70x160 A2.Y
+__w_37	wire	70x160 A2.Y
+__w_38	wire	70x160 A2.Y
+__w_39	wire	90x0 A0.Y
+__w_42	wire	90x40 __w_39.Y
+__w_43	wire	90x0 A0.Y
+__w_44	wire	90x120 __w_43.Y
+__w_45	wire	70x140 __w_46.Y
+__w_46	wire	70x20 A1.Y
+__w_47	wire	70x100 __w_48.Y
+__w_48	wire	70x20 A1.Y
+__w_49	wire	390x20 __w_60.Y
+__w_54	wire	390x140 __w_57.Y
+__w_55	wire	390x100 __w_58.Y
+__w_56	wire	390x60 __w_59.Y
+__w_57	wire	390x160 not_A2.Y
+__w_58	wire	390x160 not_A2.Y
+__w_59	wire	390x160 not_A2.Y
+__w_60	wire	390x160 not_A2.Y
+__w_61	wire	360x0 and_00.Y
+__w_63	wire	350x40 and_01.Y
+__w_64	wire	350x220 __w_63.Y
+__w_65	wire	340x260 __w_67.Y
+__w_66	wire	360x180 __w_61.Y
+__w_67	wire	340x80 and_10.Y
+__w_68	wire	330x120 and_11.Y
+__w_69	wire	330x300 __w_68.Y

@@ -1,12 +1,20 @@
 A	input	0x0
 B	input	0x20
-C_in	input	0x50
-S	output	290x50 xor2.Y
-C_out	output	390x110 or.Y
-xor1	xor	80x0 A.Y B.Y
-xor2	xor	190x50 xor1.Y C_in.Y
-and1	and	190x100 xor1.Y C_in.Y
-and2	and	190x140 A.Y B.Y
-or	or	290x110 and1.Y and2.Y
-mod	module	230x0 inc/test.txt and1.Y
-led	led	410x50 mod.Y
+C_in	input	0x70
+S	output	340x50 xor2.Y
+C_out	output	440x110 or.Y
+xor1	xor	110x0 A.Y B.Y
+xor2	xor	240x50 __w_11.Y C_in.Y
+and1	and	240x100 __w_7.Y __w_3.Y
+and2	and	240x140 __w_6.Y __w_1.Y
+or	or	340x110 and1.Y and2.Y
+__w_1	wire	60x160 __w_5.Y
+__w_2	wire	100x70 C_in.Y
+__w_3	wire	100x120 __w_2.Y
+__w_4	wire	80x0 A.Y
+__w_5	wire	60x20 B.Y
+__w_6	wire	80x140 __w_4.Y
+__w_7	wire	200x100 __w_8.Y
+__w_8	wire	200x0 xor1.Y
+__w_10	wire	200x0 xor1.Y
+__w_11	wire	200x50 __w_10.Y

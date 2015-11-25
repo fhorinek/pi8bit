@@ -1,0 +1,33 @@
+0	input	0x0
+1	input	0x40
+2	input	0x80
+3	input	0x120
+4	input	0x160
+5	input	0x200
+6	input	0x240
+7	input	0x280
+E	input	0x300
+o0	output	210x0 __and_18.Y
+o1	output	210x40 __and_19.Y
+o2	output	210x80 __and_20.Y
+o3	output	210x120 __and_21.Y
+o4	output	210x160 __and_22.Y
+o5	output	210x200 __and_23.Y
+o6	output	210x240 __and_62.Y
+o7	output	210x280 __and_63.Y
+__and_18	and	100x0 0.Y __wire_53.Y
+__and_19	and	100x40 1.Y __wire_52.Y
+__and_20	and	100x80 2.Y __wire_51.Y
+__and_21	and	100x120 3.Y __wire_50.Y
+__and_22	and	100x160 4.Y __wire_49.Y
+__and_23	and	100x200 5.Y __wire_38.Y
+__wire_35	wire	70x300 E.Y
+__wire_36	wire	70x260 __wire_35.Y
+__wire_38	wire	70x220 __wire_36.Y
+__wire_49	wire	70x180 __wire_38.Y
+__wire_50	wire	70x140 __wire_49.Y
+__wire_51	wire	70x100 __wire_50.Y
+__wire_52	wire	70x60 __wire_51.Y
+__wire_53	wire	70x20 __wire_52.Y
+__and_62	and	100x240 6.Y __wire_36.Y
+__and_63	and	100x280 7.Y __wire_35.Y

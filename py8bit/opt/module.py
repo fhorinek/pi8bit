@@ -1,6 +1,8 @@
 from cell import Cell
 from controller import Controller
 from pygame import Rect
+from utils import file_opendialog
+import os
 
 class module(Cell, Controller):
     def __init__(self, parent):
@@ -18,6 +20,12 @@ class module(Cell, Controller):
         return self.objects[pin].input("A")
         
     def parse_cfg(self, arr):
+        if len(arr) < 4:
+            path = file_opendialog("inc")
+            path = os.path.relpath(path, os.getcwd())
+            arr.append(path)
+            print arr
+            
         self.filename = arr[3]
         self.read_file(self.filename)
         

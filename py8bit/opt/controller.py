@@ -2,9 +2,18 @@ from collections import OrderedDict
 from cell import High, Low
 
 import pygame
+from pygame import Rect
 
-LEFT = 1
-RIGHT = 3
+LEFT    = 1
+MID     = 2
+RIGHT   = 3
+
+MODE_IDLE = 0
+MODE_MOVE = 1
+MODE_ADD  = 2
+MODE_DEL  = 3
+MODE_WIRE = 4
+
 
 class Controller():
     def __init__(self, canvas, parent):
@@ -19,15 +28,48 @@ class Controller():
         self.move_offest = False
         
         self.default_y = 0
+        self.obj_id = 0
+        
+        self.pan = False
+        self.pan_x = 0
+        self.pan_y = 0
+        self.pan_offset_x = 0
+        self.pan_offset_y = 0
+        
+    def get_obj_id(self):
+        self.obj_id += 1
+        return self.obj_id
     
     def assign_pos(self, name):
         o = self.objects[name]
         o.set_pos(self.canvas.style["d_space"], self.default_y)
         self.default_y += self.canvas.style["d_space"] + o.rect.h
         
-       
+    def normalize_positons(self):
+        big_rect = False
+        for k in self.objects:
+            o = self.objects[k]
+            if big_rect:
+                big_rect = big_rect.union(o.rect)
+            else:
+                big_rect = o.rect
+        
+        offset_x = big_rect[0]
+        offset_y = big_rect[1]
+        
+        for k in self.objects:
+            o = self.objects[k]
+            pos_x = o.rect[0] - offset_x
+            pos_y = o.rect[1] - offset_y
+            o.set_pos(pos_x, pos_y)
+        
+        
+               
     def write_file(self, filename):
         lines = ""
+        
+        self.normalize_positons()
+        
         for k in self.objects:
             if k in ["HIGH", "LOW"]:
                 continue
@@ -46,14 +88,19 @@ class Controller():
         
     def read_file(self, filename):
         print "Reading file", filename
-                
-        f = open(filename, "r")
-        data = f.readlines()
-        f.close()
         
-        self.create_objects(data)
+        try:        
+            f = open(filename, "r")
+            data = f.readlines()
+            f.close()
+            
+            self.create_objects(data)
+    
+            print "done", filename
+        except IOError:
+            print "not found"
 
-        print "done", filename
+        
         
     def create_objects(self, data):
         params = OrderedDict()
@@ -69,10 +116,18 @@ class Controller():
             if (len(arr) < 2):
                 continue
             
-            
             name = arr[0]
             fcs = arr[1]
-
+            
+            #calc id
+            s = name.split("_")
+            if len(s) == 4 and s[0] == "" and s[1] == "":
+                try:
+                    obj_id = int(s[3])
+                    self.obj_id = max(obj_id + 1, self.obj_id)
+                except ValueError:
+                    pass
+            
             o = False
             if fcs in self.canvas.cells:
                 o = self.canvas.cells[fcs](self)
@@ -81,14 +136,14 @@ class Controller():
                 params[name] = arr
                 self.objects[name] = o
         
+        #let object to parse parameters
         for name in params:
             arr = params[name]
 
             o = self.objects[name]
             o.parse(arr)   
-    
+            
     def find_cell_pin(self, name):
-       
         arr = name.split(".")
         if (len(arr) == 1):
             o_name = arr[0]
@@ -102,10 +157,28 @@ class Controller():
         
         return o, o_pin  
     
+    def find_output(self, obj, pin):
+        for k in self.objects:
+            o = self.objects[k]
+            for p in o.inputs:
+                pair = o.inputs[p]
+                if pair == False:
+                    continue
+                if pair[0] == obj and pair[1] == pin:
+                    return o, p
+        return False
+    
     def blit(self, surface, rect):
+        rect = Rect(rect)
+        rect.x += self.pan_offset_x
+        rect.y += self.pan_offset_y
         self.canvas.screen.blit(surface, rect)
         
     def draw_circle(self, pos, state):
+
+        pos = list(pos)
+        pos[0] += self.pan_offset_x
+        pos[1] += self.pan_offset_y        
         if (state):
             color = self.canvas.style["c_high"]
         else:
@@ -113,7 +186,14 @@ class Controller():
 
         self.canvas.draw_circle(color, pos) 
         
-    def draw_line(self, start, end, state):       
+    def draw_line(self, start, end, state):     
+        start = list(start)
+        end = list(end)
+        start[0] += self.pan_offset_x
+        start[1] += self.pan_offset_y
+        end[0] += self.pan_offset_x
+        end[1] += self.pan_offset_y
+          
         if (state):
             color = self.canvas.style["c_high"]
         else:
@@ -142,6 +222,9 @@ class Controller():
             self.objects[k].clear_io_cache()              
             
     def get_object_pos(self, pos):
+        pos = list(pos)
+        pos[0] -= self.pan_offset_x
+        pos[1] -= self.pan_offset_y
         object_list = list(self.objects.keys())
         object_list.reverse()
         for k in object_list:
@@ -151,43 +234,205 @@ class Controller():
         return False        
     
     def get_line_pos(self, pos):
+        pos = list(pos)
+        pos[0] -= self.pan_offset_x
+        pos[1] -= self.pan_offset_y
         object_list = list(self.objects.keys())
         object_list.reverse()
         for k in object_list:
             o = self.objects[k]
-            pair = o.check_input_line_collision(pos)
-            if (pair):
-                return pair
+            data = o.check_input_line_collision(pos)
+            if (data):
+                return data
         return False   
+    
+    def get_output_pos(self, pos):
+        pos = list(pos)
+        pos[0] -= self.pan_offset_x
+        pos[1] -= self.pan_offset_y
+        object_list = list(self.objects.keys())
+        object_list.reverse()
+        for k in object_list:
+            o = self.objects[k]
+            pin = o.check_output_collision(pos)
+            if (pin):
+                return o, pin
+        return False   
+   
+    def get_input_pos(self, pos, exclude=[]):
+        pos = list(pos)
+        pos[0] -= self.pan_offset_x
+        pos[1] -= self.pan_offset_y
+        object_list = list(self.objects.keys())
+        object_list.reverse()
+        for k in object_list:
+            if k in exclude:
+                continue
+            o = self.objects[k]
+            pin = o.check_input_collision(pos)
+            if (pin):
+                return o, pin
+        return False     
             
-    def event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
-            o = self.get_object_pos(event.pos)
-            if o is not False:
-                o.click()
+        
+    def add_object(self, fcs, pos):
+        o = self.canvas.cells[fcs](self)
+        name = "__%s_%d" % (fcs, self.get_obj_id())
+        self.objects[name] = o
+        o.update()
+        pos = "%dx%d" % (pos[0], pos[1])
+        o.parse([name, fcs, pos])
+        self.apply_grid(o)
+        self.canvas.request_io_redraw() 
+        return o     
+           
+    def apply_grid(self, obj):
+        g_hor = self.canvas.style["g_hor"]
+        g_ver = self.canvas.style["g_ver"]        
+        obj.rect.x = int(round(obj.rect.x / float(g_hor)) * g_hor)
+        obj.rect.y = int(round(obj.rect.y / float(g_ver)) * g_ver)
+        obj.update_io_xy()
+        
+    def delete(self, name):
+        if name in self.objects:
+            self.objects[name].disconnect()
+            del self.objects[name]
+            
+        #TODO: remove orphan wire nodes
+
+            
+    def event(self, event, mode):
+        #PAN is allways working
+        if event.type == pygame.MOUSEBUTTONUP and event.button == RIGHT:
+            self.pan = False
+            self.pan_offset_x += event.pos[0] - self.pan_x
+            self.pan_offset_y += event.pos[1] - self.pan_y        
         
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == RIGHT:
-            line = self.get_line_pos(event.pos)
-            if line:
-                print line
-            self.move = self.get_object_pos(event.pos)
-            if self.move is not False:
-                self.move_offest = [event.pos[0] - self.move.rect[0], event.pos[1] - self.move.rect[1]]
-                
-        
-        if event.type == pygame.MOUSEBUTTONUP and event.button == RIGHT:
-            if self.move is not False:
-                g_hor = self.canvas.style["g_hor"]
-                g_ver = self.canvas.style["g_ver"]
-                x = int(round((event.pos[0] - self.move_offest[0]) / float(g_hor)) * g_hor)
-                y = int(round((event.pos[1] - self.move_offest[1]) / float(g_ver)) * g_ver)
-                self.move.set_pos(x, y)
-                self.canvas.request_io_redraw()
-            self.move = False
-        
+            self.pan = True
+            self.pan_x = event.pos[0]
+            self.pan_y = event.pos[1]
+            
         if event.type == pygame.MOUSEMOTION:
-            if self.move is not False:
-                x = event.pos[0] - self.move_offest[0]
-                y = event.pos[1] - self.move_offest[1]
-                self.move.set_pos(x, y)
-                self.canvas.request_io_redraw()
+            if self.pan:
+                self.pan_offset_x += event.pos[0] - self.pan_x
+                self.pan_offset_y += event.pos[1] - self.pan_y     
+                self.pan_x = event.pos[0]
+                self.pan_y = event.pos[1]
+                self.canvas.request_io_redraw()                    
+        
+        if mode == MODE_IDLE:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
+                o = self.get_object_pos(event.pos)
+                if o is not False:
+                    o.click()
+         
+        if mode == MODE_DEL:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
+                o = self.get_object_pos(event.pos)
+                if o:
+                    self.delete(o.name)
+                    self.canvas.request_io_redraw()
+                    self.canvas.reset_mode()
+                else:
+                    w = self.get_line_pos(event.pos)
+                    if w:
+                        o = w[0]
+                        p = w[1]
+                        o.clear_input(p)
+                        self.canvas.request_io_redraw()
+                        self.canvas.reset_mode()                        
+             
+        if mode == MODE_ADD:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
+                pos = list(event.pos)
+                pos[0] -= self.pan_offset_x
+                pos[1] -= self.pan_offset_y
+                fcs = self.canvas.cells.keys()[self.canvas.add_cell_index]
+                self.add_object(fcs, pos)   
+            
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
+                self.canvas.inc_cell_index()        
+
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
+                self.canvas.dec_cell_index()        
+                
+        if mode == MODE_WIRE:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
+                start = self.get_output_pos(event.pos)
+                if start is not False:
+                    p = self.canvas.style["d_point"]
+
+                    pos = list(event.pos)
+                    pos[0] -= self.pan_offset_x + 2*p
+                    pos[1] -= self.pan_offset_y + 2*p
+                    self.move = self.add_object("wire", pos)
+                    self.move.assign_input("A", start[0], start[1])
+
+                    self.move_offest = [2 * p + self.pan_offset_x, 2 * p + self.pan_offset_y]
+                else:
+                    w = self.get_line_pos(event.pos)
+                    if w:
+                        in_cell = w[0]
+                        in_pin = w[1]
+                        out_cell = w[2]
+                        out_pin = w[3]
+                        
+                        p = self.canvas.style["d_point"]
+    
+                        pos = list(event.pos)
+                        pos[0] -= self.pan_offset_x + 2*p
+                        pos[1] -= self.pan_offset_y + 2*p
+                        self.move = self.add_object("wire", pos)
+                        self.move.assign_input("A", out_cell, out_pin)
+                        in_cell.assign_input(in_pin, self.move, "Y")
+    
+                        self.move_offest = [2 * p + self.pan_offset_x, 2 * p + self.pan_offset_y]                        
+                        
+                        
+
+            if event.type == pygame.MOUSEMOTION:
+                if self.move is not False:
+                    x = event.pos[0] - self.move_offest[0]
+                    y = event.pos[1] - self.move_offest[1]
+                    self.move.set_pos(x, y)
+                    self.canvas.request_io_redraw()
+
+            if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
+                if self.move is not False:
+                    end = self.get_input_pos(event.pos, exclude = [self.move.name])
+                    if end is not False:
+                        obj_input = self.move.inputs["A"]
+                        end[0].assign_input(end[1], obj_input[0], obj_input[1])
+                        self.delete(self.move.name)
+                    else:
+                        self.apply_grid(self.move)
+                        self.move.done_drag()   
+                        
+                    self.move = False
+                    self.canvas.request_io_redraw()
+                   
+                    
+        if mode == MODE_MOVE:           
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
+                self.move = self.get_object_pos(event.pos)
+                if self.move is not False:
+                    self.move_offest = [event.pos[0] - self.move.rect[0], event.pos[1] - self.move.rect[1]]
+        
+            if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
+                if self.move is not False:
+                    x = event.pos[0] - self.move_offest[0]
+                    y = event.pos[1] - self.move_offest[1]
+                    self.move.set_pos(x, y)
+                    self.apply_grid(self.move)
+                    self.move.done_drag()
+                    self.canvas.request_io_redraw()
+                self.move = False
+        
+            if event.type == pygame.MOUSEMOTION:
+                if self.move is not False:
+                    x = event.pos[0] - self.move_offest[0]
+                    y = event.pos[1] - self.move_offest[1]
+                    self.move.set_pos(x, y)
+                    self.canvas.request_io_redraw()
+                

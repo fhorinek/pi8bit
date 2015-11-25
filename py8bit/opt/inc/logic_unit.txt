@@ -1,0 +1,18 @@
+A	input	0x0
+B	input	0x120
+o_and	input	190x20
+o_or	input	190x70
+o_xor	input	190x120
+o_not	input	190x170
+Y	output	570x30 sum3.Y
+and	and	100x0 A.Y B.Y
+or	or	100x50 A.Y B.Y
+xor	xor	100x100 A.Y B.Y
+not	not	100x150 A.Y
+en_and	and	270x0 and.Y o_and.Y
+en_or	and	270x50 or.Y o_or.Y
+en_xor	and	270x100 xor.Y o_xor.Y
+en_not	and	270x150 not.Y o_not.Y
+sum1	or	370x30 en_and.Y en_or.Y
+sum2	or	370x100 en_xor.Y en_not.Y
+sum3	or	470x30 sum1.Y sum2.Y
