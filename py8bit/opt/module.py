@@ -24,7 +24,6 @@ class module(Cell, Controller):
             path = file_opendialog("inc")
             path = os.path.relpath(path, os.getcwd())
             arr.append(path)
-            print arr
             
         self.filename = arr[3]
         self.read_file(self.filename)

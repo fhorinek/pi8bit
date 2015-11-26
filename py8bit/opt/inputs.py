@@ -8,8 +8,7 @@ class Toggle(cell.Cell):
         self.add_output("Y")
 
     def parse_cfg(self, arr):
-        print arr
-        
+       
         if len(arr) == 4:
             self.val = int(arr[3])
 

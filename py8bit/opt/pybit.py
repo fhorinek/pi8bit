@@ -11,10 +11,8 @@ import module
 import cell
 import inputs
 
-from pgu import gui
 
 from controller import MODE_IDLE, MODE_MOVE, MODE_ADD, MODE_DEL, MODE_WIRE
-from controller import LEFT, MID, RIGHT
 from utils import file_opendialog
 
 class Canvas():

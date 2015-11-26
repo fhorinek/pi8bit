@@ -3,10 +3,13 @@ from cell import High, Low
 
 import pygame
 from pygame import Rect
+from nose.util import isproperty
 
 LEFT    = 1
 MID     = 2
 RIGHT   = 3
+WHEEL_UP    =   4
+WHEEL_DOWN  =   5
 
 MODE_IDLE = 0
 MODE_MOVE = 1
@@ -35,6 +38,7 @@ class Controller():
         self.pan_y = 0
         self.pan_offset_x = 0
         self.pan_offset_y = 0
+        self.zoom = 0.5
         
     def get_obj_id(self):
         self.obj_id += 1
@@ -170,13 +174,18 @@ class Controller():
     
     def blit(self, surface, rect):
         rect = Rect(rect)
+        rect.x *= self.zoom
+        rect.y *= self.zoom
         rect.x += self.pan_offset_x
         rect.y += self.pan_offset_y
-        self.canvas.screen.blit(surface, rect)
+        w = int(surface.get_width() * self.zoom)
+        h = int(surface.get_height() * self.zoom)
+        new = pygame.transform.scale(surface, (w, h))
+        self.canvas.screen.blit(new, rect)
         
     def draw_circle(self, pos, state):
 
-        pos = list(pos)
+        pos = [int(x * self.zoom) for x in pos] 
         pos[0] += self.pan_offset_x
         pos[1] += self.pan_offset_y        
         if (state):
@@ -187,8 +196,9 @@ class Controller():
         self.canvas.draw_circle(color, pos) 
         
     def draw_line(self, start, end, state):     
-        start = list(start)
-        end = list(end)
+        start =  [int(x * self.zoom) for x in start] 
+        end = [int(x * self.zoom) for x in end] 
+        
         start[0] += self.pan_offset_x
         start[1] += self.pan_offset_y
         end[0] += self.pan_offset_x
@@ -223,8 +233,6 @@ class Controller():
             
     def get_object_pos(self, pos):
         pos = list(pos)
-        pos[0] -= self.pan_offset_x
-        pos[1] -= self.pan_offset_y
         object_list = list(self.objects.keys())
         object_list.reverse()
         for k in object_list:
@@ -235,8 +243,6 @@ class Controller():
     
     def get_line_pos(self, pos):
         pos = list(pos)
-        pos[0] -= self.pan_offset_x
-        pos[1] -= self.pan_offset_y
         object_list = list(self.objects.keys())
         object_list.reverse()
         for k in object_list:
@@ -248,8 +254,6 @@ class Controller():
     
     def get_output_pos(self, pos):
         pos = list(pos)
-        pos[0] -= self.pan_offset_x
-        pos[1] -= self.pan_offset_y
         object_list = list(self.objects.keys())
         object_list.reverse()
         for k in object_list:
@@ -261,8 +265,6 @@ class Controller():
    
     def get_input_pos(self, pos, exclude=[]):
         pos = list(pos)
-        pos[0] -= self.pan_offset_x
-        pos[1] -= self.pan_offset_y
         object_list = list(self.objects.keys())
         object_list.reverse()
         for k in object_list:
@@ -302,6 +304,10 @@ class Controller():
 
             
     def event(self, event, mode):
+        if hasattr(event, "pos"):
+            mouse_x = (event.pos[0] - self.pan_offset_x) / self.zoom
+            mouse_y = (event.pos[1] - self.pan_offset_y) / self.zoom  
+        
         #PAN is allways working
         if event.type == pygame.MOUSEBUTTONUP and event.button == RIGHT:
             self.pan = False
@@ -313,6 +319,16 @@ class Controller():
             self.pan_x = event.pos[0]
             self.pan_y = event.pos[1]
             
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_UP:   
+            self.zoom += 0.1
+            self.canvas.request_io_redraw()
+
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_DOWN:   
+            if self.zoom > 0.1:
+                self.zoom -= 0.1
+                self.canvas.request_io_redraw()
+       
+            
         if event.type == pygame.MOUSEMOTION:
             if self.pan:
                 self.pan_offset_x += event.pos[0] - self.pan_x
@@ -323,19 +339,19 @@ class Controller():
         
         if mode == MODE_IDLE:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
-                o = self.get_object_pos(event.pos)
+                o = self.get_object_pos([mouse_x, mouse_y])
                 if o is not False:
                     o.click()
          
         if mode == MODE_DEL:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
-                o = self.get_object_pos(event.pos)
+                o = self.get_object_pos([mouse_x, mouse_y])
                 if o:
                     self.delete(o.name)
                     self.canvas.request_io_redraw()
                     self.canvas.reset_mode()
                 else:
-                    w = self.get_line_pos(event.pos)
+                    w = self.get_line_pos([mouse_x, mouse_y])
                     if w:
                         o = w[0]
                         p = w[1]
@@ -345,11 +361,8 @@ class Controller():
              
         if mode == MODE_ADD:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
-                pos = list(event.pos)
-                pos[0] -= self.pan_offset_x
-                pos[1] -= self.pan_offset_y
                 fcs = self.canvas.cells.keys()[self.canvas.add_cell_index]
-                self.add_object(fcs, pos)   
+                self.add_object(fcs, [mouse_x, mouse_y])   
             
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
                 self.canvas.inc_cell_index()        
@@ -359,19 +372,16 @@ class Controller():
                 
         if mode == MODE_WIRE:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
-                start = self.get_output_pos(event.pos)
+                start = self.get_output_pos([mouse_x, mouse_y])
                 if start is not False:
                     p = self.canvas.style["d_point"]
 
-                    pos = list(event.pos)
-                    pos[0] -= self.pan_offset_x + 2*p
-                    pos[1] -= self.pan_offset_y + 2*p
-                    self.move = self.add_object("wire", pos)
+                    self.move = self.add_object("wire", [mouse_x + 2*p, mouse_y + 2*p])
                     self.move.assign_input("A", start[0], start[1])
 
                     self.move_offest = [2 * p + self.pan_offset_x, 2 * p + self.pan_offset_y]
                 else:
-                    w = self.get_line_pos(event.pos)
+                    w = self.get_line_pos([mouse_x, mouse_y])
                     if w:
                         in_cell = w[0]
                         in_pin = w[1]
@@ -380,10 +390,7 @@ class Controller():
                         
                         p = self.canvas.style["d_point"]
     
-                        pos = list(event.pos)
-                        pos[0] -= self.pan_offset_x + 2*p
-                        pos[1] -= self.pan_offset_y + 2*p
-                        self.move = self.add_object("wire", pos)
+                        self.move = self.add_object("wire", [mouse_x + 2*p, mouse_y + 2*p])
                         self.move.assign_input("A", out_cell, out_pin)
                         in_cell.assign_input(in_pin, self.move, "Y")
     
@@ -393,14 +400,12 @@ class Controller():
 
             if event.type == pygame.MOUSEMOTION:
                 if self.move is not False:
-                    x = event.pos[0] - self.move_offest[0]
-                    y = event.pos[1] - self.move_offest[1]
-                    self.move.set_pos(x, y)
+                    self.move.set_pos(mouse_x, mouse_y)
                     self.canvas.request_io_redraw()
 
             if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
                 if self.move is not False:
-                    end = self.get_input_pos(event.pos, exclude = [self.move.name])
+                    end = self.get_input_pos([mouse_x, mouse_y], exclude = [self.move.name])
                     if end is not False:
                         obj_input = self.move.inputs["A"]
                         end[0].assign_input(end[1], obj_input[0], obj_input[1])
@@ -415,14 +420,14 @@ class Controller():
                     
         if mode == MODE_MOVE:           
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
-                self.move = self.get_object_pos(event.pos)
+                self.move = self.get_object_pos([mouse_x, mouse_y])
                 if self.move is not False:
-                    self.move_offest = [event.pos[0] - self.move.rect[0], event.pos[1] - self.move.rect[1]]
+                    self.move_offest = [mouse_x - self.move.rect[0], mouse_y - self.move.rect[1]]
         
             if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
                 if self.move is not False:
-                    x = event.pos[0] - self.move_offest[0]
-                    y = event.pos[1] - self.move_offest[1]
+                    x = mouse_x - self.move_offest[0]
+                    y = mouse_y - self.move_offest[1]                    
                     self.move.set_pos(x, y)
                     self.apply_grid(self.move)
                     self.move.done_drag()
@@ -431,8 +436,8 @@ class Controller():
         
             if event.type == pygame.MOUSEMOTION:
                 if self.move is not False:
-                    x = event.pos[0] - self.move_offest[0]
-                    y = event.pos[1] - self.move_offest[1]
+                    x = mouse_x - self.move_offest[0]
+                    y = mouse_y - self.move_offest[1]
                     self.move.set_pos(x, y)
                     self.canvas.request_io_redraw()
                 
