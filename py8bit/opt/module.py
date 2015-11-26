@@ -117,6 +117,7 @@ class minput(Cell):
         Cell.__init__(self, parent)
         self.add_output("Y")
         self.val = 0
+        self.old_value = 0
         self.module = None
         
     def set_module(self, module):
@@ -124,9 +125,13 @@ class minput(Cell):
         
     def calc(self, pin):
         if self.module is not None:
-            return self.module.input(self.name)
-        else:
-            return self.val
+            self.val = self.module.input(self.name)
+            
+        if (self.old_value is not self.val):
+            self.old_value = self.val
+            self.update_body()       
+                 
+        return self.val
         
     def click(self):
         if self.module is None:
