@@ -13,7 +13,7 @@ class And(cell.Cell):
         
     def update_body(self):
         cell.Cell.update_body(self)
-        self.draw_text("AND", self.rect_rel)  
+        self.parent.draw_text(self.surface, "AND", self.rect_rel)  
         
 class Or(cell.Cell):
     def __init__(self, parent):
@@ -28,7 +28,7 @@ class Or(cell.Cell):
         
     def update_body(self):
         cell.Cell.update_body(self)
-        self.draw_text("OR", self.rect_rel)  
+        self.parent.draw_text(self.surface, "OR", self.rect_rel)  
 
 class Xor(cell.Cell):
     def __init__(self, parent):
@@ -43,7 +43,7 @@ class Xor(cell.Cell):
         
     def update_body(self):
         cell.Cell.update_body(self)
-        self.draw_text("XOR", self.rect_rel)  
+        self.parent.draw_text(self.surface, "XOR", self.rect_rel)  
         
 class Nand(cell.Cell):
     def __init__(self, parent):
@@ -58,7 +58,7 @@ class Nand(cell.Cell):
         
     def update_body(self):
         cell.Cell.update_body(self)
-        self.draw_text("NAND", self.rect_rel) 
+        self.parent.draw_text(self.surface, "NAND", self.rect_rel) 
         
 class Nor(cell.Cell):
     def __init__(self, parent):
@@ -73,7 +73,7 @@ class Nor(cell.Cell):
         
     def update_body(self):
         cell.Cell.update_body(self)
-        self.draw_text("NOR", self.rect_rel)        
+        self.parent.draw_text(self.surface, "NOR", self.rect_rel)        
         
 class Not(cell.Cell):
     def __init__(self, parent):
@@ -87,4 +87,4 @@ class Not(cell.Cell):
         
     def update_body(self):
         cell.Cell.update_body(self)
-        self.draw_text("NOT", self.rect_rel)   
+        self.parent.draw_text(self.surface, "NOT", self.rect_rel)   

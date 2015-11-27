@@ -164,18 +164,10 @@ class Cell():
         self.update_rect()
         self.update_body()
 
-    def draw_text(self, text, rect):
-        tmp = self.parent.canvas.font.render(text, True, self.parent.canvas.style["c_text"])
-        rect2 = tmp.get_rect()
-        rect = [rect.x + rect.w / 2 - rect2.w / 2, rect.y + rect.h / 2 - rect2.h / 2]
-        
-        self.surface.blit(tmp,  rect)
-    
     def update_body(self, state = None):
-        size = [self.rect.w + 1, self.rect.h + 1]
         rect = Rect(0, 0, self.rect.w, self.rect.h)
         
-        self.surface = pygame.Surface(size, self.parent.canvas.surface_flags)
+        self.surface = self.parent.mk_surface(self.rect)
         if state is None:
             color = "c_fill"
         else:
@@ -184,27 +176,27 @@ class Cell():
             else:
                 color = "c_low"
                 
-        pygame.draw.rect(self.surface, self.parent.canvas.style[color], rect)
-        pygame.draw.rect(self.surface, self.parent.canvas.style["c_border"], rect, 2)
+        self.parent.draw_rect(self.surface, self.parent.canvas.style[color], rect)
+        self.parent.draw_rect(self.surface, self.parent.canvas.style["c_border"], rect, 2)
         
         if len(self.inputs) > 1:
             in_rect = Rect(0, 0, self.parent.canvas.style["d_input"], self.rect.h) 
-            pygame.draw.rect(self.surface, self.parent.canvas.style["c_border"], in_rect, 1)
+            self.parent.draw_rect(self.surface, self.parent.canvas.style["c_border"], in_rect, 1)
             
         if len(self.outputs) > 1:
             a = self.parent.canvas.style["d_output"]
             out_rect = Rect(self.rect.w - a, 0, a, self.rect.h) 
-            pygame.draw.rect(self.surface, self.parent.canvas.style["c_border"], out_rect, 1)
+            self.parent.draw_rect(self.surface, self.parent.canvas.style["c_border"], out_rect, 1)
  
         if len(self.inputs) > 1:
             for c in self.inputs:
                 rect = self.get_input_rect(c)
-                self.draw_text(c, rect)
+                self.parent.draw_text(self.surface, c, rect)
 
         if len(self.outputs) > 1:
             for c in self.outputs:
                 rect = self.get_output_rect(c)
-                self.draw_text(c, rect)
+                self.parent.draw_text(self.surface, c, rect)
  
         self.parent.request_update()
     

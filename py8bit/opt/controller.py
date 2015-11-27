@@ -3,7 +3,6 @@ from cell import High, Low
 
 import pygame
 from pygame import Rect
-from nose.util import isproperty
 
 LEFT    = 1
 MID     = 2
@@ -38,7 +37,9 @@ class Controller():
         self.pan_y = 0
         self.pan_offset_x = 0
         self.pan_offset_y = 0
-        self.zoom = 0.5
+        self.zoom = 1.0
+        
+        self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_font"] * self.zoom))
         
     def get_obj_id(self):
         self.obj_id += 1
@@ -178,13 +179,9 @@ class Controller():
         rect.y *= self.zoom
         rect.x += self.pan_offset_x
         rect.y += self.pan_offset_y
-        w = int(surface.get_width() * self.zoom)
-        h = int(surface.get_height() * self.zoom)
-        new = pygame.transform.scale(surface, (w, h))
-        self.canvas.screen.blit(new, rect)
+        self.canvas.screen.blit(surface, rect)
         
     def draw_circle(self, pos, state):
-
         pos = [int(x * self.zoom) for x in pos] 
         pos[0] += self.pan_offset_x
         pos[1] += self.pan_offset_y        
@@ -193,7 +190,7 @@ class Controller():
         else:
             color = self.canvas.style["c_low"]
 
-        self.canvas.draw_circle(color, pos) 
+        self.canvas.draw_circle(color, pos, self.zoom) 
         
     def draw_line(self, start, end, state):     
         start =  [int(x * self.zoom) for x in start] 
@@ -209,7 +206,33 @@ class Controller():
         else:
             color = self.canvas.style["c_low"]   
             
-        self.canvas.draw_line(start, end, color)
+        self.canvas.draw_line(start, end, color, self.zoom)
+        
+    def draw_rect(self, surface, color, rect, width = 0):
+        rect = Rect(rect)
+        rect.w = int(rect.w * self.zoom)
+        rect.h = int(rect.h * self.zoom)
+        w = int(width * self.zoom)
+        if width > 0 and w == 0:
+            w = 1
+        pygame.draw.rect(surface, color, rect, w)
+        
+    def draw_text(self, surface, text, rect):
+        tmp = self.font.render(text, True, self.canvas.style["c_text"])
+        rect2 = tmp.get_rect()
+        rect = Rect([int(x * self.zoom) for x in rect]) 
+        rect = [rect.x + rect.w / 2 - rect2.w / 2, rect.y + rect.h / 2 - rect2.h / 2]
+        
+        surface.blit(tmp,  rect)        
+        
+    def mk_surface(self, rect):
+        size = [int(rect.w * self.zoom), int(rect.h * self.zoom)]
+        return pygame.Surface(size, self.canvas.surface_flags)
+        
+    def update_zoom(self):
+        self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_font"] * self.zoom))
+        for k in self.objects:
+            self.objects[k].update_body()     
         
     def draw(self):
         for k in self.objects:
@@ -321,11 +344,13 @@ class Controller():
             
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_UP:   
             self.zoom += 0.1
+            self.update_zoom()
             self.canvas.request_io_redraw()
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_DOWN:   
             if self.zoom > 0.1:
                 self.zoom -= 0.1
+                self.update_zoom()
                 self.canvas.request_io_redraw()
        
             

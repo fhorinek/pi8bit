@@ -18,7 +18,7 @@ class Toggle(cell.Cell):
         
     def update_body(self):
         cell.Cell.update_body(self, self.val)
-        self.draw_text(self.name, self.rect_rel)         
+        self.parent.draw_text(self.surface, self.name, self.rect_rel)         
 
     def click(self):
         self.val = not self.val

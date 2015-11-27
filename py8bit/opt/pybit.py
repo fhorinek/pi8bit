@@ -24,7 +24,6 @@ class Canvas():
         self.update_surfaces()
         
         pygame.font.init()
-        self.font = pygame.font.Font(pygame.font.get_default_font(), 10)
         self.status_font = pygame.font.Font(pygame.font.get_default_font(), 20)
         
         self.style = {
@@ -43,6 +42,7 @@ class Canvas():
             "d_point": 4,
             "d_line_height": 2,
             "d_space": 10,
+            "d_font": 10,
             
             "d_line_col": 10,
             "d_wire_col": 20,
@@ -102,7 +102,7 @@ class Canvas():
         
         self.screen.blit(tmp,  rect)
         
-    def draw_line(self, start, end, color):
+    def draw_line(self, start, end, color, zoom):
         x1 = start[0]
         y1 = start[1]
         x2 = end[0]
@@ -112,10 +112,12 @@ class Canvas():
         
         lines = (start, end)
 #         lines = (start, (xm, y1), (xm, ym), (xm, y2), end)
-        pygame.draw.lines(self.surface_io, color, False, lines, self.style["d_line_height"])
+        w = max(int(zoom * self.style["d_line_height"]), 1)
         
-    def draw_circle(self, color, pos):
-        pygame.draw.circle(self.surface_io, color, pos, self.style["d_point"])
+        pygame.draw.lines(self.surface_io, color, False, lines, w)
+        
+    def draw_circle(self, color, pos, zoom):
+        pygame.draw.circle(self.surface_io, color, pos, int(zoom * self.style["d_point"]))
         
         
     def draw_status(self, text):

@@ -39,7 +39,7 @@ class HexDisplay(cell.Cell):
         val += self.input("A6") * 64
         val += self.input("A7") * 128
                 
-        self.draw_text("%02X" % val, self.rect_rel)
+        self.parent.draw_text(self.surface, "%02X" % val, self.rect_rel)
         
 class Led(cell.Cell):
     def __init__(self, parent):
@@ -54,4 +54,4 @@ class Led(cell.Cell):
         
     def update_body(self):
         cell.Cell.update_body(self, state = self.input("A"))
-        self.draw_text(self.name, self.rect_rel)
+        self.parent.draw_text(self.surface, self.name, self.rect_rel)

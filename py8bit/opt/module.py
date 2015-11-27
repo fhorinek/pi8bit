@@ -81,6 +81,8 @@ class module(Cell, Controller):
         rect = Rect(rect)
         rect.x += self.offset_x
         rect.y += self.offset_y
+        rect.x *= self.zoom
+        rect.y *= self.zoom   
         self.surface.blit(surface, rect)
     
     def draw(self):
@@ -96,9 +98,15 @@ class module(Cell, Controller):
             self.objects[k].draw_io()
     
     def update_body(self, state=None):
+        self.zoom = self.parent.zoom
+        self.font = self.parent.font
         Cell.update_body(self, state=state)
         for k in self.objects:
+            self.objects[k].update_body()
             self.objects[k].draw()
+            
+        #update_request is invalid since all cell were allready redrawn (and it is triggered by Cell.update_body())
+        self.update_request = False
             
     def request_update(self):
         self.update_request = True
@@ -139,7 +147,7 @@ class minput(Cell):
         
     def update_body(self, state=None):
         Cell.update_body(self, state=self.val)
-        self.draw_text(self.name, self.rect_rel)
+        self.parent.draw_text(self.surface, self.name, self.rect_rel)
         
 class moutput(Cell):
     def __init__(self, parent):
@@ -154,4 +162,4 @@ class moutput(Cell):
                     
     def update_body(self, state=None):
         Cell.update_body(self, state=self.input("A"))
-        self.draw_text(self.name, self.rect_rel)        
+        self.parent.draw_text(self.surface, self.name, self.rect_rel)        
