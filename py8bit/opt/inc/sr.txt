@@ -1,0 +1,31 @@
+I	input	10x0
+W	input	20x40
+E	input	290x80
+O	output	390x0 __wire_61.Y
+__and_2	and	100x0 __wire_65.Y __wire_47.Y
+__and_3	and	100x60 __wire_70.Y __not_45.Y
+__and_4	and	370x60 __wire_16.Y E.Y
+__nor_5	nor	200x60 __wire_14.Y __and_3.Y
+__nor_6	nor	200x0 __and_2.Y __wire_19.Y
+__wire_11	wire	280x0 __nor_6.Y
+__wire_12	wire	280x30 __wire_11.Y
+__wire_13	wire	180x50 __wire_12.Y
+__wire_14	wire	180x60 __wire_13.Y
+__wire_16	wire	290x60 __nor_5.Y
+__wire_17	wire	290x50 __wire_16.Y
+__wire_18	wire	180x30 __wire_17.Y
+__wire_19	wire	180x20 __wire_18.Y
+__wire_33	wire	450x60 __and_4.Y
+__wire_34	wire	450x30 __wire_33.Y
+__wire_35	wire	370x30 __wire_34.Y
+S	output	310x30 __wire_41.Y
+__wire_41	wire	290x30 __wire_17.Y
+__not_45	not	20x80 __wire_59.Y
+__wire_47	wire	80x20 __wire_69.Y
+__wire_59	wire	0x80 __wire_67.Y
+__wire_61	wire	370x0 __wire_35.Y
+__wire_65	wire	70x0 I.Y
+__wire_66	wire	70x20 __wire_65.Y
+__wire_67	wire	0x20 __wire_66.Y
+__wire_69	wire	80x40 W.Y
+__wire_70	wire	80x60 __wire_69.Y

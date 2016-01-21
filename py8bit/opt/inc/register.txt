@@ -1,0 +1,44 @@
+A0	input	0x0
+A1	input	0x120
+A2	input	0x240
+A3	input	0x360
+A4	input	0x480
+A5	input	0x600
+A6	input	0x720
+A7	input	0x840
+W	input	0x940
+E	input	0x910
+B0	output	630x0 __module_1.O
+B1	output	630x120 __module_2.O
+B2	output	630x240 __module_3.O
+B3	output	630x360 __module_4.O
+B4	output	630x480 __module_5.O
+B5	output	630x600 __module_6.O
+B6	output	630x720 __module_8.O
+B7	output	630x840 __module_7.O
+__module_1	module	100x0 inc/sr.txt A0.Y __wire_11.Y __wire_28.Y
+__module_2	module	100x120 inc/sr.txt A1.Y __wire_14.Y __wire_30.Y
+__module_3	module	100x240 inc/sr.txt A2.Y __wire_16.Y __wire_32.Y
+__module_4	module	100x360 inc/sr.txt A3.Y __wire_18.Y __wire_34.Y
+__module_5	module	100x480 inc/sr.txt A4.Y __wire_19.Y __wire_36.Y
+__module_6	module	100x600 inc/sr.txt A5.Y __wire_22.Y __wire_38.Y
+__module_7	module	100x840 inc/sr.txt A7.Y __wire_12.Y __wire_42.Y
+__module_8	module	100x720 inc/sr.txt A6.Y __wire_24.Y __wire_40.Y
+__wire_10	wire	80x940 W.Y
+__wire_11	wire	80x20 __wire_14.Y
+__wire_12	wire	80x860 __wire_10.Y
+__wire_14	wire	80x140 __wire_16.Y
+__wire_16	wire	80x260 __wire_18.Y
+__wire_18	wire	80x380 __wire_19.Y
+__wire_19	wire	80x500 __wire_22.Y
+__wire_22	wire	80x620 __wire_24.Y
+__wire_24	wire	80x740 __wire_12.Y
+__wire_27	wire	70x910 E.Y
+__wire_28	wire	70x40 __wire_30.Y
+__wire_30	wire	70x160 __wire_32.Y
+__wire_32	wire	70x280 __wire_34.Y
+__wire_34	wire	70x400 __wire_36.Y
+__wire_36	wire	70x520 __wire_38.Y
+__wire_38	wire	70x640 __wire_40.Y
+__wire_40	wire	70x760 __wire_42.Y
+__wire_42	wire	70x880 __wire_27.Y

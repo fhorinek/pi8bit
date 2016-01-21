@@ -201,7 +201,7 @@ class Controller():
         end[0] += self.pan_offset_x
         end[1] += self.pan_offset_y
           
-        if (state):
+        if state:
             color = self.canvas.style["c_high"]
         else:
             color = self.canvas.style["c_low"]   
@@ -210,9 +210,8 @@ class Controller():
         
     def draw_rect(self, surface, color, rect, width = 0):
         rect = Rect(rect)
-        rect.w = int(rect.w * self.zoom)
-        rect.h = int(rect.h * self.zoom)
         w = int(width * self.zoom)
+        rect = Rect([int(x * self.zoom) for x in rect]) 
         if width > 0 and w == 0:
             w = 1
         pygame.draw.rect(surface, color, rect, w)
@@ -342,25 +341,42 @@ class Controller():
             self.pan_x = event.pos[0]
             self.pan_y = event.pos[1]
             
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_UP:   
-            self.zoom += 0.1
-            self.update_zoom()
-            self.canvas.request_io_redraw()
-
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_DOWN:   
-            if self.zoom > 0.1:
-                self.zoom -= 0.1
-                self.update_zoom()
-                self.canvas.request_io_redraw()
-       
-            
         if event.type == pygame.MOUSEMOTION:
             if self.pan:
                 self.pan_offset_x += event.pos[0] - self.pan_x
                 self.pan_offset_y += event.pos[1] - self.pan_y     
                 self.pan_x = event.pos[0]
                 self.pan_y = event.pos[1]
-                self.canvas.request_io_redraw()                    
+                self.canvas.request_io_redraw()                  
+            
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_UP:  
+            if self.zoom < 1.5: 
+                self.zoom += 0.1
+                w = int(self.canvas.size[0] * self.zoom * 0.05)
+                h = int(self.canvas.size[1] * self.zoom * 0.05)
+                
+                self.pan_offset_x -= w
+                self.pan_offset_y -= h
+                
+                self.update_zoom()
+                self.canvas.request_io_redraw()
+
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_DOWN:   
+            if self.zoom > 0.2:
+                
+                w = int(self.canvas.size[0] * self.zoom * 0.05)
+                h = int(self.canvas.size[1] * self.zoom * 0.05)
+                
+                self.zoom -= 0.1
+                
+                self.pan_offset_x += w
+                self.pan_offset_y += h    
+                            
+                self.update_zoom()
+                self.canvas.request_io_redraw()
+       
+            
+              
         
         if mode == MODE_IDLE:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:

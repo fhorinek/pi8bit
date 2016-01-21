@@ -88,6 +88,7 @@ class Canvas():
            
     def update_surfaces(self):
         self.screen = pygame.display.set_mode(self.size, self.screen_flags)
+        self.rect = self.screen.get_rect()
         self.surface_io = pygame.Surface(self.size, self.surface_flags)
         self.surface_io.set_colorkey((0, 0, 0))
   
@@ -165,7 +166,8 @@ class Canvas():
     def loop(self):
         self.screen.fill((0, 0, 0))
         self.events()
-        self.controller.tick()
+        for i in range(10):
+            self.controller.tick()
         self.controller.draw()
         self.screen.blit(self.surface_io, [0, 0])
         
@@ -189,7 +191,7 @@ class Canvas():
 
 filename = file_opendialog(os.getcwd())
 
-profile = True
+profile = False
 
 a = Canvas()
 a.controller.read_file(filename)
