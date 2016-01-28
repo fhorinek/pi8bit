@@ -8,6 +8,9 @@ class Cell():
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.rect_rel = pygame.Rect(0, 0, 0, 0)
         
+        self.move_offset_x = 0
+        self.move_offset_y = 0
+        
         self.input_xy = OrderedDict()
         self.output_xy = OrderedDict()
         
@@ -21,15 +24,15 @@ class Cell():
         self.name = "cell"    
         self.fcs = "cell"    
             
-    def done_drag(self):
-        pass
+    def done_drag(self): pass
+    def click(self): pass          
             
     def add_input(self, name):
         self.inputs[name] = False
     
     def add_output(self, name):
         self.outputs.append(name)
-                
+               
     def update_rect(self): 
         self.rect.w = self.parent.canvas.style["d_width"]
         
@@ -58,7 +61,9 @@ class Cell():
             i = self.outputs.index(pin)
             x = self.rect.x + self.rect.w
             y = int(self.rect.y + self.parent.canvas.style["d_line"] * (i + 0.5))    
-            self.output_xy[pin] = [x, y]       
+            self.output_xy[pin] = [x, y]
+              
+        self.parent.canvas.request_io_redraw()     
 
     def get_input_rect(self, pin):
         i = self.inputs.keys().index(pin)
@@ -76,9 +81,17 @@ class Cell():
         h = self.parent.canvas.style["d_line"]
         return pygame.Rect((x, y, w, h))    
 
+    def set_offset(self, x, y):
+        self.move_offset_x = x
+        self.move_offset_y = y
+
+    def clear_offset(self):
+        self.move_offset_x = 0
+        self.move_offset_y = 0
+
     def set_pos(self, x, y):
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.x = x - self.move_offset_x
+        self.rect.y = y - self.move_offset_y
         self.update_io_xy()
         
     def clear_input(self, name):
@@ -123,7 +136,7 @@ class Cell():
             x,y = map(int, arr[2].split("x"))
             self.set_pos(x, y)
         except:
-            self.parent.assign_pos(self.name)
+            self.set_pos(0, 0)
         
     def reset(self):
         self.res = {}
@@ -145,9 +158,9 @@ class Cell():
         return self.res[pin]
     
     def input(self, pin):
-        if pin not in self.inputs:
-            return 0
-        
+#         if pin not in self.inputs:
+#             return 0
+#         
         if self.inputs[pin] is False:
             return 0
             
@@ -156,9 +169,6 @@ class Cell():
             return in_pin
         else:
             return in_obj.output(in_pin)
-           
-    def click(self):
-        pass          
     
     def update(self):
         self.update_rect()
@@ -292,55 +302,14 @@ class Cell():
     
     def disconnect(self):
         for wire_output in self.outputs:
-            print wire_output
             while True:
                 target = self.parent.find_output(self, wire_output)
                 if target:
-                    target[0].clear_input(target[1])
+                    obj, pin = target
+                    obj.clear_input(pin)
                 else:
                     break
         
-      
-class Wire(Cell):
-    def __init__(self, parent):
-        Cell.__init__(self, parent)
-        self.add_input("A")
-        self.add_output("Y")
-        
-    def get_parent(self):
-        obj, pin = self.inputs["A"]
-#         while (obj.fcs == "wire"):
-#             obj, pin = obj.inputs["A"]
-            
-        return obj, pin
-        
-    def update_rect(self):
-        self.rect.w = self.parent.canvas.style["d_wire_col"]
-        self.rect.h = self.parent.canvas.style["d_wire_col"]
-        
-    def update_io_xy(self):
-        x = self.rect.x + self.parent.canvas.style["d_wire_col"] / 2
-        y = self.rect.y + self.parent.canvas.style["d_wire_col"] / 2
-        self.input_xy["A"] = [x, y]
-        self.output_xy["Y"] = [x, y]
-        
-    def done_drag(self):
-        Cell.done_drag(self)
-        
-    def set_pos(self, x, y):
-        Cell.set_pos(self, x, y)
-        
-    def update_body(self, state=None):
-        pass
-     
-    def draw(self):
-        pass  
-    
-    def calc(self, pin):
-        return self.input("A")
-        
-               
-    
 class Invisible(Cell):
     def __init__(self, parent):
         Cell.__init__(self, parent)

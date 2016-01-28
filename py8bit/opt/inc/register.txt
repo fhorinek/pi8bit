@@ -42,3 +42,11 @@ __wire_36	wire	70x520 __wire_38.Y
 __wire_38	wire	70x640 __wire_40.Y
 __wire_40	wire	70x760 __wire_42.Y
 __wire_42	wire	70x880 __wire_27.Y
+O0	output	630x20 __module_1.S
+O1	output	630x140 __module_2.S
+O2	output	630x260 __module_3.S
+O3	output	630x380 __module_4.S
+O4	output	630x500 __module_5.S
+05	output	630x620 __module_6.S
+06	output	630x740 __module_8.S
+O7	output	630x860 __module_7.S

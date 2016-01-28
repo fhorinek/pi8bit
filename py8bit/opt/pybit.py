@@ -10,9 +10,10 @@ import outputs
 import module
 import cell
 import inputs
+import wire
 
 
-from controller import MODE_IDLE, MODE_MOVE, MODE_ADD, MODE_DEL, MODE_WIRE
+from controller import MODE_IDLE, MODE_MOVE, MODE_ADD, MODE_DEL, MODE_WIRE, MODE_SELECT, MODE_EDIT
 from utils import file_opendialog
 
 class Canvas():
@@ -33,6 +34,7 @@ class Canvas():
             "c_status": (255, 255, 255),
             "c_low": (200, 200, 200),
             "c_high": (0, 255, 0),
+            "c_highlight": (0, 255, 255),
         
             "d_width": 60,
             "d_input": 20,
@@ -55,7 +57,8 @@ class Canvas():
         
         self.cells = OrderedDict()
         
-        self.add_cell("wire", cell.Wire)
+        self.add_cell("net", wire.Net)
+        self.add_cell("node", wire.Node)
         
         self.add_cell("and", basic_logic.And)
         self.add_cell("or", basic_logic.Or)
@@ -84,14 +87,12 @@ class Canvas():
             self.add_cell_index = len(self.cells) - 1
         else:
             self.add_cell_index = self.add_cell_index - 1
-
            
     def update_surfaces(self):
         self.screen = pygame.display.set_mode(self.size, self.screen_flags)
         self.rect = self.screen.get_rect()
         self.surface_io = pygame.Surface(self.size, self.surface_flags)
         self.surface_io.set_colorkey((0, 0, 0))
-  
   
     def add_cell(self, name, cell):
         self.cells[name] = cell          
@@ -104,23 +105,16 @@ class Canvas():
         self.screen.blit(tmp,  rect)
         
     def draw_line(self, start, end, color, zoom):
-        x1 = start[0]
-        y1 = start[1]
-        x2 = end[0]
-        y2 = end[1]
-        xm = x1 + (x2 - x1) / 2
-        ym = y1 + (y2 - y1) / 2
-        
+       
         lines = (start, end)
-#         lines = (start, (xm, y1), (xm, ym), (xm, y2), end)
         w = max(int(zoom * self.style["d_line_height"]), 1)
         
         pygame.draw.lines(self.surface_io, color, False, lines, w)
         
     def draw_circle(self, color, pos, zoom):
         pygame.draw.circle(self.surface_io, color, pos, int(zoom * self.style["d_point"]))
-        
-        
+    
+   
     def draw_status(self, text):
         tmp = self.status_font.render(text, True, self.style["c_status"])
         rect2 = tmp.get_rect();
@@ -140,24 +134,13 @@ class Canvas():
                 self.request_io_redraw()
                 return
              
-            if event.type == pygame.KEYDOWN:
-                if event.key == ord('m'):
-                    self.mode = MODE_MOVE
-                if event.key == ord('n'):
-                    self.mode = MODE_IDLE
-                if event.key == ord('a'):
-                    self.mode = MODE_ADD           
-                if event.key == ord('d'):
-                    self.mode = MODE_DEL  
-                if event.key == ord('w'):
-                    self.mode = MODE_WIRE   
-                if event.key == pygame.K_ESCAPE:
-                    self.reset_mode()
-                            
             self.controller.event(event, self.mode)
         
     def reset_mode(self):
         self.mode = MODE_IDLE
+
+    def set_mode(self, mode):
+        self.mode = mode
         
     def request_io_redraw(self):
         self.surface_io.fill((0, 0, 0))
@@ -166,19 +149,22 @@ class Canvas():
     def loop(self):
         self.screen.fill((0, 0, 0))
         self.events()
-        for i in range(10):
+        for i in range(20):
             self.controller.tick()
-        self.controller.draw()
+            
+        self.controller.draw(self.mode)
         self.screen.blit(self.surface_io, [0, 0])
         
         if self.mode == MODE_MOVE:
             self.draw_status("move")
         if self.mode == MODE_ADD:
             self.draw_status("add %s" % self.cells.keys()[self.add_cell_index])
-        if self.mode == MODE_DEL:
-            self.draw_status("delete")
+        if self.mode == MODE_EDIT:
+            self.draw_status("edit")
         if self.mode == MODE_WIRE:
-            self.draw_status("wire")        
+            self.draw_status("wire")    
+        if self.mode == MODE_SELECT:
+            self.draw_status("select")                        
         
         pygame.display.flip()
         

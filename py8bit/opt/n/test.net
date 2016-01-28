@@ -1,0 +1,9 @@
+__input_1	input	0x0
+__input_2	input	0x20
+__input_3	input	0x60
+__input_7	input	0x40
+__led_4	led	290x30 __node_4.Y
+0	node	80x30 __net_11 __input_1.Y __input_2.Y __input_3.Y __input_7.Y
+3	node	120x30 __net_11 0
+4	node	170x30 __net_11 3 __node_4
+__node_4	node	220x30 __net_11
