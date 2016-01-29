@@ -1,62 +1,57 @@
 A0	input	0x0
 A1	input	0x20
 A2	input	0x160
-Y0	output	510x0 and_000.Y
-Y1	output	510x40 and_001.Y
-Y2	output	510x80 and_010.Y
-Y3	output	510x120 and_011.Y
-Y4	output	510x180 and_100.Y
-Y5	output	510x220 and_101.Y
-Y6	output	510x260 and_110.Y
-Y7	output	510x300 and_111.Y
-not_A0	not	120x0 A0.Y
-not_A1	not	120x20 A1.Y
-not_A2	not	120x160 A2.Y
-and_00	and	240x0 not_A0.Y not_A1.Y
-and_01	and	240x40 __w_42.Y __w_31.Y
-and_10	and	240x80 __w_30.Y __w_47.Y
-and_11	and	240x120 __w_44.Y __w_45.Y
-and_000	and	410x0 and_00.Y __w_49.Y
-and_001	and	410x40 and_01.Y __w_56.Y
-and_010	and	410x80 and_10.Y __w_55.Y
-and_011	and	410x120 and_11.Y __w_54.Y
-and_100	and	410x180 __w_66.Y __w_33.Y
-and_101	and	410x220 __w_64.Y __w_23.Y
-and_110	and	410x260 __w_65.Y __w_21.Y
-and_111	and	410x300 __w_69.Y __w_19.Y
-__w_19	wire	70x320 __w_38.Y
-__w_21	wire	70x280 __w_34.Y
-__w_23	wire	70x240 __w_36.Y
-__w_29	wire	190x0 not_A0.Y
-__w_30	wire	190x80 __w_29.Y
-__w_31	wire	210x60 __w_32.Y
-__w_32	wire	210x20 not_A1.Y
-__w_33	wire	70x200 __w_37.Y
-__w_34	wire	70x160 A2.Y
-__w_36	wire	70x160 A2.Y
-__w_37	wire	70x160 A2.Y
-__w_38	wire	70x160 A2.Y
-__w_39	wire	90x0 A0.Y
-__w_42	wire	90x40 __w_39.Y
-__w_43	wire	90x0 A0.Y
-__w_44	wire	90x120 __w_43.Y
-__w_45	wire	70x140 __w_46.Y
-__w_46	wire	70x20 A1.Y
-__w_47	wire	70x100 __w_48.Y
-__w_48	wire	70x20 A1.Y
-__w_49	wire	390x20 __w_60.Y
-__w_54	wire	390x140 __w_57.Y
-__w_55	wire	390x100 __w_58.Y
-__w_56	wire	390x60 __w_59.Y
-__w_57	wire	390x160 not_A2.Y
-__w_58	wire	390x160 not_A2.Y
-__w_59	wire	390x160 not_A2.Y
-__w_60	wire	390x160 not_A2.Y
-__w_61	wire	360x0 and_00.Y
-__w_63	wire	350x40 and_01.Y
-__w_64	wire	350x220 __w_63.Y
-__w_65	wire	340x260 __w_67.Y
-__w_66	wire	360x180 __w_61.Y
-__w_67	wire	340x80 and_10.Y
-__w_68	wire	330x120 and_11.Y
-__w_69	wire	330x300 __w_68.Y
+Y0	output	480x0 and_000.Y
+Y1	output	480x40 and_001.Y
+Y2	output	480x80 and_010.Y
+Y3	output	480x120 and_011.Y
+Y4	output	480x180 and_100.Y
+Y5	output	480x220 and_101.Y
+Y6	output	480x260 and_110.Y
+Y7	output	480x300 and_111.Y
+not_A0	not	110x0 __node_33.Y
+not_A1	not	110x20 __node_42.Y
+not_A2	not	240x160 __node_65.Y
+and_00	and	220x0 __node_39.Y __node_36.Y
+and_01	and	220x40 __node_50.Y __node_37.Y
+and_10	and	220x80 __node_40.Y __node_48.Y
+and_11	and	220x120 __node_51.Y __node_46.Y
+and_000	and	380x0 __node_53.Y __node_16.Y
+and_001	and	380x40 __node_56.Y __node_24.Y
+and_010	and	380x80 __node_59.Y __node_23.Y
+and_011	and	380x120 __node_62.Y __node_20.Y
+and_100	and	380x180 __node_54.Y __node_68.Y
+and_101	and	380x220 __node_57.Y __node_69.Y
+and_110	and	380x260 __node_60.Y __node_71.Y
+and_111	and	380x300 __node_63.Y __node_73.Y
+__node_15	node	350x160 __net_17 not_A2.Y __node_20
+__node_16	node	350x20 __net_17 __node_24
+__node_20	node	350x140 __net_17 __node_23
+__node_23	node	350x100 __net_17 __node_24
+__node_24	node	350x60 __net_17
+__node_33	node	80x0 __net_37 A0.Y __node_78
+__node_36	node	190x20 __net_25 not_A1.Y
+__node_37	node	190x60 __net_25 __node_36
+__node_39	node	180x0 __net_26 not_A0.Y
+__node_40	node	180x80 __net_26 __node_39
+__node_42	node	70x20 __net_27 A1.Y
+__node_43	node	70x100 __net_27 __node_43 __node_42 __node_48
+__node_46	node	180x140 __net_27
+__node_48	node	180x100 __net_27 __node_46
+__node_50	node	170x40 __net_37 LOW.Y
+__node_51	node	170x120 __net_37 __node_50
+__node_53	node	340x0 __net_30 and_00.Y
+__node_54	node	340x180 __net_30 __node_53
+__node_56	node	330x40 __net_31 and_01.Y
+__node_57	node	330x220 __net_31 __node_56
+__node_59	node	320x80 __net_32 and_10.Y
+__node_60	node	320x260 __net_32 __node_59
+__node_62	node	310x120 __net_33 and_11.Y
+__node_63	node	310x300 __net_33 __node_62
+__node_65	node	220x160 __net_34 A2.Y
+__node_66	node	220x200 __net_34 __node_65 __node_68
+__node_68	node	350x200 __net_34 __node_66.Y
+__node_69	node	350x240 __net_34 __node_68
+__node_71	node	350x280 __net_34 __node_69
+__node_73	node	350x320 __net_34 __node_71
+__node_78	node	80x40 __net_37 __node_50

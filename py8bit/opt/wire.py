@@ -42,13 +42,12 @@ class Node(cell.Cell):
     def update_rect(self):
         self.rect.w = self.parent.canvas.style["d_line"]
         self.rect.h = self.parent.canvas.style["d_line"]
-   
       
     def update_body(self, state=None): pass
     def draw(self): pass
     def draw_io(self): pass
     def calc(self, pin): pass
-    
+
     def update_io_xy(self):
         self.output_xy["Y"] = [self.rect.x + self.rect.w / 2, self.rect.y + self.rect.h / 2]
         self.parent.canvas.request_io_redraw()
@@ -76,6 +75,8 @@ class Node(cell.Cell):
                     self.parent.draw_line(start, end, state)             
 
     def add_sibling(self, node):
+        if node == self:
+            return
         if node not in self.siblings:
             self.siblings.append(node)
 
@@ -112,7 +113,6 @@ class Node(cell.Cell):
                 basic = pygame.Rect(x, y, w, h)
                 
                 if basic.collidepoint(pos):
-                
                     dx = end[0] - start[0]
                     dy = end[1] - start[1]
                     if abs(dx) < abs(dy):
@@ -127,8 +127,41 @@ class Node(cell.Cell):
                         
                         if abs(y - pos[1]) < offset:
                             return self, p, obj, pin
+        
         return False 
         
+    def check_net_line_collision(self, pos):
+        for node in self.siblings:
+                start = self.output_xy["Y"]
+                end = node.output_xy["Y"]
+                #basic rect TODO
+                offset = self.parent.canvas.style["d_line_col"]
+                
+                x = min((start[0], end[0])) - offset
+                y = min((start[1], end[1])) - offset
+                w = abs(start[0] - end[0]) + offset * 2
+                h = abs(start[1] - end[1]) + offset * 2
+                
+                basic = pygame.Rect(x, y, w, h)
+                
+                if basic.collidepoint(pos):
+                    dx = end[0] - start[0]
+                    dy = end[1] - start[1]
+                    if abs(dx) < abs(dy):
+                        k = float(dx) / float(dy)
+                        x = start[0] + k * (pos[1] - start[1])
+                
+                        if abs(x - pos[0]) < offset:
+                            return self, node, self.net                  
+                    else:
+                        k = float(dy) / float(dx)
+                        y = start[1] + k * (pos[0] - start[0])
+                        
+                        if abs(y - pos[1]) < offset:
+                            return self, node, self.net
+        
+        return False 
+
 
 
 class Net(cell.Invisible):
@@ -229,6 +262,3 @@ class Net(cell.Invisible):
         for node in self.nodes:
             node.draw_node(state)
         
-
-        
-

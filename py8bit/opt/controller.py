@@ -5,6 +5,9 @@ import wire
 import pygame
 from pygame import Rect
 
+from math import floor
+from twisted.internet.defer import succeed
+
 LEFT    = 1
 MID     = 2
 RIGHT   = 3
@@ -20,6 +23,14 @@ MODE_PAN  = 5
 MODE_SELECT = 6
 MODE_EDIT = 7
 
+NODE_DIR_NA = 0
+NODE_DIR_FROM_NODE = 1
+NODE_DIR_FROM_INPUT = 2
+NODE_DIR_FROM_OUTPUT = 3
+
+LIGHT_NONE = 0
+LIGHT_POINT = 1
+LIGHT_LINE = 2
 
 class Controller():
     def __init__(self, canvas, parent):
@@ -44,13 +55,22 @@ class Controller():
         self.pan_offset_y = 0
 
         self.new_node = False
+        self.new_node_direction = NODE_DIR_NA
 
         self.zoom = 1.0
         
         self.obj_id = 0
         self.net_id = 0
         
+        self.highlight_mode = LIGHT_NONE
+        self.highlight_pos = False
+        
         self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_font"] * self.zoom))
+        
+    def highlight(self, mode, pos = False):
+        self.highlight_mode = mode
+        self.highlight_pos = pos
+        self.canvas.request_io_redraw()
         
     def get_obj_id(self):
         self.obj_id += 1
@@ -151,7 +171,7 @@ class Controller():
                 if len(s) == 4 and s[0] == "" and s[1] == "":
                     try:
                         net_id = int(s[3])
-                        self.obj_id = max(net_id + 1, self.net_id)
+                        self.net_id = max(net_id + 1, self.net_id)
                     except ValueError:
                         pass
             
@@ -258,7 +278,39 @@ class Controller():
         
         surface.blit(tmp,  rect)        
         
-    def draw_highlight(self, rect):
+    def draw_highlight(self):
+        if self.highlight_mode == LIGHT_LINE:
+            start = self.highlight_pos[0]
+            end = self.highlight_pos[1]
+            
+            width = self.canvas.style["d_line_height"]
+            w = int(width * self.zoom)
+            
+            start = [int(x * self.zoom) for x in start] 
+            start[0] += self.pan_offset_x
+            start[1] += self.pan_offset_y
+            
+            end = [int(x * self.zoom) for x in end] 
+            end[0] += self.pan_offset_x
+            end[1] += self.pan_offset_y
+            
+            if width > 0 and w == 0:
+                w = 1
+            pygame.draw.line(self.canvas.surface_io, self.canvas.style["c_highlight"], start, end, w)        
+
+        if self.highlight_mode == LIGHT_POINT:
+            width = self.canvas.style["d_point"]
+            w = int(width * self.zoom)
+            
+            point = [int(x * self.zoom) for x in self.highlight_pos] 
+            point[0] += self.pan_offset_x
+            point[1] += self.pan_offset_y
+            
+            if width > 0 and w == 0:
+                w = 1
+            pygame.draw.circle(self.canvas.surface_io, self.canvas.style["c_highlight"], point, w)        
+        
+    def draw_highlight_box(self, rect):
         rect = Rect(rect)
         width = self.canvas.style["d_line_height"]
         w = int(width * self.zoom)
@@ -268,7 +320,7 @@ class Controller():
         if width > 0 and w == 0:
             w = 1
         pygame.draw.rect(self.canvas.surface_io, self.canvas.style["c_highlight"], rect, w)
-         
+        
     def mk_surface(self, rect):
         size = [int(rect.w * self.zoom), int(rect.h * self.zoom)]
         return pygame.Surface(size, self.canvas.surface_flags)
@@ -288,10 +340,13 @@ class Controller():
 
         if mode == MODE_SELECT:
             self.select_rect.normalize()
-            self.draw_highlight(self.select_rect)
+            self.draw_highlight_box(self.select_rect)
         
         for o in self.selected:
-            self.draw_highlight(o.rect)
+            self.draw_highlight_box(o.rect)
+
+        if mode == MODE_WIRE:            
+            self.draw_highlight()
         
     def tick(self):
         for k in self.objects:
@@ -321,16 +376,39 @@ class Controller():
                 return o
         return False        
     
-    def get_line_pos(self, pos):
+    #wire form input / output
+    def get_line_pos(self, pos, exclude = []):
         pos = list(pos)
         object_list = list(self.objects.keys())
-        object_list.reverse()
         for k in object_list:
             o = self.objects[k]
+            if o in exclude:
+                continue
+            
             data = o.check_input_line_collision(pos)
             if (data):
+                if data[2] in exclude:
+                    continue
                 return data
         return False   
+    
+    #wire form net
+    def get_net_line_pos(self, pos, exclude=[]):
+        pos = list(pos)
+        object_list = list(self.objects.keys())
+        for k in object_list:
+            o = self.objects[k]
+            if isinstance(o, wire.Node):
+                if o in exclude:
+                    continue
+                
+                data = o.check_net_line_collision(pos)
+                if (data):
+                    if data[1] in exclude:
+                        continue
+                    
+                    return data
+        return False  
     
     def get_output_pos(self, pos, exclude=[]):
         pos = list(pos)
@@ -365,9 +443,9 @@ class Controller():
         name = "__%s_%d" % (fcs, self.get_obj_id())
         self.objects[name] = o
         o.update()
+        o.middle_offset()
         pos = "%dx%d" % (pos[0], pos[1])
         o.parse([name, fcs, pos])
-        self.apply_grid(o)
         self.canvas.request_io_redraw() 
         return o     
 
@@ -376,11 +454,11 @@ class Controller():
         name = "__node_%d" % (self.get_obj_id())
         self.objects[name] = o
         o.update()
+        o.middle_offset()
         pos = "%dx%d" % (pos[0], pos[1])
         if net is False:
             net = self.add_net()
         o.parse([name, "node", pos, net.name])
-        self.apply_grid(o)
         self.canvas.request_io_redraw() 
         return o     
     
@@ -399,18 +477,18 @@ class Controller():
         g_ver = self.canvas.style["g_ver"]        
         obj.rect.x = int(round(obj.rect.x / float(g_hor)) * g_hor)
         obj.rect.y = int(round(obj.rect.y / float(g_ver)) * g_ver)
+        obj.clear_offset()
         obj.update_io_xy()
         
     def delete(self, name):
         if name in self.objects:
             self.objects[name].disconnect()
             del self.objects[name]
-            
-        #TODO: remove orphan wire nodes
+        self.canvas.request_io_redraw()
             
     def select_obj(self, objs):
         for o in objs:
-            if o not in self.selected:
+            if o not in self.selected and not isinstance(o, Invisible):
                 self.selected.append(o)
                 self.canvas.request_io_redraw()
                 
@@ -454,6 +532,7 @@ class Controller():
             if event.key == pygame.K_ESCAPE:
                 if self.canvas.mode == MODE_WIRE:
                     self.canvas.set_mode(MODE_EDIT)   
+                    self.highlight(LIGHT_NONE)
                 else:
                     self.clear_selection()
                     self.canvas.set_mode(MODE_IDLE)   
@@ -472,7 +551,6 @@ class Controller():
                 self.pan_offset_y += event.pos[1] - self.pan_y
                 self.pan = False
             
-                
             if event.type == pygame.MOUSEMOTION:
                 self.pan_offset_x += event.pos[0] - self.pan_x
                 self.pan_offset_y += event.pos[1] - self.pan_y     
@@ -549,9 +627,9 @@ class Controller():
                     
             if event.type == pygame.KEYDOWN and event.key == pygame.K_DELETE:
                 for o in self.selected:
-                    o.disconnect()
-                    del self.objects[o.name]
+                    self.delete(o.name)
                 self.clear_selection()
+                
                                        
         if mode == MODE_SELECT:
             if event.type == pygame.MOUSEMOTION:
@@ -571,7 +649,6 @@ class Controller():
             if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
                 for o in self.selected:
                     o.set_pos(mouse_x, mouse_y)
-                    o.clear_offset()
                     self.apply_grid(o)
                     o.done_drag()
                 
@@ -586,61 +663,134 @@ class Controller():
 
         if mode == MODE_WIRE:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
+                print 
+                print "<<"
+                
+                print "get_object_pos", hover_object
                 if isinstance(hover_object, wire.Node):
                     self.new_node = self.add_node([mouse_x, mouse_y], hover_object.net)
-                    self.new_node.set_offset(self.new_node.rect.w / 2, self.new_node.rect.h / 2)
                     self.new_node.add_sibling(hover_object)
-                    self.new_node.set_pos(mouse_x, mouse_y)     
+                    self.new_node_direction = NODE_DIR_FROM_NODE
+                    return                
+                
+                target = self.get_input_pos([mouse_x, mouse_y])
+                print "get_input_pos", target
+                if target is not False:
+                    obj, pin = target
+                    self.new_node = self.add_node([mouse_x, mouse_y])
+                    obj.assign_input(pin, self.new_node, "Y")
+                    self.new_node_direction = NODE_DIR_FROM_INPUT
+                    return
+                
+                target = self.get_output_pos([mouse_x, mouse_y])
+                print "get_output_pos", target
+                if target is not False:
+                    obj, pin = target
+                    self.new_node = self.add_node([mouse_x, mouse_y])
+                    self.new_node.assign_free_input(obj, pin)
+                    self.new_node_direction = NODE_DIR_FROM_OUTPUT
+                    return                   
+                
+                target = self.get_line_pos([mouse_x, mouse_y])
+                print "get_line_pos", target
+                if target is not False:
+                    obj, obj_pin, inp, inp_pin = target
+                    start_node = self.add_node([mouse_x, mouse_y])
+                    self.apply_grid(start_node)
+                    
+                    if isinstance(inp, wire.Node):
+                        inp.add_sibling(start_node)
+                        start_node.net.remove_node(self.new_node)
+                        self.delete(start_node.net.name)
+                        inp.net.add_node(start_node)
+                    obj.assign_input(obj_pin, start_node, "Y")
+                        
+                    if isinstance(obj, wire.Node):
+                        obj.add_sibling(start_node)
+                        start_node.net.remove_node(start_node)
+                        self.delete(start_node.net.name)
+                        obj.net.add_node(start_node)
+                    start_node.assign_free_input(inp, inp_pin)        
+
+                    self.new_node = self.add_node([mouse_x, mouse_y], start_node.net)
+                    self.new_node.add_sibling(start_node)      
+                    return                   
+                
+                target = self.get_net_line_pos([mouse_x, mouse_y])
+                print "get_net_line_pos", target
+                if target is not False:
+                    node1, node2, net = target
+                    start_node = self.add_node([mouse_x, mouse_y], net)
+                    self.apply_grid(start_node)                        
+                    node1.remove_sibling(node2)
+                    node1.add_sibling(start_node)
+                    node2.remove_sibling(node1)
+                    node2.add_sibling(start_node)
+                    
+                    self.new_node = self.add_node([mouse_x, mouse_y], start_node.net)
+                    self.new_node.add_sibling(start_node)      
+                    return     
+  
                 else:
                     if hover_object is False: 
                         start_node = self.add_node([mouse_x, mouse_y])
-                        start_node.set_offset(start_node.rect.w / 2, start_node.rect.h / 2)
-                        start_node.set_pos(mouse_x, mouse_y)
                         self.apply_grid(start_node)
                         
                         self.new_node = self.add_node([mouse_x, mouse_y], start_node.net)
-                        self.new_node.set_offset(self.new_node.rect.w / 2, self.new_node.rect.h / 2)
                         self.new_node.add_sibling(start_node)      
-                        self.new_node.set_pos(mouse_x, mouse_y)              
-                             
+            
             if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
                 if self.new_node is not False:
                     self.new_node.set_pos(mouse_x, mouse_y)
-                    self.new_node.clear_offset()
                     self.apply_grid(self.new_node)
+
+                    print 
+                    print ">>"
+
+                    target = self.get_object_pos([mouse_x, mouse_y], [self.new_node])
+                    print "get_object_pos", target
+                    if target is not False:
+                        if isinstance(target, wire.Node):
+                            #FROM_INPUT / FROM_OUTPUT will be handeled lower
+                            if self.new_node_direction == NODE_DIR_FROM_NODE:
+                                prev = self.new_node.siblings[0]
+                                target.add_sibling(prev)
+                                prev.net.asimilate(target.net)
+
+                                self.delete(self.new_node.name)
+                                self.new_node = False
+                                return
                     
                     target = self.get_input_pos([mouse_x, mouse_y], [self.new_node])
                     print "get_input_pos", target
-                    if target is not False:
+                    if target is not False and self.new_node_direction is not NODE_DIR_FROM_INPUT:
                         obj, pin = target
-                        obj.assign_input(pin, self.new_node.siblings[0], "Y")
+                        if self.new_node_direction == NODE_DIR_FROM_NODE:
+                            obj.assign_input(pin, self.new_node.siblings[0], "Y")
+                        if self.new_node_direction == NODE_DIR_FROM_OUTPUT:
+                            key = self.new_node.inputs.keys()[0]
+                            inp, inp_pin = self.new_node.inputs[key]
+                            obj.assign_input(pin, inp, inp_pin)
+                        
                         self.delete(self.new_node.name)
                         self.new_node = False
                         return
                     
                     target = self.get_output_pos([mouse_x, mouse_y], [self.new_node])
                     print "get_output_pos", target
-                    if target is not False:
+                    if target is not False and self.new_node_direction is not NODE_DIR_FROM_OUTPUT:
                         obj, pin = target
-                        self.new_node.siblings[0].assign_free_input(obj , pin)
+                        if self.new_node_direction == NODE_DIR_FROM_NODE:
+                            self.new_node.siblings[0].assign_free_input(obj , pin)
+                        if self.new_node_direction == NODE_DIR_FROM_INPUT:
+                            orig_obj, orig_pin = self.find_output(self.new_node, "Y")
+                            orig_obj.assign_input(orig_pin, obj, pin)
+                                
                         self.delete(self.new_node.name)
                         self.new_node = False
                         return                    
                     
-                    target = self.get_object_pos([mouse_x, mouse_y], [self.new_node])
-                    print "get_object_pos", target
-                    if target is not False:
-                        if isinstance(target, wire.Node):
-                            prev = self.new_node.siblings[0]
-                            target.add_sibling(prev)
-                            if prev.net is not target.net:
-                                prev.net.asimilate(target.net)
-
-                            self.delete(self.new_node.name)
-                            self.new_node = False
-                        return     
-                    
-                    target = self.get_line_pos([mouse_x, mouse_y])
+                    target = self.get_line_pos([mouse_x, mouse_y], [self.new_node])
                     print "get_line_pos", target
                     if target is not False:
                         obj, obj_pin, inp, inp_pin = target
@@ -654,86 +804,124 @@ class Controller():
                             obj.add_sibling(self.new_node)
                             self.new_node.net.asimilate(inp.net)
                         else:
-                            obj.assign_input(obj_pin, self.new_node, "Y")                
+                            obj.assign_input(obj_pin, self.new_node, "Y")        
+                        self.new_node = False
+                        return        
+
+                    target = self.get_net_line_pos([mouse_x, mouse_y], [self.new_node])
+                    print "get_net_line_pos", target
+                    if target is not False:
+                        node1, node2, net = target
+                        node1.remove_sibling(node2)
+                        node1.add_sibling(self.new_node)
+                        node2.remove_sibling(node1)
+                        node2.add_sibling(self.new_node)
+                        self.new_node.net.asimilate(net)
+                        self.new_node = False
+                        return        
 
                     self.new_node = False
                                
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == RIGHT:
+                if self.new_node is not False:
+                    self.delete(self.new_node.name)
+                    self.new_node = False
+                else:
+                    #delete node or split siblings or net
+                    if isinstance(hover_object, wire.Node):
+                        siblings = hover_object.net.list_node_sibling(hover_object)
+                        if len(siblings) > 0:
+                            successor = siblings[0]
+                            
+                            for node in siblings:
+                                successor.add_sibling(node)
+                                
+                            for k in hover_object.inputs:
+                                obj, pin = hover_object.inputs[k]
+                                successor.assign_free_input(obj, pin)
+                                
+                            target = self.find_output(hover_object, "Y")
+                            while target is not False:
+                                obj, pin = target
+                                obj.assign_input(pin, successor, "Y")
+                                target = self.find_output(hover_object, "Y")
+                        
+                        self.delete(hover_object.name)
+                        self.highlight(LIGHT_NONE)
+                        return
+                    
+                    target = self.get_line_pos([mouse_x, mouse_y])
+                    print "get_line_pos", target
+                    if target is not False:
+                        obj, obj_pin, inp, inp_pin = target
+                        obj.clear_input(obj_pin)
+                        self.highlight(LIGHT_NONE)
+                        return                  
+                    
+                    target = self.get_net_line_pos([mouse_x, mouse_y], [self.new_node])
+                    print "get_net_line_pos", target
+                    if target is not False:
+                        node1, node2, net = target
+                        node1.remove_sibling(node2)
+                        node2.remove_sibling(node1)
+                        net.rebuild()
+                        self.canvas.request_io_redraw()
+                        self.highlight(LIGHT_NONE)
+                        return     
+
             if event.type == pygame.MOUSEMOTION:
                 if self.new_node is not False:
                     self.new_node.set_pos(mouse_x, mouse_y)
-        
-            
-#         if mode == MODE_DEL:
-#             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
-#                 o = self.get_object_pos([mouse_x, mouse_y])
-#                 if o:
-#                     self.delete(o.name)
-#                     self.canvas.request_io_redraw()
-#                     self.canvas.reset_mode()
-#                 else:
-#                     w = self.get_line_pos([mouse_x, mouse_y])
-#                     if w:
-#                         o = w[0]
-#                         p = w[1]
-#                         o.clear_input(p)
-#                         self.canvas.request_io_redraw()
-#                         self.canvas.reset_mode()                        
-#              
-#         if mode == MODE_ADD:
-#             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
-#                 fcs = self.canvas.cells.keys()[self.canvas.add_cell_index]
-#                 self.add_object(fcs, [mouse_x, mouse_y])   
-#             
-#             if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
-#                 self.canvas.inc_cell_index()        
-# 
-#             if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
-#                 self.canvas.dec_cell_index()            
-#         
-#         if mode == MODE_WIRE:
-#             pass
-#             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
-#                 start = self.get_output_pos([mouse_x, mouse_y])
-#                 if start is not False:
-#                     p = self.canvas.style["d_point"]
-# 
-#                     self.move = self.add_object("wire", [mouse_x + 2*p, mouse_y + 2*p])
-#                     self.move.assign_free_input(start[0], start[1])
-# 
-#                     self.move_offset = [2 * p + self.pan_offset_x, 2 * p + self.pan_offset_y]
-#                 else:
-#                     w = self.get_line_pos([mouse_x, mouse_y])
-#                     if w:
-#                         in_cell = w[0]
-#                         in_pin = w[1]
-#                         out_cell = w[2]
-#                         out_pin = w[3]
-#                         
-#                         p = self.canvas.style["d_point"]
-#     
-#                         self.move = self.add_object("wire", [mouse_x + 2*p, mouse_y + 2*p])
-#                         self.move.assign_free_input(out_cell, out_pin)
-#                         in_cell.assign_input(in_pin, self.move, "Y")
-#     
-#                         self.move_offset = [2 * p + self.pan_offset_x, 2 * p + self.pan_offset_y]                        
-#                         
-#                         
-# 
-#             if event.type == pygame.MOUSEMOTION:
-#                 if self.move is not False:
-#                     self.move.set_pos(mouse_x, mouse_y)
-#                     self.canvas.request_io_redraw()
-# 
-#             if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
-#                 if self.move is not False:
-#                     end = self.get_input_pos([mouse_x, mouse_y], exclude = [self.move.name])
-#                     if end is not False:
-#                         obj_input = self.move.inputs["A"]
-#                         end[0].assign_input(end[1], obj_input[0], obj_input[1])
-#                         self.delete(self.move.name)
-#                     else:
-#                         self.apply_grid(self.move)
-#                         self.move.done_drag()   
-#                         
-#                     self.move = False
-#                     self.canvas.request_io_redraw()
+
+                target = self.get_object_pos([mouse_x, mouse_y], [self.new_node])
+                print "get_object_pos", target
+                if target is not False:
+                    if isinstance(target, wire.Node):
+                        self.highlight(LIGHT_POINT, target.output_xy["Y"]);
+                        return
+                
+                target = self.get_input_pos([mouse_x, mouse_y], [self.new_node])
+                print "get_input_pos", target
+                if target is not False:
+                    obj, pin = target
+                    pos = obj.input_xy[pin]
+                    self.highlight(LIGHT_POINT, pos);
+                    return
+                
+                target = self.get_output_pos([mouse_x, mouse_y], [self.new_node])
+                print "get_output_pos", target
+                if target is not False:
+                    obj, pin = target
+                    pos = obj.output_xy[pin]
+                    self.highlight(LIGHT_POINT, pos);
+                    return                    
+                
+                target = self.get_line_pos([mouse_x, mouse_y], [self.new_node])
+                print "get_line_pos", target
+                if target is not False:
+                    obj, obj_pin, inp, inp_pin = target
+                    
+                    if isinstance(obj, wire.Node):
+                        start = obj.output_xy["Y"]
+                    else:
+                        start = obj.input_xy[obj_pin]
+                        
+                    if isinstance(inp, wire.Node):
+                        end = inp.output_xy["Y"]
+                    else:                            
+                        end = inp.output_xy[inp_pin]
+                    
+                    self.highlight(LIGHT_LINE, [start, end])
+                    return        
+
+                target = self.get_net_line_pos([mouse_x, mouse_y], [self.new_node])
+                print "get_net_line_pos", target
+                if target is not False:
+                    node1, node2, net = target
+                    start = node1.output_xy["Y"]
+                    end = node2.output_xy["Y"]
+                    self.highlight(LIGHT_LINE, [start, end])
+                    return        
+
+                self.highlight(LIGHT_NONE)
+                

@@ -176,13 +176,16 @@ class Canvas():
 
 
 filename = file_opendialog(os.getcwd())
+if filename is not False:
 
-profile = False
-
-a = Canvas()
-a.controller.read_file(filename)
-if profile:
-    cProfile.run("a.run()", sort="tottime")
+    profile = False
+    
+    a = Canvas()
+    a.controller.read_file(filename)
+    if profile:
+        cProfile.run("a.run()", sort="tottime")
+    else:
+        a.run()
+    a.controller.write_file(filename)
 else:
-    a.run()
-a.controller.write_file(filename)
+    print "No file"

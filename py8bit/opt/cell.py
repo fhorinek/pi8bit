@@ -23,6 +23,7 @@ class Cell():
         
         self.name = "cell"    
         self.fcs = "cell"    
+
             
     def done_drag(self): pass
     def click(self): pass          
@@ -81,6 +82,10 @@ class Cell():
         h = self.parent.canvas.style["d_line"]
         return pygame.Rect((x, y, w, h))    
 
+    def middle_offset(self):
+        self.move_offset_x = self.rect.w / 2
+        self.move_offset_y = self.rect.h / 2
+    
     def set_offset(self, x, y):
         self.move_offset_x = x
         self.move_offset_y = y
