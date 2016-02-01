@@ -5,9 +5,6 @@ import wire
 import pygame
 from pygame import Rect
 
-from math import floor
-from twisted.internet.defer import succeed
-
 LEFT    = 1
 MID     = 2
 RIGHT   = 3
@@ -64,6 +61,9 @@ class Controller():
         
         self.highlight_mode = LIGHT_NONE
         self.highlight_pos = False
+        
+        self.add_index = 0
+        self.add_list = ["and", "or", "nand", "nor", "xor", "not", "led", "hex", "tgl", "input", "output"]
         
         self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_font"] * self.zoom))
         
@@ -329,6 +329,8 @@ class Controller():
         self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_font"] * self.zoom))
         for k in self.objects:
             self.objects[k].update_body()     
+        if self.canvas.mode == MODE_ADD:
+            self.new_node.update_body()
         
     def draw(self, mode):
         if mode == MODE_SELECT:
@@ -347,6 +349,11 @@ class Controller():
 
         if mode == MODE_WIRE:            
             self.draw_highlight()
+            
+        if mode == MODE_ADD:
+            if self.new_node is not False:
+                self.new_node.draw()
+                self.new_node.draw_io()
         
     def tick(self):
         for k in self.objects:
@@ -714,6 +721,8 @@ class Controller():
 
                     self.new_node = self.add_node([mouse_x, mouse_y], start_node.net)
                     self.new_node.add_sibling(start_node)      
+                    
+                    self.new_node_direction = NODE_DIR_FROM_NODE
                     return                   
                 
                 target = self.get_net_line_pos([mouse_x, mouse_y])
@@ -729,6 +738,8 @@ class Controller():
                     
                     self.new_node = self.add_node([mouse_x, mouse_y], start_node.net)
                     self.new_node.add_sibling(start_node)      
+                    
+                    self.new_node_direction = NODE_DIR_FROM_NODE
                     return     
   
                 else:
@@ -738,6 +749,7 @@ class Controller():
                         
                         self.new_node = self.add_node([mouse_x, mouse_y], start_node.net)
                         self.new_node.add_sibling(start_node)      
+                        self.new_node_direction = NODE_DIR_FROM_NODE
             
             if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
                 if self.new_node is not False:
@@ -837,6 +849,7 @@ class Controller():
                                 successor.add_sibling(node)
                                 
                             for k in hover_object.inputs:
+                                print "hover_object.input", k, hover_object, hover_object.inputs
                                 obj, pin = hover_object.inputs[k]
                                 successor.assign_free_input(obj, pin)
                                 
@@ -874,14 +887,14 @@ class Controller():
                     self.new_node.set_pos(mouse_x, mouse_y)
 
                 target = self.get_object_pos([mouse_x, mouse_y], [self.new_node])
-                print "get_object_pos", target
+#                 print "get_object_pos", target
                 if target is not False:
                     if isinstance(target, wire.Node):
                         self.highlight(LIGHT_POINT, target.output_xy["Y"]);
                         return
                 
                 target = self.get_input_pos([mouse_x, mouse_y], [self.new_node])
-                print "get_input_pos", target
+#                 print "get_input_pos", target
                 if target is not False:
                     obj, pin = target
                     pos = obj.input_xy[pin]
@@ -889,7 +902,7 @@ class Controller():
                     return
                 
                 target = self.get_output_pos([mouse_x, mouse_y], [self.new_node])
-                print "get_output_pos", target
+#                 print "get_output_pos", target
                 if target is not False:
                     obj, pin = target
                     pos = obj.output_xy[pin]
@@ -897,7 +910,7 @@ class Controller():
                     return                    
                 
                 target = self.get_line_pos([mouse_x, mouse_y], [self.new_node])
-                print "get_line_pos", target
+#                 print "get_line_pos", target
                 if target is not False:
                     obj, obj_pin, inp, inp_pin = target
                     
@@ -915,7 +928,7 @@ class Controller():
                     return        
 
                 target = self.get_net_line_pos([mouse_x, mouse_y], [self.new_node])
-                print "get_net_line_pos", target
+#                 print "get_net_line_pos", target
                 if target is not False:
                     node1, node2, net = target
                     start = node1.output_xy["Y"]
@@ -924,4 +937,24 @@ class Controller():
                     return        
 
                 self.highlight(LIGHT_NONE)
+                
+        if mode == MODE_ADD:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == RIGHT:
+                self.add_index = (self.add_index + 1) % len(self.add_list)
+                fcs = self.add_list[self.add_index]
+                pos = "%dx%d" % (mouse_x, mouse_y)
+                name = "_%s_" % fcs
+                self.new_node = self.canvas.cells[fcs](self)
+                self.new_node.update()
+                self.new_node.middle_offset()
+                self.new_node.parse([name, fcs, pos])
+            
+            if event.type == pygame.MOUSEMOTION:
+                if self.new_node is not False:
+                    self.new_node.set_pos(mouse_x, mouse_y)
+                    self.new_node.clear_io_cache()
+            
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
+                o = self.add_object(self.add_list[self.add_index], [mouse_x, mouse_y])
+                self.apply_grid(o)
                 

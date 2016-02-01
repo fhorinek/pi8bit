@@ -163,9 +163,6 @@ class Cell():
         return self.res[pin]
     
     def input(self, pin):
-#         if pin not in self.inputs:
-#             return 0
-#         
         if self.inputs[pin] is False:
             return 0
             

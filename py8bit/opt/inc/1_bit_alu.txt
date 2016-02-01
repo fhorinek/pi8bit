@@ -1,0 +1,58 @@
+A	input	0x0
+B	input	0x20
+F	input	0x350
+C_in	input	0x490
+ADD	input	0x280
+INC	input	0x370
+AND	input	0x40
+OR	input	0x60
+XOR	input	0x80
+NOT	input	0x100
+O	output	620x340 __node_208.Y
+__module_1	module	120x450 inc/full_adder.txt __node_156.Y __node_145.Y C_in.Y
+__module_16	module	120x330 inc/select2.txt __node_190.Y F.Y __node_181.Y
+__module_19	module	160x0 inc/logic_unit.txt __node_150.Y __node_189.Y __node_162.Y __node_165.Y __node_168.Y __node_175.Y
+C_out	output	620x470 __module_1.C_out
+__or_58	or	360x280 ADD.Y __node_182.Y
+__and_66	and	550x280 __or_58.Y __node_198.Y
+__or_76	or	160x220 __node_163.Y __node_166.Y
+__or_77	or	260x220 __or_76.Y __node_171.Y
+__or_78	or	360x220 __or_77.Y __node_178.Y
+__and_102	and	550x230 __node_187.Y __node_201.Y
+__node_145	node	70x470 __net_33 __node_150
+__node_150	node	70x0 __net_33 A.Y
+__node_153	node	520x330 __net_35 __module_16.__output_21
+__node_154	node	520x430 __net_35 __node_153
+__node_155	node	100x430 __net_35 __node_154
+__node_156	node	100x450 __net_35 __node_155
+__node_162	node	130x40 __net_40 AND.Y
+__node_163	node	130x220 __net_40 __node_162
+__node_165	node	120x60 __net_42 OR.Y
+__node_166	node	120x240 __net_42 __node_165
+__node_168	node	110x80 __net_43 XOR.Y
+__node_169	node	110x260 __net_43 __node_168
+__node_170	node	240x260 __net_43 __node_169
+__node_171	node	240x240 __net_43 __node_170
+__node_175	node	100x100 __net_46 NOT.Y
+__node_176	node	100x270 __net_46 __node_175
+__node_177	node	340x270 __net_46 __node_176
+__node_178	node	340x240 __net_46 __node_177
+__node_181	node	100x370 __net_51 INC.Y
+__node_182	node	100x300 __net_51 __node_181
+__node_184	node	670x0 __net_49 __module_19.Y
+__node_185	node	670x210 __net_49 __node_184
+__node_186	node	530x210 __net_49 __node_185
+__node_187	node	530x230 __net_49 __node_186
+__node_189	node	80x20 __net_54 B.Y
+__node_190	node	80x330 __net_54 __node_189
+__node_195	node	580x450 __net_56 __module_1.S
+__node_196	node	580x320 __net_56 __node_195
+__node_197	node	530x320 __net_56 __node_196
+__node_198	node	530x300 __net_56 __node_197
+__node_200	node	480x220 __net_57 __or_78.Y
+__node_201	node	480x250 __net_57 __node_200
+__node_203	node	630x230 __net_58 __and_102.Y
+__node_204	node	630x280 __net_58 __and_66.Y __node_203
+__node_206	node	630x320 __net_58 __node_204
+__node_207	node	600x320 __net_58 __node_206
+__node_208	node	600x340 __net_58 __node_207

@@ -6,8 +6,8 @@ A4	input	0x480
 A5	input	0x600
 A6	input	0x720
 A7	input	0x840
-W	input	0x940
-E	input	0x910
+W	input	0x910
+E	input	0x940
 B0	output	630x0 __module_1.O
 B1	output	630x120 __module_2.O
 B2	output	630x240 __module_3.O
@@ -16,32 +16,14 @@ B4	output	630x480 __module_5.O
 B5	output	630x600 __module_6.O
 B6	output	630x720 __module_8.O
 B7	output	630x840 __module_7.O
-__module_1	module	100x0 inc/sr.txt A0.Y __wire_11.Y __wire_28.Y
-__module_2	module	100x120 inc/sr.txt A1.Y __wire_14.Y __wire_30.Y
-__module_3	module	100x240 inc/sr.txt A2.Y __wire_16.Y __wire_32.Y
-__module_4	module	100x360 inc/sr.txt A3.Y __wire_18.Y __wire_34.Y
-__module_5	module	100x480 inc/sr.txt A4.Y __wire_19.Y __wire_36.Y
-__module_6	module	100x600 inc/sr.txt A5.Y __wire_22.Y __wire_38.Y
-__module_7	module	100x840 inc/sr.txt A7.Y __wire_12.Y __wire_42.Y
-__module_8	module	100x720 inc/sr.txt A6.Y __wire_24.Y __wire_40.Y
-__wire_10	wire	80x940 W.Y
-__wire_11	wire	80x20 __wire_14.Y
-__wire_12	wire	80x860 __wire_10.Y
-__wire_14	wire	80x140 __wire_16.Y
-__wire_16	wire	80x260 __wire_18.Y
-__wire_18	wire	80x380 __wire_19.Y
-__wire_19	wire	80x500 __wire_22.Y
-__wire_22	wire	80x620 __wire_24.Y
-__wire_24	wire	80x740 __wire_12.Y
-__wire_27	wire	70x910 E.Y
-__wire_28	wire	70x40 __wire_30.Y
-__wire_30	wire	70x160 __wire_32.Y
-__wire_32	wire	70x280 __wire_34.Y
-__wire_34	wire	70x400 __wire_36.Y
-__wire_36	wire	70x520 __wire_38.Y
-__wire_38	wire	70x640 __wire_40.Y
-__wire_40	wire	70x760 __wire_42.Y
-__wire_42	wire	70x880 __wire_27.Y
+__module_1	module	100x0 inc/sr.txt A0.Y __node_14.Y __node_11.Y
+__module_2	module	100x120 inc/sr.txt A1.Y __node_18.Y __node_20.Y
+__module_3	module	100x240 inc/sr.txt A2.Y __node_22.Y __node_24.Y
+__module_4	module	100x360 inc/sr.txt A3.Y __node_26.Y __node_25.Y
+__module_5	module	100x480 inc/sr.txt A4.Y __node_27.Y __node_28.Y
+__module_6	module	100x600 inc/sr.txt A5.Y __node_29.Y __node_30.Y
+__module_7	module	100x840 inc/sr.txt A7.Y __node_33.Y __node_34.Y
+__module_8	module	100x720 inc/sr.txt A6.Y __node_31.Y __node_32.Y
 O0	output	630x20 __module_1.S
 O1	output	630x140 __module_2.S
 O2	output	630x260 __module_3.S
@@ -50,3 +32,23 @@ O4	output	630x500 __module_5.S
 05	output	630x620 __module_6.S
 06	output	630x740 __module_8.S
 O7	output	630x860 __module_7.S
+__node_10	node	80x940 __net_16 LOW.Y __node_35
+__node_11	node	80x40 __net_16 __node_20
+__node_13	node	70x910 __net_17 LOW.Y __node_36
+__node_14	node	70x20 __net_17 __node_18
+__node_18	node	70x140 __net_17 __node_22
+__node_20	node	80x160 __net_16 __node_24
+__node_22	node	70x260 __net_17 __node_26
+__node_24	node	80x280 __net_16 __node_25
+__node_25	node	80x400 __net_16 __node_28
+__node_26	node	70x380 __net_17 __node_27
+__node_27	node	70x500 __net_17 __node_29
+__node_28	node	80x520 __net_16 __node_30
+__node_29	node	70x620 __net_17 __node_31
+__node_30	node	80x640 __net_16 __node_32
+__node_31	node	70x740 __net_17 __node_33
+__node_32	node	80x760 __net_16 __node_34
+__node_33	node	70x860 __net_17 __node_36
+__node_34	node	80x880 __net_16 __node_35
+__node_35	node	80x940 __net_16 E.Y
+__node_36	node	70x910 __net_17 W.Y

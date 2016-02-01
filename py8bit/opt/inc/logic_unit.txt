@@ -1,18 +1,28 @@
 A	input	0x0
 B	input	0x120
-o_and	input	190x20
-o_or	input	190x70
-o_xor	input	190x120
-o_not	input	190x170
-Y	output	570x30 sum3.Y
-and	and	100x0 A.Y B.Y
-or	or	100x50 A.Y B.Y
-xor	xor	100x100 A.Y B.Y
-not	not	100x150 A.Y
-en_and	and	270x0 and.Y o_and.Y
-en_or	and	270x50 or.Y o_or.Y
-en_xor	and	270x100 xor.Y o_xor.Y
-en_not	and	270x150 not.Y o_not.Y
-sum1	or	370x30 en_and.Y en_or.Y
-sum2	or	370x100 en_xor.Y en_not.Y
-sum3	or	470x30 sum1.Y sum2.Y
+o_and	input	210x20
+o_or	input	210x70
+o_xor	input	210x120
+o_not	input	210x170
+Y	output	410x70 __node_4.Y
+and	and	120x0 __node_9.Y __node_17.Y
+or	or	120x50 __node_10.Y __node_19.Y
+xor	xor	120x100 __node_12.Y __node_16.Y
+not	not	120x150 __node_14.Y
+en_and	and	290x0 and.Y o_and.Y
+en_or	and	290x50 or.Y o_or.Y
+en_xor	and	290x100 xor.Y o_xor.Y
+en_not	and	290x150 not.Y o_not.Y
+__node_1	node	380x0 __net_7 en_and.Y __node_21
+__node_2	node	380x150 __net_7 en_not.Y __node_6
+__node_4	node	380x70 __net_7 __node_6 __node_8
+__node_6	node	380x100 __net_7 en_xor.Y
+__node_8	node	380x50 __net_7 __node_21
+__node_9	node	90x0 __net_4 A.Y
+__node_10	node	90x50 __net_4 __node_9
+__node_12	node	90x100 __net_4 __node_10
+__node_14	node	90x150 __net_4 __node_12
+__node_16	node	70x120 __net_5 B.Y __node_19
+__node_17	node	70x20 __net_5 __node_19
+__node_19	node	70x70 __net_5
+__node_21	node	380x50 __net_7 en_or.Y

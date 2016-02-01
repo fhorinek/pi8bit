@@ -1,20 +1,20 @@
 A	input	0x0
 B	input	0x20
-C_in	input	0x70
-S	output	340x50 xor2.Y
-C_out	output	440x110 or.Y
-xor1	xor	110x0 A.Y B.Y
-xor2	xor	240x50 __w_11.Y C_in.Y
-and1	and	240x100 __w_7.Y __w_3.Y
-and2	and	240x140 __w_6.Y __w_1.Y
-or	or	340x110 and1.Y and2.Y
-__w_1	wire	60x160 __w_5.Y
-__w_2	wire	100x70 C_in.Y
-__w_3	wire	100x120 __w_2.Y
-__w_4	wire	80x0 A.Y
-__w_5	wire	60x20 B.Y
-__w_6	wire	80x140 __w_4.Y
-__w_7	wire	200x100 __w_8.Y
-__w_8	wire	200x0 xor1.Y
-__w_10	wire	200x0 xor1.Y
-__w_11	wire	200x50 __w_10.Y
+C_in	input	0x60
+S	output	340x40 xor2.Y
+C_out	output	340x100 or.Y
+xor1	xor	110x0 __node_11.Y __node_15.Y
+xor2	xor	240x40 __node_2.Y __node_8.Y
+and1	and	140x90 __node_5.Y __node_9.Y
+and2	and	140x130 __node_12.Y __node_14.Y
+or	or	240x100 and1.Y and2.Y
+__node_1	node	200x0 __net_1 xor1.Y
+__node_2	node	200x40 __net_1 __node_1
+__node_4	node	120x40 __net_1 __node_2
+__node_5	node	120x90 __net_1 __node_4
+__node_8	node	110x60 __net_3 C_in.Y
+__node_9	node	110x110 __net_3 __node_8
+__node_11	node	80x0 __net_4 A.Y
+__node_12	node	80x130 __net_4 __node_11
+__node_14	node	70x150 __net_5
+__node_15	node	70x20 __net_5 B.Y __node_14

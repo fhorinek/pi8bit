@@ -1,31 +1,32 @@
 I	input	10x0
 W	input	20x40
 E	input	290x80
-O	output	390x0 __wire_61.Y
-__and_2	and	100x0 __wire_65.Y __wire_47.Y
-__and_3	and	100x60 __wire_70.Y __not_45.Y
-__and_4	and	370x60 __wire_16.Y E.Y
-__nor_5	nor	200x60 __wire_14.Y __and_3.Y
-__nor_6	nor	200x0 __and_2.Y __wire_19.Y
-__wire_11	wire	280x0 __nor_6.Y
-__wire_12	wire	280x30 __wire_11.Y
-__wire_13	wire	180x50 __wire_12.Y
-__wire_14	wire	180x60 __wire_13.Y
-__wire_16	wire	290x60 __nor_5.Y
-__wire_17	wire	290x50 __wire_16.Y
-__wire_18	wire	180x30 __wire_17.Y
-__wire_19	wire	180x20 __wire_18.Y
-__wire_33	wire	450x60 __and_4.Y
-__wire_34	wire	450x30 __wire_33.Y
-__wire_35	wire	370x30 __wire_34.Y
-S	output	310x30 __wire_41.Y
-__wire_41	wire	290x30 __wire_17.Y
-__not_45	not	20x80 __wire_59.Y
-__wire_47	wire	80x20 __wire_69.Y
-__wire_59	wire	0x80 __wire_67.Y
-__wire_61	wire	370x0 __wire_35.Y
-__wire_65	wire	70x0 I.Y
-__wire_66	wire	70x20 __wire_65.Y
-__wire_67	wire	0x20 __wire_66.Y
-__wire_69	wire	80x40 W.Y
-__wire_70	wire	80x60 __wire_69.Y
+O	output	390x0 __node_85.Y
+__and_2	and	100x0 __node_69.Y __node_62.Y
+__and_3	and	100x60 __node_65.Y __not_45.Y
+__and_4	and	370x60 __node_91.Y E.Y
+__nor_5	nor	200x60 __node_51.Y __and_3.Y
+__nor_6	nor	200x0 __and_2.Y __node_59.Y
+S	output	310x0 __node_92.Y
+__not_45	not	20x80 __node_72.Y
+__node_50	node	180x50 __net_15 __node_88
+__node_51	node	180x60 __net_15 __node_50
+__node_56	node	280x60 __net_5 __nor_5.Y __node_91
+__node_57	node	280x50 __net_5 __node_56
+__node_58	node	180x30 __net_5 __node_57
+__node_59	node	180x20 __net_5 __node_58
+__node_61	node	80x40 __net_6 W.Y
+__node_62	node	80x20 __net_6 __node_61
+__node_65	node	80x60 __net_6 __node_61
+__node_69	node	70x0 __net_8 I.Y
+__node_70	node	70x20 __net_8 __node_69
+__node_71	node	0x20 __net_8 __node_70
+__node_72	node	0x80 __net_8 __node_71
+__node_82	node	450x60 __net_12 __and_4.Y
+__node_83	node	450x30 __net_12 __node_82
+__node_84	node	370x30 __net_12 __node_83
+__node_85	node	370x0 __net_12 __node_84
+__node_87	node	280x0 __net_15 __nor_6.Y
+__node_88	node	280x30 __net_15 __node_87
+__node_91	node	290x60 __net_5 __node_56
+__node_92	node	290x0 __net_5 __node_91

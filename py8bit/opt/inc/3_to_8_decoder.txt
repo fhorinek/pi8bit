@@ -50,7 +50,7 @@ __node_62	node	310x120 __net_33 and_11.Y
 __node_63	node	310x300 __net_33 __node_62
 __node_65	node	220x160 __net_34 A2.Y
 __node_66	node	220x200 __net_34 __node_65 __node_68
-__node_68	node	350x200 __net_34 __node_66.Y
+__node_68	node	350x200 __net_34 __node_66
 __node_69	node	350x240 __net_34 __node_68
 __node_71	node	350x280 __net_34 __node_69
 __node_73	node	350x320 __net_34 __node_71

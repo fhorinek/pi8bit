@@ -24,6 +24,8 @@ class Canvas():
         
         self.update_surfaces()
         
+        self.need_io_redraw = True
+        
         pygame.font.init()
         self.status_font = pygame.font.Font(pygame.font.get_default_font(), 20)
         
@@ -46,8 +48,8 @@ class Canvas():
             "d_space": 10,
             "d_font": 10,
             
-            "d_line_col": 10,
-            "d_wire_col": 20,
+            "d_line_col": 5,
+            "d_wire_col": 5,
         
             "g_hor" : 10,
             "g_ver": 10,
@@ -77,8 +79,7 @@ class Canvas():
         self.add_cell("output", module.moutput)    
         
         self.mode = MODE_IDLE
-        self.add_cell_index = 0
-          
+
     def inc_cell_index(self):
         self.add_cell_index = (self.add_cell_index + 1) % len(self.cells)
 
@@ -143,8 +144,7 @@ class Canvas():
         self.mode = mode
         
     def request_io_redraw(self):
-        self.surface_io.fill((0, 0, 0))
-        self.controller.clear_io_cache()
+        self.need_io_redraw = True
 
     def loop(self):
         self.screen.fill((0, 0, 0))
@@ -152,13 +152,18 @@ class Canvas():
         for i in range(20):
             self.controller.tick()
             
+        if self.need_io_redraw:
+            self.surface_io.fill((0, 0, 0))
+            self.controller.clear_io_cache()
+            self.need_io_redraw = False
+            
         self.controller.draw(self.mode)
         self.screen.blit(self.surface_io, [0, 0])
         
         if self.mode == MODE_MOVE:
             self.draw_status("move")
         if self.mode == MODE_ADD:
-            self.draw_status("add %s" % self.cells.keys()[self.add_cell_index])
+            self.draw_status("add")
         if self.mode == MODE_EDIT:
             self.draw_status("edit")
         if self.mode == MODE_WIRE:
@@ -178,7 +183,7 @@ class Canvas():
 filename = file_opendialog(os.getcwd())
 if filename is not False:
 
-    profile = False
+    profile = True
     
     a = Canvas()
     a.controller.read_file(filename)
