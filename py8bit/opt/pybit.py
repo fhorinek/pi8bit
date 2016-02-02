@@ -1,6 +1,6 @@
 import pygame
 import cProfile
-from controller import Controller
+from controller import Controller, MODE_ADD_MODULE
 from collections import OrderedDict
 
 import os
@@ -169,7 +169,9 @@ class Canvas():
         if self.mode == MODE_WIRE:
             self.draw_status("wire")    
         if self.mode == MODE_SELECT:
-            self.draw_status("select")                        
+            self.draw_status("select")  
+        if self.mode == MODE_ADD_MODULE:
+            self.draw_status("add module")     
         
         pygame.display.flip()
         
@@ -183,7 +185,7 @@ class Canvas():
 filename = file_opendialog(os.getcwd())
 if filename is not False:
 
-    profile = True
+    profile = False
     
     a = Canvas()
     a.controller.read_file(filename)

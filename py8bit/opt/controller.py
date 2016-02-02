@@ -19,6 +19,7 @@ MODE_WIRE = 4
 MODE_PAN  = 5
 MODE_SELECT = 6
 MODE_EDIT = 7
+MODE_ADD_MODULE = 8
 
 NODE_DIR_NA = 0
 NODE_DIR_FROM_NODE = 1
@@ -350,7 +351,7 @@ class Controller():
         if mode == MODE_WIRE:            
             self.draw_highlight()
             
-        if mode == MODE_ADD:
+        if mode in [MODE_ADD, MODE_ADD_MODULE]:
             if self.new_node is not False:
                 self.new_node.draw()
                 self.new_node.draw_io()
@@ -445,14 +446,14 @@ class Controller():
         return False     
             
         
-    def add_object(self, fcs, pos):
+    def add_object(self, fcs, pos, params = []):
         o = self.canvas.cells[fcs](self)
         name = "__%s_%d" % (fcs, self.get_obj_id())
         self.objects[name] = o
         o.update()
         o.middle_offset()
         pos = "%dx%d" % (pos[0], pos[1])
-        o.parse([name, fcs, pos])
+        o.parse([name, fcs, pos] + params)
         self.canvas.request_io_redraw() 
         return o     
 
@@ -530,8 +531,10 @@ class Controller():
             hover_object = self.get_object_pos([mouse_x, mouse_y])
         
         if event.type == pygame.KEYDOWN:
-            if event.key == ord('a'):
+            if event.key == ord('a') and self.canvas.mode == MODE_EDIT:
                 self.canvas.set_mode(MODE_ADD)           
+            if event.key == ord('m') and self.canvas.mode == MODE_EDIT:
+                self.canvas.set_mode(MODE_ADD_MODULE)           
             if event.key == ord('e'):
                 self.canvas.set_mode(MODE_EDIT)  
             if event.key == ord('w') and self.canvas.mode == MODE_EDIT:
@@ -540,7 +543,16 @@ class Controller():
                 if self.canvas.mode == MODE_WIRE:
                     self.canvas.set_mode(MODE_EDIT)   
                     self.highlight(LIGHT_NONE)
-                else:
+
+                if self.canvas.mode == MODE_ADD:
+                    self.canvas.set_mode(MODE_EDIT)   
+                    self.new_node = False
+
+                if self.canvas.mode == MODE_ADD_MODULE:
+                    self.canvas.set_mode(MODE_EDIT)   
+                    self.new_node = False
+                
+                if self.canvas.mode == MODE_EDIT:                                   
                     self.clear_selection()
                     self.canvas.set_mode(MODE_IDLE)   
         
@@ -957,4 +969,24 @@ class Controller():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
                 o = self.add_object(self.add_list[self.add_index], [mouse_x, mouse_y])
                 self.apply_grid(o)
+                
+        if mode == MODE_ADD_MODULE:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == RIGHT:
+                fcs = "module"
+                pos = "%dx%d" % (mouse_x, mouse_y)
+                name = "_%s_" % fcs
+                self.new_node = self.canvas.cells[fcs](self)
+                self.new_node.update()
+                self.new_node.middle_offset()
+                self.new_node.parse([name, fcs, pos])
+                self.new_node_filename = self.new_node.filename
+            
+            if event.type == pygame.MOUSEMOTION:
+                if self.new_node is not False:
+                    self.new_node.set_pos(mouse_x, mouse_y)
+                    self.new_node.clear_io_cache()
+            
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
+                o = self.add_object("module", [mouse_x, mouse_y], [self.new_node_filename])
+                self.apply_grid(o)                
                 
