@@ -115,6 +115,10 @@ class Node(cell.Cell):
                 if basic.collidepoint(pos):
                     dx = end[0] - start[0]
                     dy = end[1] - start[1]
+                    
+                    if dx == 0 and dy == 0:
+                        return False                    
+                    
                     if abs(dx) < abs(dy):
                         k = float(dx) / float(dy)
                         x = start[0] + k * (pos[1] - start[1])
@@ -147,6 +151,10 @@ class Node(cell.Cell):
                 if basic.collidepoint(pos):
                     dx = end[0] - start[0]
                     dy = end[1] - start[1]
+                    
+                    if dx == 0 and dy == 0:
+                        return False
+                    
                     if abs(dx) < abs(dy):
                         k = float(dx) / float(dy)
                         x = start[0] + k * (pos[1] - start[1])

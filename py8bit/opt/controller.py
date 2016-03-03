@@ -20,6 +20,7 @@ MODE_PAN  = 5
 MODE_SELECT = 6
 MODE_EDIT = 7
 MODE_ADD_MODULE = 8
+MODE_STEP = 9
 
 NODE_DIR_NA = 0
 NODE_DIR_FROM_NODE = 1
@@ -532,14 +533,32 @@ class Controller():
         
         if event.type == pygame.KEYDOWN:
             if event.key == ord('a') and self.canvas.mode == MODE_EDIT:
-                self.canvas.set_mode(MODE_ADD)           
+                self.canvas.set_mode(MODE_ADD)        
+                   
             if event.key == ord('m') and self.canvas.mode == MODE_EDIT:
-                self.canvas.set_mode(MODE_ADD_MODULE)           
-            if event.key == ord('e'):
+                self.canvas.set_mode(MODE_ADD_MODULE)    
+                       
+            if event.key == ord('e') and self.canvas.mode == MODE_IDLE:
                 self.canvas.set_mode(MODE_EDIT)  
+                
+            if event.key == ord('d') and self.canvas.mode == MODE_IDLE:
+                self.canvas.set_mode(MODE_STEP)    
+                              
             if event.key == ord('w') and self.canvas.mode == MODE_EDIT:
-                self.canvas.set_mode(MODE_WIRE)   
+                self.canvas.set_mode(MODE_WIRE)  
+                 
+            if event.key == pygame.K_SPACE and self.canvas.mode == MODE_STEP:
+                self.tick()
+                                 
             if event.key == pygame.K_ESCAPE:
+                self.canvas.request_io_redraw()
+                if self.canvas.mode == MODE_STEP:                                   
+                    self.canvas.set_mode(MODE_IDLE)                   
+                
+                if self.canvas.mode == MODE_EDIT:                                   
+                    self.clear_selection()
+                    self.canvas.set_mode(MODE_IDLE)   
+                    
                 if self.canvas.mode == MODE_WIRE:
                     self.canvas.set_mode(MODE_EDIT)   
                     self.highlight(LIGHT_NONE)
@@ -551,10 +570,6 @@ class Controller():
                 if self.canvas.mode == MODE_ADD_MODULE:
                     self.canvas.set_mode(MODE_EDIT)   
                     self.new_node = False
-                
-                if self.canvas.mode == MODE_EDIT:                                   
-                    self.clear_selection()
-                    self.canvas.set_mode(MODE_IDLE)   
         
         #PAN is woring allways
         #RIGHT DOWN => START PAN
@@ -605,7 +620,7 @@ class Controller():
                 self.canvas.request_io_redraw()
           
           
-        if mode == MODE_IDLE:
+        if mode == MODE_IDLE or mode == MODE_STEP:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
                 if hover_object is not False:
                     hover_object.click()
@@ -826,9 +841,11 @@ class Controller():
                             
                         if isinstance(obj, wire.Node):
                             obj.add_sibling(self.new_node)
-                            self.new_node.net.asimilate(inp.net)
+                            obj.clear_input(obj_pin)
+                            self.new_node.net.asimilate(obj.net)
                         else:
                             obj.assign_input(obj_pin, self.new_node, "Y")        
+                            
                         self.new_node = False
                         return        
 

@@ -1,6 +1,6 @@
 import pygame
 import cProfile
-from controller import Controller, MODE_ADD_MODULE
+from controller import Controller, MODE_ADD_MODULE, MODE_STEP
 from collections import OrderedDict
 
 import os
@@ -13,7 +13,7 @@ import inputs
 import wire
 
 
-from controller import MODE_IDLE, MODE_MOVE, MODE_ADD, MODE_DEL, MODE_WIRE, MODE_SELECT, MODE_EDIT
+from controller import MODE_IDLE, MODE_MOVE, MODE_ADD, MODE_WIRE, MODE_SELECT, MODE_EDIT
 from utils import file_opendialog
 
 class Canvas():
@@ -149,7 +149,8 @@ class Canvas():
     def loop(self):
         self.screen.fill((0, 0, 0))
         self.events()
-        for i in range(20):
+#         for i in range(20):
+        if self.mode is not MODE_STEP:
             self.controller.tick()
             
         if self.need_io_redraw:
@@ -172,7 +173,9 @@ class Canvas():
             self.draw_status("select")  
         if self.mode == MODE_ADD_MODULE:
             self.draw_status("add module")     
-        
+        if self.mode == MODE_STEP:
+            self.draw_status("step")   
+                      
         pygame.display.flip()
         
     def run(self):
