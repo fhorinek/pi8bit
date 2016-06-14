@@ -2,7 +2,10 @@ from collections import OrderedDict
 from cell import High, Low, Invisible
 
 import wire
+import cell
+
 import pygame
+import utils
 from pygame import Rect
 
 LEFT    = 1
@@ -21,6 +24,7 @@ MODE_SELECT = 6
 MODE_EDIT = 7
 MODE_ADD_MODULE = 8
 MODE_STEP = 9
+MODE_RENAME = 10
 
 NODE_DIR_NA = 0
 NODE_DIR_FROM_NODE = 1
@@ -57,7 +61,8 @@ class Controller():
         self.new_node_direction = NODE_DIR_NA
 
         self.zoom = 1.0
-        
+        self.zoom_step = 0.1
+             
         self.obj_id = 0
         self.net_id = 0
         
@@ -65,9 +70,13 @@ class Controller():
         self.highlight_pos = False
         
         self.add_index = 0
-        self.add_list = ["and", "or", "nand", "nor", "xor", "not", "led", "hex", "tgl", "input", "output"]
+        self.add_list = ["label", "and", "or", "nand", "nor", "xor", "not", "diode", "led", "hex", "tgl", "input", "output"]
         
         self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_font"] * self.zoom))
+        self.label_font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_label_font"] * self.zoom))
+        
+        
+        self.tmp = (0,0,0,0)
         
     def highlight(self, mode, pos = False):
         self.highlight_mode = mode
@@ -280,6 +289,21 @@ class Controller():
         
         surface.blit(tmp,  rect)        
         
+    def draw_label(self, surface, text, rect):
+        tmp = self.label_font.render(text, True, self.canvas.style["c_label"])
+        rect2 = tmp.get_rect()
+        rect = Rect([int(x * self.zoom) for x in rect]) 
+        rect = [rect.x + rect.w / 2 - rect2.w / 2, rect.y + rect.h / 2 - rect2.h / 2]
+        
+        surface.blit(tmp,  rect)            
+        
+    def label_font_size(self, text):
+        label_font = pygame.font.Font(pygame.font.get_default_font(), self.canvas.style["d_label_font"])
+        tmp = label_font.render(text, True, self.canvas.style["c_text"])
+        rect2 = tmp.get_rect()
+
+        return rect2
+        
     def draw_highlight(self):
         if self.highlight_mode == LIGHT_LINE:
             start = self.highlight_pos[0]
@@ -327,8 +351,16 @@ class Controller():
         size = [int(rect.w * self.zoom), int(rect.h * self.zoom)]
         return pygame.Surface(size, self.canvas.surface_flags)
         
+    def mk_transparent_surface(self, rect):
+        size = [int(rect.w * self.zoom), int(rect.h * self.zoom)]
+        surface = pygame.Surface(size, self.canvas.surface_flags) 
+        surface.set_colorkey((0, 0, 0))
+        return surface      
+        
     def update_zoom(self):
         self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_font"] * self.zoom))
+        self.label_font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_label_font"] * self.zoom))
+
         for k in self.objects:
             self.objects[k].update_body()     
         if self.canvas.mode == MODE_ADD:
@@ -346,6 +378,9 @@ class Controller():
             self.select_rect.normalize()
             self.draw_highlight_box(self.select_rect)
         
+        if mode == MODE_IDLE:
+            pygame.draw.rect(self.canvas.surface_io, self.canvas.style["c_highlight"], self.tmp, 2)
+        
         for o in self.selected:
             self.draw_highlight_box(o.rect)
 
@@ -359,7 +394,12 @@ class Controller():
         
     def tick(self):
         for k in self.objects:
-            self.objects[k].tick()        
+            if isinstance(k, wire.Net):
+                self.objects[k].tick()    
+                
+        for k in self.objects:
+            if isinstance(k, wire.Net) == False:
+                self.objects[k].tick()                    
         
     def reset(self):
         for k in self.objects:
@@ -517,7 +557,16 @@ class Controller():
         self.selected = []
         self.canvas.request_io_redraw()                
             
-         
+    def rename_obj(self, obj, new_name):
+        if new_name in self.objects:
+            return False
+        
+        del self.objects[obj.name]
+        obj.name = new_name
+        self.objects[new_name] = obj
+        obj.update()
+        
+        return True
             
     def event(self, event, mode):
         
@@ -533,12 +582,20 @@ class Controller():
         
         if event.type == pygame.KEYDOWN:
             if event.key == ord('a') and self.canvas.mode == MODE_EDIT:
+                fcs = self.add_list[self.add_index]
+                pos = "%dx%d" % (0, 0)
+                name = "_%s_" % fcs
+                self.new_node = self.canvas.cells[fcs](self)
+                self.new_node.update()
+                self.new_node.middle_offset()
+                self.new_node.parse([name, fcs, pos])
                 self.canvas.set_mode(MODE_ADD)        
                    
             if event.key == ord('m') and self.canvas.mode == MODE_EDIT:
                 self.canvas.set_mode(MODE_ADD_MODULE)    
                        
-            if event.key == ord('e') and self.canvas.mode == MODE_IDLE:
+            if event.key == ord('e') and self.canvas.mode in [MODE_IDLE, MODE_WIRE, MODE_RENAME]:
+                self.highlight(LIGHT_NONE)
                 self.canvas.set_mode(MODE_EDIT)  
                 
             if event.key == ord('d') and self.canvas.mode == MODE_IDLE:
@@ -546,6 +603,9 @@ class Controller():
                               
             if event.key == ord('w') and self.canvas.mode == MODE_EDIT:
                 self.canvas.set_mode(MODE_WIRE)  
+                 
+            if event.key == ord('r') and self.canvas.mode == MODE_EDIT:
+                self.canvas.set_mode(MODE_RENAME)                   
                  
             if event.key == pygame.K_SPACE and self.canvas.mode == MODE_STEP:
                 self.tick()
@@ -570,6 +630,9 @@ class Controller():
                 if self.canvas.mode == MODE_ADD_MODULE:
                     self.canvas.set_mode(MODE_EDIT)   
                     self.new_node = False
+                    
+                if self.canvas.mode == MODE_RENAME:                                   
+                    self.canvas.set_mode(MODE_EDIT)          
         
         #PAN is woring allways
         #RIGHT DOWN => START PAN
@@ -593,29 +656,46 @@ class Controller():
                 self.canvas.request_io_redraw()                  
             
         #ZOOM is working allways
+        if event.type == pygame.MOUSEMOTION:
+            m = (1 - self.zoom_step) / 2
+            
+            w = int(self.canvas.size[0] * m) * 2
+            h = int(self.canvas.size[1] * m) * 2  
+            x = event.pos[0] - int(self.canvas.size[0] * m)
+            y = event.pos[1] - int(self.canvas.size[1] * m)
+          
+            
+            self.tmp = (x, y, w, h)
+            print self.tmp, self.pan_offset_x, self.pan_offset_y, event.pos
+            self.canvas.request_io_redraw()
+            
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_UP:  
             if self.zoom < 1.5: 
-                self.zoom += 0.1
-                w = int(self.canvas.size[0] * self.zoom * 0.05)
-                h = int(self.canvas.size[1] * self.zoom * 0.05)
-                
-                self.pan_offset_x -= w
-                self.pan_offset_y -= h
+                 
+                w = self.canvas.size[0] * self.zoom
+                h = self.canvas.size[1] * self.zoom
+                self.zoom += self.zoom_step                 
+
+                self.pan_offset_x -= int(w * self.zoom_step / 2)
+                self.pan_offset_y -= int(h * self.zoom_step / 2)
                 
                 self.update_zoom()
                 self.canvas.request_io_redraw()
+                
+
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_DOWN:   
             if self.zoom > 0.2:
                 
-                w = int(self.canvas.size[0] * self.zoom * 0.05)
-                h = int(self.canvas.size[1] * self.zoom * 0.05)
+                w = self.canvas.size[0] 
+                h = self.canvas.size[1]
+                 
+                self.pan_offset_x += int(w * self.zoom_step / 2)
+                self.pan_offset_y += int(h * self.zoom_step / 2)
                 
-                self.zoom -= 0.1
+                self.zoom -= self.zoom_step
                 
-                self.pan_offset_x += w
-                self.pan_offset_y += h    
-                            
+                           
                 self.update_zoom()
                 self.canvas.request_io_redraw()
           
@@ -624,6 +704,40 @@ class Controller():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
                 if hover_object is not False:
                     hover_object.click()
+        
+        if mode == MODE_RENAME:
+            #LEFT DOWN => RENAME
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
+                if hover_object is not False:
+                    if isinstance(hover_object, cell.Label):
+                        label = utils.gui_textedit("Change the label", hover_object.label)
+                        if len(label) == 0:
+                            utils.gui_alert("Error", "Labels can't be empty")
+                        else:
+                            hover_object.label = label
+                            hover_object.update()
+                            self.canvas.set_mode(MODE_EDIT)
+                    else:
+                        if isinstance(hover_object, wire.Node):
+                            obj = hover_object.net
+                        else:
+                            obj = hover_object
+                        
+                        old_name = obj.name    
+                        name = utils.gui_textedit("Rename the object", obj.name)
+                        if old_name == name:
+                            return
+                        
+                        if len(name) == 0:
+                            utils.gui_alert("Error", "Name can't be empty")
+                            return
+                        
+                        if not self.rename_obj(obj, name):
+                            utils.gui_alert("Error", "Unable to rename object")
+                        else:
+                            self.canvas.set_mode(MODE_EDIT)    
+                        
+              
             
         if mode == MODE_EDIT:
             #LEFT DOWN => START SELECT

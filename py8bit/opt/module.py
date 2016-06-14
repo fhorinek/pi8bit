@@ -42,7 +42,6 @@ class module(Cell, Controller):
     def tick(self):
         Controller.tick(self)
         Cell.tick(self)
-             
 
     def update_rect(self):
         rect = Rect(0, 0, 0, 0)
@@ -100,6 +99,7 @@ class module(Cell, Controller):
     def update_body(self, state=None):
         self.zoom = self.parent.zoom
         self.font = self.parent.font
+        self.label_font = self.parent.label_font
         Cell.update_body(self, state=state)
         for k in self.objects:
             self.objects[k].update_body()

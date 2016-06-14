@@ -1,0 +1,76 @@
+A0	input	0x20
+A1	input	0x80
+A2	input	0x140
+A3	input	0x200
+A4	input	0x260
+A5	input	0x320
+A6	input	0x380
+A7	input	0x440
+B0	input	0x40
+B1	input	0x100
+B2	input	0x160
+B3	input	0x220
+B4	input	0x280
+B5	input	0x340
+B6	input	0x400
+B7	input	0x460
+S	input	0x480
+Y0	output	280x20 __node_18.Y
+Y1	output	280x80 __node_88.Y
+Y2	output	280x140 __node_86.Y
+Y3	output	280x200 __node_84.Y
+Y4	output	280x260 __node_82.Y
+Y5	output	280x320 __node_80.Y
+Y6	output	280x380 __node_76.Y
+Y7	output	280x440 __node_75.Y
+__not_5	not	90x480 __node_8.Y
+__node_7	node	160x480 __net_28 __not_5.Y __node_57
+__node_8	node	60x480 __net_61 S.Y __node_103
+__and_10	and	80x0 __node_89.Y A0.Y
+__and_11	and	180x20 __node_13.Y B0.Y
+__node_13	node	160x20 __net_28 __node_50
+__node_16	node	260x0 __net_4 __and_10.Y
+__node_18	node	260x20 __net_4 __and_11.Y __node_16
+__and_21	and	80x60 __node_92.Y A1.Y
+__and_22	and	180x80 __node_50.Y B1.Y
+__and_23	and	80x120 __node_99.Y A2.Y
+__and_24	and	80x180 __node_98.Y A3.Y
+__and_25	and	80x240 __node_100.Y A4.Y
+__and_26	and	80x300 __node_101.Y A5.Y
+__and_27	and	80x360 __node_102.Y A6.Y
+__and_28	and	80x420 __node_103.Y A7.Y
+__and_29	and	180x140 __node_51.Y B2.Y
+__and_30	and	180x200 __node_53.Y B3.Y
+__and_31	and	180x260 __node_54.Y B4.Y
+__and_32	and	180x320 __node_55.Y B5.Y
+__and_33	and	180x380 __node_56.Y B6.Y
+__and_34	and	180x440 __node_57.Y B7.Y
+__node_50	node	160x80 __net_28 __node_51
+__node_51	node	160x140 __net_28 __node_53
+__node_53	node	160x200 __net_28 __node_54
+__node_54	node	160x260 __net_28 __node_55
+__node_55	node	160x320 __net_28 __node_56
+__node_56	node	160x380 __net_28 __node_57
+__node_57	node	160x440 __net_28
+__node_74	node	260x420 __net_44 __and_28.Y
+__node_75	node	260x440 __net_44 __and_34.Y __node_74
+__node_76	node	260x380 __net_45 __and_33.Y
+__node_77	node	260x360 __net_45 __and_27.Y __node_76
+__node_79	node	260x300 __net_46 __and_26.Y
+__node_80	node	260x320 __net_46 __and_32.Y __node_79
+__node_81	node	260x240 __net_47 __and_25.Y
+__node_82	node	260x260 __net_47 __and_31.Y __node_81
+__node_83	node	260x180 __net_48 __and_24.Y
+__node_84	node	260x200 __net_48 __and_30.Y __node_83
+__node_85	node	260x120 __net_49 __and_23.Y
+__node_86	node	260x140 __net_49 __and_29.Y __node_85
+__node_87	node	260x60 __net_50 __and_21.Y
+__node_88	node	260x80 __net_50 __and_22.Y __node_87
+__node_89	node	60x0 __net_61 __node_92
+__node_92	node	60x60 __net_61 __node_99
+__node_98	node	60x180 __net_61 __node_99 __node_100
+__node_99	node	60x120 __net_61
+__node_100	node	60x240 __net_61 __node_101
+__node_101	node	60x300 __net_61 __node_102
+__node_102	node	60x360 __net_61 __node_103
+__node_103	node	60x420 __net_61

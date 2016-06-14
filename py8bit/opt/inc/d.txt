@@ -1,0 +1,25 @@
+D	input	0x0
+E	input	0x80
+Q	output	310x0 __node_5.Y
+Q'	output	310x60 __node_10.Y
+__nand_1	nand	100x0 __node_31.Y __node_27.Y
+__nand_2	nand	100x60 __not_18.Y __node_26.Y
+__nand_3	nand	210x0 __nand_1.Y __node_44.Y
+__nand_4	nand	210x60 __node_8.Y __node_20.Y
+__node_5	node	290x0 __net_1 __nand_3.Y
+__node_6	node	290x30 __net_1 __node_5
+__node_7	node	190x50 __net_1 __node_6
+__node_8	node	190x60 __net_1 __node_7
+__node_10	node	290x60 __net_2 __nand_4.Y
+__node_11	node	290x50 __net_2 __node_10 __node_46
+__not_18	not	20x60 __node_34.Y
+__node_19	node	180x60 __net_3 __nand_2.Y
+__node_20	node	180x80 __net_3 __node_19
+__node_26	node	80x80 __net_7 E.Y
+__node_27	node	80x20 __net_7 __node_26
+__node_31	node	60x0 __net_10 D.Y
+__node_32	node	60x40 __net_10 __node_31
+__node_33	node	0x40 __net_10 __node_32
+__node_34	node	0x60 __net_10 __node_33
+__node_44	node	190x20 __net_2 __node_46
+__node_46	node	190x30 __net_2

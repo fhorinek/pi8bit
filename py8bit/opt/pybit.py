@@ -1,6 +1,6 @@
 import pygame
 import cProfile
-from controller import Controller, MODE_ADD_MODULE, MODE_STEP
+from controller import Controller, MODE_ADD_MODULE, MODE_STEP, MODE_RENAME
 from collections import OrderedDict
 
 import os
@@ -18,7 +18,7 @@ from utils import file_opendialog
 
 class Canvas():
     def __init__(self):
-        self.size = (800, 600)
+        self.size = (800, 800)
         self.screen_flags = pygame.DOUBLEBUF | pygame.RESIZABLE | pygame.HWSURFACE
         self.surface_flags = pygame.HWSURFACE
         
@@ -33,6 +33,7 @@ class Canvas():
             "c_border": (0, 0, 255),
             "c_fill": (255, 255, 255),
             "c_text": (10, 10, 10),
+            "c_label": (173, 216, 230),
             "c_status": (255, 255, 255),
             "c_low": (200, 200, 200),
             "c_high": (0, 255, 0),
@@ -47,6 +48,7 @@ class Canvas():
             "d_line_height": 2,
             "d_space": 10,
             "d_font": 10,
+            "d_label_font": 40,
             
             "d_line_col": 5,
             "d_wire_col": 5,
@@ -58,6 +60,8 @@ class Canvas():
         self.controller = Controller(self, False)
         
         self.cells = OrderedDict()
+
+        self.add_cell("label", cell.Label)
         
         self.add_cell("net", wire.Net)
         self.add_cell("node", wire.Node)
@@ -68,6 +72,7 @@ class Canvas():
         self.add_cell("nor", basic_logic.Nor)
         self.add_cell("xor", basic_logic.Xor)
         self.add_cell("not", basic_logic.Not)
+        self.add_cell("diode", basic_logic.Diode)
         
         self.add_cell("led", outputs.Led)
         self.add_cell("hex", outputs.HexDisplay)
@@ -106,7 +111,6 @@ class Canvas():
         self.screen.blit(tmp,  rect)
         
     def draw_line(self, start, end, color, zoom):
-       
         lines = (start, end)
         w = max(int(zoom * self.style["d_line_height"]), 1)
         
@@ -150,7 +154,7 @@ class Canvas():
         self.screen.fill((0, 0, 0))
         self.events()
 #         for i in range(20):
-        if self.mode is not MODE_STEP:
+        if self.mode is MODE_IDLE:
             self.controller.tick()
             
         if self.need_io_redraw:
@@ -161,6 +165,8 @@ class Canvas():
         self.controller.draw(self.mode)
         self.screen.blit(self.surface_io, [0, 0])
         
+        if self.mode is MODE_IDLE:
+            self.draw_status("run")
         if self.mode == MODE_MOVE:
             self.draw_status("move")
         if self.mode == MODE_ADD:
@@ -175,7 +181,9 @@ class Canvas():
             self.draw_status("add module")     
         if self.mode == MODE_STEP:
             self.draw_status("step")   
-                      
+        if self.mode == MODE_RENAME:
+            self.draw_status("rename") 
+                                    
         pygame.display.flip()
         
     def run(self):

@@ -2,6 +2,50 @@
 
 import gtk
 
+def process_gui_events():
+    while gtk.events_pending(): #   this forces the refresh of the screen
+        gtk.main_iteration()         
+
+def gui_alert(title, text):
+    dialog = gtk.Dialog(title, parent=None, flags=gtk.DIALOG_MODAL, 
+        buttons= (gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
+    dialog.set_default_response(gtk.RESPONSE_OK)
+    
+    label = gtk.Label(text)
+    dialog.vbox.pack_start(label, True, True, 0)
+    label.show()
+    
+    dialog.run()
+    dialog.destroy()
+    
+    process_gui_events()
+
+
+def gui_textedit(title, text):
+    dialog = gtk.Dialog(title, parent=None, flags=gtk.DIALOG_MODAL, 
+        buttons= (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                    gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
+    dialog.set_default_response(gtk.RESPONSE_REJECT)
+    
+    label = gtk.Label(title)
+    dialog.vbox.pack_start(label, True, True, 0)
+    label.show()
+    
+    edit = gtk.Entry()
+    edit.set_text(text)
+    dialog.vbox.pack_start(edit, True, True, 0)
+    edit.show()    
+    
+    response = dialog.run()
+    if response == gtk.RESPONSE_ACCEPT:
+        text = edit.get_text()
+    
+    dialog.destroy()
+    
+    process_gui_events()    
+    
+    return text
+
 def file_opendialog(path = None):
     dialog = gtk.FileChooserDialog("Chose file",
                                    None,
@@ -26,7 +70,6 @@ def file_opendialog(path = None):
         
     dialog.destroy()
     
-    while gtk.events_pending(): #   this forces the refresh of the screen
-        gtk.main_iteration()    
+    process_gui_events() 
     
     return ret

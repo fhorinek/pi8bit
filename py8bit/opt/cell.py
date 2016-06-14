@@ -114,7 +114,7 @@ class Cell():
             
     def parse_cfg(self, arr):
         for i in range(len(arr) - 3):
-            name =  arr[3 + i]
+            name = arr[3 + i]
             conn = self.parent.find_cell_pin(name)    
             self.assign_free_input(*conn)
  
@@ -345,4 +345,37 @@ class Low(Invisible):
         
     def calc(self, pin):
         return 0    
-    
+
+class Label(Cell):
+    def __init__(self, parent):
+        Cell.__init__(self, parent)
+        self.label = "New label"
+               
+    def update_rect(self):
+        rect = self.parent.label_font_size(self.label)
+        
+        self.rect.w = rect.w
+        self.rect.h = rect.h
+
+        self.rect_rel = Rect(self.rect)
+        self.rect_rel.x = 0
+        self.rect_rel.y = 0
+     
+    def update_body(self):
+        self.surface = self.parent.mk_transparent_surface(self.rect)
+        self.parent.request_update()
+        
+        self.parent.draw_label(self.surface, self.label, self.rect_rel)       
+
+    def parse_cfg(self, arr):
+        if len(arr) >= 4:
+            label = arr[3]
+            self.label = label.replace("_", " ")
+        
+        
+    def get_params(self):
+        p = Cell.get_params(self)
+        label = self.label.replace(" ", "_")
+        p.append(label)
+        
+        return p
