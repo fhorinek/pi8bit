@@ -22,7 +22,7 @@ class module(Cell, Controller):
     def parse_cfg(self, arr):
         if len(arr) < 4:
             path = file_opendialog("inc")
-            path = os.path.relpath(path, os.getcwd())
+
             arr.append(path)
             
         self.filename = arr[3]

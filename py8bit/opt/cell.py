@@ -335,7 +335,7 @@ class Cell():
         self.drawable_io = tmp.colliderect(window)
         self.border = tmp
 
-        if self.drawable or self.draw_io():
+        if self.drawable or self.drawable_io:
             drawable_list.append(self)        
         
 class Invisible(Cell):

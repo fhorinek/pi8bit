@@ -70,7 +70,7 @@ class Controller():
         self.highlight_pos = False
         
         self.add_index = 0
-        self.add_list = ["label", "and", "or", "nand", "nor", "xor", "not", "diode", "led", "hex", "tgl", "input", "output"]
+        self.add_list = ["label", "and", "or", "nand", "nor", "xor", "not", "diode", "led", "hex", "tgl", "input", "output", "memory"]
         
         self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_font"] * self.zoom))
         self.label_font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_label_font"] * self.zoom))
@@ -118,6 +118,8 @@ class Controller():
         
         self.normalize_positons()
         
+        print "Writing file", filename
+        line_n = 0
         for k in self.objects:
             if k in ["HIGH", "LOW"]:
                 continue
@@ -129,13 +131,16 @@ class Controller():
             if p == False:
                 continue
             params = " ".join(p)
-            line = name, fcs, params
-            lines += "%s\n" % "\t".join(line)
+            line = "\t".join([name, fcs, params])
+            lines += "%s\n" % line
+
+            print " %5d: %s" % (line_n, line)  
+            line_n += 1
         
         f = open(filename, "w")
         f.write(lines)
         f.close() 
-        
+        print "done", filename
         
     def read_file(self, filename):
         print "Reading file", filename
@@ -160,7 +165,7 @@ class Controller():
             
             arr = line.split()
             
-            print "%5d: %s" % (line_n, " ".join(arr))
+            print " %5d: %s" % (line_n, " ".join(arr))
             
             if (len(arr) < 2):
                 continue
@@ -377,13 +382,11 @@ class Controller():
             self.new_node.update_body()
         
     def solve_drawable(self):
-        print "need_solve_drawable"
         self.need_solve_drawable = True
                 
     def draw(self, mode):
 
         if self.need_solve_drawable:
-            print "solving drawable"
             self.need_solve_drawable = False
             window = Rect(-self.pan_offset_x, -self.pan_offset_y, self.canvas.size[0] / self.zoom, self.canvas.size[1] / self.zoom)
             self.drawable = []
@@ -415,7 +418,7 @@ class Controller():
         
     def tick(self):
         for k in self.objects:
-                self.objects[k].tick()    
+            self.objects[k].tick()    
          
     def reset(self):
         for k in self.objects:
@@ -592,6 +595,12 @@ class Controller():
             mouse_y = (event.pos[1] / self.zoom) - self.pan_offset_y
             
             hover_object = self.get_object_pos([mouse_x, mouse_y])
+            
+            if keys[pygame.K_LCTRL]:
+                g_hor = self.canvas.style["g_hor"]
+                g_ver = self.canvas.style["g_ver"]        
+                mouse_x = int(round(mouse_x / float(g_hor)) * g_hor)
+                mouse_y = int(round(mouse_y / float(g_ver)) * g_ver)
         
         if event.type == pygame.KEYDOWN:
             if event.key == ord('a') and self.canvas.mode == MODE_EDIT:
@@ -746,7 +755,7 @@ class Controller():
                     self.select_start = [mouse_x, mouse_y]
                     self.select_rect = pygame.Rect(mouse_x, mouse_y, 0, 0)
                 else:
-                    if keys[pygame.K_LCTRL]:
+                    if keys[pygame.K_LSHIFT]:
                         self.tglselect_obj(hover_object)
                     else:
                         if hover_object not in self.selected:

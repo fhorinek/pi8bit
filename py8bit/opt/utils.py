@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import gtk
+import os
 
 def process_gui_events():
     while gtk.events_pending(): #   this forces the refresh of the screen
@@ -59,14 +60,18 @@ def file_opendialog(path = None):
     filt.add_pattern("*")
     dialog.add_filter(filt)
     
-    if path is not None:
-        dialog.set_current_folder(path)
+    if path is None:
+        path = os.getcwd()
+        
+    dialog.set_current_folder(path)
+    
     
     response = dialog.run()
     ret = False
 
     if response == gtk.RESPONSE_OK:
         ret = dialog.get_filename()
+        ret = os.path.relpath(ret, os.getcwd())
         
     dialog.destroy()
     

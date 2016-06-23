@@ -11,6 +11,7 @@ import module
 import cell
 import inputs
 import wire
+import memory
 
 
 from controller import MODE_IDLE, MODE_MOVE, MODE_ADD, MODE_WIRE, MODE_SELECT, MODE_EDIT
@@ -81,6 +82,8 @@ class Canvas():
         self.add_cell("module", module.module)        
         self.add_cell("input", module.minput)        
         self.add_cell("output", module.moutput)    
+        
+        self.add_cell("memory", memory.Memory)    
         
         self.mode = MODE_IDLE
 
@@ -196,7 +199,7 @@ class Canvas():
 
 
 profile = False
-filename = file_opendialog(os.getcwd())
+filename = file_opendialog()
 
 
 if filename is not False:
