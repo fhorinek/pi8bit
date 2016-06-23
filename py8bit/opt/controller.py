@@ -76,8 +76,6 @@ class Controller():
         self.label_font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_label_font"] * self.zoom))
         
         
-        self.tmp = (0,0,0,0)
-        
     def highlight(self, mode, pos = False):
         self.highlight_mode = mode
         self.highlight_pos = pos
@@ -240,16 +238,18 @@ class Controller():
     
     def blit(self, surface, rect):
         rect = Rect(rect)
-        rect.x *= self.zoom
-        rect.y *= self.zoom
         rect.x += self.pan_offset_x
         rect.y += self.pan_offset_y
+        rect.x *= self.zoom
+        rect.y *= self.zoom
+        
         self.canvas.screen.blit(surface, rect)
         
     def draw_circle(self, pos, state):
-        pos = [int(x * self.zoom) for x in pos] 
+        pos = list(pos)
         pos[0] += self.pan_offset_x
         pos[1] += self.pan_offset_y        
+        pos = [int(x * self.zoom) for x in pos] 
         if (state):
             color = self.canvas.style["c_high"]
         else:
@@ -258,14 +258,18 @@ class Controller():
         self.canvas.draw_circle(color, pos, self.zoom) 
         
     def draw_line(self, start, end, state):     
-        start =  [int(x * self.zoom) for x in start] 
-        end = [int(x * self.zoom) for x in end] 
+        #copy the data
+        start = list(start)
+        end = list(end)
         
         start[0] += self.pan_offset_x
         start[1] += self.pan_offset_y
         end[0] += self.pan_offset_x
         end[1] += self.pan_offset_y
-          
+
+        start =  [int(x * self.zoom) for x in start] 
+        end = [int(x * self.zoom) for x in end] 
+
         if state:
             color = self.canvas.style["c_high"]
         else:
@@ -306,19 +310,19 @@ class Controller():
         
     def draw_highlight(self):
         if self.highlight_mode == LIGHT_LINE:
-            start = self.highlight_pos[0]
-            end = self.highlight_pos[1]
+            start = list(self.highlight_pos[0])
+            end = list(self.highlight_pos[1])
             
             width = self.canvas.style["d_line_height"]
             w = int(width * self.zoom)
             
-            start = [int(x * self.zoom) for x in start] 
             start[0] += self.pan_offset_x
             start[1] += self.pan_offset_y
+            start = [int(x * self.zoom) for x in start] 
             
-            end = [int(x * self.zoom) for x in end] 
             end[0] += self.pan_offset_x
             end[1] += self.pan_offset_y
+            end = [int(x * self.zoom) for x in end] 
             
             if width > 0 and w == 0:
                 w = 1
@@ -328,9 +332,10 @@ class Controller():
             width = self.canvas.style["d_point"]
             w = int(width * self.zoom)
             
-            point = [int(x * self.zoom) for x in self.highlight_pos] 
-            point[0] += self.pan_offset_x
-            point[1] += self.pan_offset_y
+            point = list(self.highlight_pos)
+            point[0] += int(self.pan_offset_x)
+            point[1] += int(self.pan_offset_y)
+            point = [int(x * self.zoom) for x in point] 
             
             if width > 0 and w == 0:
                 w = 1
@@ -340,9 +345,9 @@ class Controller():
         rect = Rect(rect)
         width = self.canvas.style["d_line_height"]
         w = int(width * self.zoom)
-        rect = Rect([int(x * self.zoom) for x in rect]) 
         rect.x += self.pan_offset_x
         rect.y += self.pan_offset_y
+        rect = Rect([int(x * self.zoom) for x in rect]) 
         if width > 0 and w == 0:
             w = 1
         pygame.draw.rect(self.canvas.surface_io, self.canvas.style["c_highlight"], rect, w)
@@ -361,11 +366,21 @@ class Controller():
         self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_font"] * self.zoom))
         self.label_font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_label_font"] * self.zoom))
 
+        self.solve_drawable()
+
         for k in self.objects:
             self.objects[k].update_body()     
         if self.canvas.mode == MODE_ADD:
             self.new_node.update_body()
         
+    def solve_drawable(self):
+        window = Rect(-self.pan_offset_x, -self.pan_offset_y, self.canvas.size[0] / self.zoom, self.canvas.size[1] / self.zoom)
+        
+#         print window
+        
+        for k in self.objects:
+            self.objects[k].solve_drawable(window)
+                
     def draw(self, mode):
         if mode == MODE_SELECT:
             self.canvas.request_io_redraw()
@@ -373,13 +388,10 @@ class Controller():
         for k in self.objects:
             self.objects[k].draw()
             self.objects[k].draw_io()
-
+       
         if mode == MODE_SELECT:
             self.select_rect.normalize()
             self.draw_highlight_box(self.select_rect)
-        
-        if mode == MODE_IDLE:
-            pygame.draw.rect(self.canvas.surface_io, self.canvas.style["c_highlight"], self.tmp, 2)
         
         for o in self.selected:
             self.draw_highlight_box(o.rect)
@@ -394,13 +406,8 @@ class Controller():
         
     def tick(self):
         for k in self.objects:
-            if isinstance(k, wire.Net):
                 self.objects[k].tick()    
-                
-        for k in self.objects:
-            if isinstance(k, wire.Net) == False:
-                self.objects[k].tick()                    
-        
+         
     def reset(self):
         for k in self.objects:
             self.objects[k].reset()     
@@ -509,6 +516,8 @@ class Controller():
             net = self.add_net()
         o.parse([name, "node", pos, net.name])
         self.canvas.request_io_redraw() 
+        o.drawable = True
+        o.drawable_io = True
         return o     
     
     def add_net(self, net_name = False):
@@ -575,8 +584,8 @@ class Controller():
         keys = pygame.key.get_pressed()
         
         if hasattr(event, "pos"):
-            mouse_x = (event.pos[0] - self.pan_offset_x) / self.zoom
-            mouse_y = (event.pos[1] - self.pan_offset_y) / self.zoom
+            mouse_x = (event.pos[0] / self.zoom) - self.pan_offset_x
+            mouse_y = (event.pos[1] / self.zoom) - self.pan_offset_y
             
             hover_object = self.get_object_pos([mouse_x, mouse_y])
         
@@ -637,48 +646,36 @@ class Controller():
         #PAN is woring allways
         #RIGHT DOWN => START PAN
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == RIGHT:
-            self.pan_x = event.pos[0]
-            self.pan_y = event.pos[1]
+            self.pan_x = event.pos[0] / self.zoom
+            self.pan_y = event.pos[1] / self.zoom
             self.pan = True
         
         if self.pan:
             #RIGHT UP => STOP PAN
             if event.type == pygame.MOUSEBUTTONUP and event.button == RIGHT:
-                self.pan_offset_x += event.pos[0] - self.pan_x
-                self.pan_offset_y += event.pos[1] - self.pan_y
+                self.pan_offset_x += event.pos[0] / self.zoom - self.pan_x
+                self.pan_offset_y += event.pos[1] / self.zoom - self.pan_y
+                self.solve_drawable()
                 self.pan = False
             
             if event.type == pygame.MOUSEMOTION:
-                self.pan_offset_x += event.pos[0] - self.pan_x
-                self.pan_offset_y += event.pos[1] - self.pan_y     
-                self.pan_x = event.pos[0]
-                self.pan_y = event.pos[1]
-                self.canvas.request_io_redraw()                  
+                self.pan_offset_x += event.pos[0] / self.zoom - self.pan_x
+                self.pan_offset_y += event.pos[1] / self.zoom - self.pan_y     
+                self.pan_x = event.pos[0] / self.zoom
+                self.pan_y = event.pos[1] / self.zoom
+                
+                self.solve_drawable()
+                self.canvas.request_io_redraw()    
+      
             
         #ZOOM is working allways
-        if event.type == pygame.MOUSEMOTION:
-            m = (1 - self.zoom_step) / 2
-            
-            w = int(self.canvas.size[0] * m) * 2
-            h = int(self.canvas.size[1] * m) * 2  
-            x = event.pos[0] - int(self.canvas.size[0] * m)
-            y = event.pos[1] - int(self.canvas.size[1] * m)
-          
-            
-            self.tmp = (x, y, w, h)
-            print self.tmp, self.pan_offset_x, self.pan_offset_y, event.pos
-            self.canvas.request_io_redraw()
-            
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_UP:  
-            if self.zoom < 1.5: 
-                 
-                w = self.canvas.size[0] * self.zoom
-                h = self.canvas.size[1] * self.zoom
+            if self.zoom < 1.5:
+                             
+                self.pan_offset_x -= mouse_x + self.pan_offset_x - event.pos[0] / self.zoom
+                self.pan_offset_y -= mouse_y + self.pan_offset_y - event.pos[1] / self.zoom
                 self.zoom += self.zoom_step                 
 
-                self.pan_offset_x -= int(w * self.zoom_step / 2)
-                self.pan_offset_y -= int(h * self.zoom_step / 2)
-                
                 self.update_zoom()
                 self.canvas.request_io_redraw()
                 
@@ -686,12 +683,6 @@ class Controller():
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_DOWN:   
             if self.zoom > 0.2:
-                
-                w = self.canvas.size[0] 
-                h = self.canvas.size[1]
-                 
-                self.pan_offset_x += int(w * self.zoom_step / 2)
-                self.pan_offset_y += int(h * self.zoom_step / 2)
                 
                 self.zoom -= self.zoom_step
                 
@@ -818,6 +809,7 @@ class Controller():
                 if isinstance(hover_object, wire.Node):
                     self.new_node = self.add_node([mouse_x, mouse_y], hover_object.net)
                     self.new_node.add_sibling(hover_object)
+
                     self.new_node_direction = NODE_DIR_FROM_NODE
                     return                
                 
@@ -864,6 +856,7 @@ class Controller():
                     self.new_node.add_sibling(start_node)      
                     
                     self.new_node_direction = NODE_DIR_FROM_NODE
+                    self.solve_drawable()
                     return                   
                 
                 target = self.get_net_line_pos([mouse_x, mouse_y])
@@ -1091,7 +1084,9 @@ class Controller():
                 self.new_node.update()
                 self.new_node.middle_offset()
                 self.new_node.parse([name, fcs, pos])
-            
+                self.new_node.drawable = True
+                self.new_node.drawable_io = True
+                
             if event.type == pygame.MOUSEMOTION:
                 if self.new_node is not False:
                     self.new_node.set_pos(mouse_x, mouse_y)
@@ -1111,6 +1106,8 @@ class Controller():
                 self.new_node.middle_offset()
                 self.new_node.parse([name, fcs, pos])
                 self.new_node_filename = self.new_node.filename
+                self.new_node.drawable = True
+                self.new_node.drawable_io = True
             
             if event.type == pygame.MOUSEMOTION:
                 if self.new_node is not False:

@@ -23,6 +23,10 @@ class Cell():
         
         self.name = "cell"    
         self.fcs = "cell"    
+        
+        self.drawable = False
+        self.drawable_io = False
+        self.border = Rect(0,0,0,0)
 
             
     def done_drag(self): pass
@@ -213,9 +217,14 @@ class Cell():
         self.parent.request_update()
     
     def draw(self):
+        if not self.drawable:
+            return
         self.parent.blit(self.surface, self.rect)
     
     def draw_io(self):   
+        if not self.drawable_io:
+            return
+        
         for c in self.inputs:
             state = self.input(c)
             if c in self.input_cache:
@@ -315,6 +324,22 @@ class Cell():
                     obj.clear_input(pin)
                 else:
                     break
+              
+    def solve_drawable(self, window):
+        tmp = Rect(self.rect)
+        
+        self.drawable = tmp.colliderect(window)
+            
+        for c in self.inputs:
+            if self.inputs[c] is not False:
+                in_obj, in_pin = self.inputs[c]
+                if not isinstance(in_obj, Invisible):
+                    x, y = in_obj.output_xy[in_pin]
+                    tmp = tmp.union(Rect(x, y, 0, 0))
+        
+        self.drawable_io = tmp.colliderect(window)
+        self.border = tmp
+        
         
 class Invisible(Cell):
     def __init__(self, parent):
@@ -328,6 +353,9 @@ class Invisible(Cell):
         pass
     
     def draw_io(self):
+        pass
+    
+    def solve_drawable(self, window):
         pass
 
 class High(Invisible):

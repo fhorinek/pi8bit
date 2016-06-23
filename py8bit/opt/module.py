@@ -34,7 +34,10 @@ class module(Cell, Controller):
                 self.add_output(k)
             if o.fcs == "input":
                 self.add_input(k)    
-                o.set_module(self)   
+                o.set_module(self)
+                
+            o.drawable = True
+            o.drawable_io = True   
     
         del arr[3]
         Cell.parse_cfg(self, arr)
@@ -85,14 +88,21 @@ class module(Cell, Controller):
         self.surface.blit(surface, rect)
     
     def draw(self):
+        if not self.drawable:
+            return
+        
         if (self.update_request):
             self.update_request = False
-            self.update()
+            self.update_body()
             
         Cell.draw(self)
         
     def draw_io(self):
         Cell.draw_io(self)
+        
+        if not self.drawable:
+            return
+
         for k in self.objects:
             self.objects[k].draw_io()
     
@@ -100,6 +110,7 @@ class module(Cell, Controller):
         self.zoom = self.parent.zoom
         self.font = self.parent.font
         self.label_font = self.parent.label_font
+        
         Cell.update_body(self, state=state)
         for k in self.objects:
             self.objects[k].update_body()

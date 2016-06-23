@@ -22,10 +22,6 @@ class Canvas():
         self.screen_flags = pygame.DOUBLEBUF | pygame.RESIZABLE | pygame.HWSURFACE
         self.surface_flags = pygame.HWSURFACE
         
-        self.update_surfaces()
-        
-        self.need_io_redraw = True
-        
         pygame.font.init()
         self.status_font = pygame.font.Font(pygame.font.get_default_font(), 20)
         
@@ -58,6 +54,9 @@ class Canvas():
         }        
         
         self.controller = Controller(self, False)
+
+        self.update_surfaces()
+        self.need_io_redraw = True
         
         self.cells = OrderedDict()
 
@@ -99,6 +98,8 @@ class Canvas():
         self.rect = self.screen.get_rect()
         self.surface_io = pygame.Surface(self.size, self.surface_flags)
         self.surface_io.set_colorkey((0, 0, 0))
+        
+        self.controller.solve_drawable()
   
     def add_cell(self, name, cell):
         self.cells[name] = cell          
@@ -189,15 +190,17 @@ class Canvas():
     def run(self):
         self.running = True;
         self.controller.reset()
+        self.controller.solve_drawable()
+        
         while (self.running):
             self.loop()    
 
 
+profile = False
 filename = file_opendialog(os.getcwd())
-if filename is not False:
 
-    profile = False
-    
+
+if filename is not False:
     a = Canvas()
     a.controller.read_file(filename)
     if profile:

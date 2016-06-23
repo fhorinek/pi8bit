@@ -1,15 +1,15 @@
-in1	input	0x0
-in2	input	0x130
-led2	led	330x130 __node_9.Y
-__node_1	node	350x10 seit LOW.Y __node_9
-__node_2	node	130x240 seit
-__node_3	node	90x50 seit in1.Y __node_2 __node_6
-__node_5	node	180x200 seit
-__node_6	node	180x50 seit __node_5 __node_8
-__node_7	node	260x200 seit __node_11
-__node_8	node	240x50 seit __node_9 __node_11
-__node_9	node	280x20 seit
-__node_10	node	360x70 seit __node_14
-__node_11	node	240x120 seit __node_14
-__node_14	node	360x70 seit
-led10	led	430x60 __node_14.Y
+in1	input	0x180
+in2	input	0x340
+led2	led	290x0 __node_9.Y
+__node_1	node	390x160 seit LOW.Y __node_9
+__node_2	node	160x320 seit
+__node_3	node	130x200 seit in1.Y __node_2 __node_6
+__node_5	node	220x350 seit
+__node_6	node	220x200 seit __node_5 __node_8
+__node_7	node	300x350 seit __node_11
+__node_8	node	280x200 seit __node_9 __node_11
+__node_9	node	320x170 seit
+__node_10	node	400x220 seit __node_14
+__node_11	node	280x270 seit __node_14
+__node_14	node	400x220 seit
+led10	led	490x250 __node_14.Y

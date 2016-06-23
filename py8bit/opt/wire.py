@@ -1,5 +1,7 @@
 import cell
 import pygame
+from pygame.rect import Rect
+from cell import Invisible
 
 class Node(cell.Cell):
     def __init__(self, parent):
@@ -57,8 +59,29 @@ class Node(cell.Cell):
             return self.net.output(pin)
         else:
             return 0
+        
+    def solve_drawable(self, window):
+        x, y = self.output_xy["Y"]
+        tmp = Rect(x, y, 0, 0)
+        
+        for n in self.siblings:
+            x, y = n.output_xy["Y"]
+            tmp = tmp.union(Rect(x, y, 0, 0))
+        
+        for c in self.inputs:
+            if self.inputs[c] is not False:
+                in_obj, in_pin = self.inputs[c]
+                if not isinstance(in_obj, Invisible):
+                    x, y = in_obj.output_xy[in_pin]
+                    tmp = tmp.union(Rect(x, y, 0, 0))
+                     
+        self.border = tmp
+        self.drawable = tmp.colliderect(window)
        
     def draw_node(self, state):
+        if not self.drawable:
+            return
+        
         start = self.output_xy["Y"]
 #         if len(self.siblings) + len(self.inputs) + self.have_output <> 2:
         self.parent.draw_circle(start, state)

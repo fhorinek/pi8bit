@@ -322,8 +322,8 @@ __node_463	node	250x550 __net_264 __diode_360.Y
 __module_465	module	3070x4850 inc/enable.txt __module_245.O0 __module_245.O1 __module_245.O2 __module_245.O3 __module_245.O4 __module_245.05 __module_245.06 __module_245.O7 LOW.Y
 __module_466	module	3070x5200 inc/enable.txt __node_477.Y __node_480.Y __node_489.Y __node_491.Y __node_493.Y __node_495.Y __node_497.Y __node_499.Y LOW.Y
 __label_475	label	3070x4800 Register_M
-__node_476	node	2880x5890 __net_274 __module_246.O0
-__node_477	node	2880x5200 __net_274 __node_476
+__node_476	node	2880x5890 __net_333 __module_246.O0
+__node_477	node	2880x5200 __net_333 __node_476
 __node_479	node	2890x5910 __net_275 __module_246.O1
 __node_480	node	2890x5220 __net_275 __node_479
 __node_482	node	2900x5930 __net_276 __module_246.O2
@@ -338,51 +338,86 @@ __node_493	node	2920x5280 __net_278 __node_484
 __node_495	node	2930x5300 __net_283
 __node_497	node	2940x5320 __net_280 __node_486
 __node_499	node	2950x5340 __net_284
-__node_501	node	3730x4790 __net_303 __node_538
-__node_502	node	3730x5810 __net_303 __node_538
-__node_503	node	3750x4790 __net_304 __node_539
-__node_505	node	3750x5810 __net_304 __node_539
-__node_506	node	3770x4790 __net_305 __node_540
-__node_507	node	3770x5810 __net_305 __node_540
-__node_508	node	3790x4790 __net_306 __node_541
-__node_509	node	3790x5810 __net_306 __node_541
-__node_510	node	3810x4790 __net_307 __node_542
-__node_511	node	3810x5810 __net_307 __node_542
-__node_512	node	3830x4790 __net_308 __node_543
-__node_513	node	3830x5810 __net_308 __node_543
-__node_514	node	3850x4790 __net_309 __node_544
-__node_515	node	3850x5810 __net_309 __node_544
-__node_518	node	3870x4790 __net_310 __node_545
-__node_519	node	3870x5810 __net_310 __node_545
-__node_520	node	3910x4790 __net_311 __node_546
-__node_521	node	3910x5810 __net_311 __node_546
-__node_522	node	3930x4790 __net_312 __node_547
-__node_523	node	3930x5810 __net_312 __node_547
-__node_524	node	3950x4790 __net_313 __node_548
-__node_525	node	3950x5810 __net_313 __node_548
-__node_526	node	3970x4790 __net_314 __node_549
-__node_527	node	3970x5810 __net_314 __node_549
-__node_528	node	3990x4790 __net_315 __node_550
-__node_529	node	3990x5810 __net_315 __node_550
-__node_530	node	4010x4790 __net_316 __node_551
-__node_531	node	4010x5810 __net_316 __node_551
-__node_534	node	4030x4790 __net_317 __node_552
-__node_535	node	4030x5810 __net_317 __node_552
-__node_536	node	4050x4790 __net_318 __node_553
-__node_537	node	4050x5810 __net_318 __node_553
-__node_538	node	3730x4850 __net_303 __module_465.o0
-__node_539	node	3750x4870 __net_304 __module_465.o1
-__node_540	node	3770x4890 __net_305 __module_465.o2
-__node_541	node	3790x4910 __net_306 __module_465.o3
-__node_542	node	3810x4930 __net_307 __module_465.o4
-__node_543	node	3830x4950 __net_308 __module_465.o5
-__node_544	node	3850x4970 __net_309 __module_465.o6
-__node_545	node	3870x4990 __net_310 __module_465.o7
-__node_546	node	3910x5200 __net_311 __module_466.o0
-__node_547	node	3930x5220 __net_312 __module_466.o1
-__node_548	node	3950x5240 __net_313 __module_466.o2
-__node_549	node	3970x5260 __net_314 __module_466.o3
-__node_550	node	3990x5280 __net_315 __module_466.o4
-__node_551	node	4010x5300 __net_316 __module_466.o5
-__node_552	node	4030x5320 __net_317 __module_466.o6
-__node_553	node	4050x5340 __net_318 __module_466.o7
+__node_501	node	3730x4790 __net_352 __node_538
+__node_502	node	3730x8230 __net_352 __node_604
+__node_503	node	3750x4790 __net_353 __node_539
+__node_505	node	3750x8230 __net_353 __node_605
+__node_506	node	3770x4790 __net_354 __node_540
+__node_507	node	3770x8230 __net_354 __node_606
+__node_508	node	3790x4790 __net_355 __node_541
+__node_509	node	3790x8230 __net_355 __node_607
+__node_510	node	3810x4790 __net_356 __node_542
+__node_511	node	3810x8230 __net_356 __node_608
+__node_512	node	3830x4790 __net_357 __node_543
+__node_513	node	3830x8230 __net_357 __node_609
+__node_514	node	3850x4790 __net_358 __node_544
+__node_515	node	3850x8230 __net_358 __node_610
+__node_518	node	3870x4790 __net_359 __node_545
+__node_519	node	3870x8230 __net_359 __node_611
+__node_520	node	3910x4790 __net_360 __node_546
+__node_521	node	3910x8230 __net_360 __node_612
+__node_522	node	3930x4790 __net_361 __node_547
+__node_523	node	3930x8230 __net_361 __node_613
+__node_524	node	3950x4790 __net_362 __node_548
+__node_525	node	3950x8230 __net_362 __node_614
+__node_526	node	3970x4790 __net_363 __node_549
+__node_527	node	3970x8230 __net_363 __node_615
+__node_528	node	3990x4790 __net_364 __node_550
+__node_529	node	3990x8230 __net_364 __node_616
+__node_530	node	4010x4790 __net_365 __node_551
+__node_531	node	4010x8230 __net_365 __node_617
+__node_534	node	4030x4790 __net_366 __node_552
+__node_535	node	4030x8230 __net_366 __node_618
+__node_536	node	4050x4790 __net_367 __node_553
+__node_537	node	4050x8230 __net_367 __node_619
+__node_538	node	3730x4850 __net_352 __module_465.o0 __node_604
+__node_539	node	3750x4870 __net_353 __module_465.o1 __node_605
+__node_540	node	3770x4890 __net_354 __module_465.o2 __node_606
+__node_541	node	3790x4910 __net_355 __module_465.o3 __node_607
+__node_542	node	3810x4930 __net_356 __module_465.o4 __node_608
+__node_543	node	3830x4950 __net_357 __module_465.o5 __node_609
+__node_544	node	3850x4970 __net_358 __module_465.o6 __node_610
+__node_545	node	3870x4990 __net_359 __module_465.o7 __node_611
+__node_546	node	3910x5200 __net_360 __module_466.o0 __node_612
+__node_547	node	3930x5220 __net_361 __module_466.o1 __node_613
+__node_548	node	3950x5240 __net_362 __module_466.o2 __node_614
+__node_549	node	3970x5260 __net_363 __module_466.o3 __node_615
+__node_550	node	3990x5280 __net_364 __module_466.o4 __node_616
+__node_551	node	4010x5300 __net_365 __module_466.o5 __node_617
+__node_552	node	4030x5320 __net_366 __module_466.o6 __node_618
+__node_553	node	4050x5340 __net_367 __module_466.o7 __node_619
+__module_555	module	3070x6930 inc/enable.txt __module_247.O0 __module_247.O1 __module_247.O2 __module_247.O3 __module_247.O4 __module_247.05 __module_247.06 __module_247.O7 LOW.Y
+__module_556	module	3070x7280 inc/enable.txt __node_576.Y __node_580.Y __node_581.Y __node_582.Y __node_583.Y __node_586.Y __node_587.Y __node_588.Y LOW.Y
+__node_573	node	2880x7970 __net_335 __module_248.O0
+__node_576	node	2880x7280 __net_335 __node_573
+__node_580	node	2890x7300 __net_336
+__node_581	node	2900x7320 __net_345 __node_590
+__node_582	node	2910x7340 __net_338
+__node_583	node	2920x7360 __net_347 __node_592
+__node_586	node	2930x7380 __net_348 __node_593
+__node_587	node	2940x7400 __net_342
+__node_588	node	2950x7420 __net_343
+__node_589	node	2890x7990 __net_336 __module_248.O1 __node_580
+__node_590	node	2900x8010 __net_345 __module_248.O2
+__node_591	node	2910x8030 __net_338 __module_248.O3 __node_582
+__node_592	node	2920x8050 __net_347 __module_248.O4
+__node_593	node	2930x8070 __net_348 __module_248.05
+__node_594	node	2940x8090 __net_342 __module_248.06 __node_587
+__node_595	node	2950x8110 __net_343 __module_248.O7 __node_588
+__node_604	node	3730x6930 __net_352 __module_555.o0
+__node_605	node	3750x6950 __net_353 __module_555.o1
+__node_606	node	3770x6970 __net_354 __module_555.o2
+__node_607	node	3790x6990 __net_355 __module_555.o3
+__node_608	node	3810x7010 __net_356 __module_555.o4
+__node_609	node	3830x7030 __net_357 __module_555.o5
+__node_610	node	3850x7050 __net_358 __module_555.o6
+__node_611	node	3870x7070 __net_359 __module_555.o7
+__node_612	node	3910x7280 __net_360 __module_556.o0
+__node_613	node	3930x7300 __net_361 __module_556.o1
+__node_614	node	3950x7320 __net_362 __module_556.o2
+__node_615	node	3970x7340 __net_363 __module_556.o3
+__node_616	node	3990x7360 __net_364 __module_556.o4
+__node_617	node	4010x7380 __net_365 __module_556.o5
+__node_618	node	4030x7400 __net_366 __module_556.o6
+__node_619	node	4050x7420 __net_367 __module_556.o7
+__label_622	label	3070x6880 Register_XY
