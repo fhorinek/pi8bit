@@ -217,14 +217,9 @@ class Cell():
         self.parent.request_update()
     
     def draw(self):
-        if not self.drawable:
-            return
         self.parent.blit(self.surface, self.rect)
     
     def draw_io(self):   
-        if not self.drawable_io:
-            return
-        
         for c in self.inputs:
             state = self.input(c)
             if c in self.input_cache:
@@ -325,7 +320,7 @@ class Cell():
                 else:
                     break
               
-    def solve_drawable(self, window):
+    def solve_drawable(self, window, drawable_list):
         tmp = Rect(self.rect)
         
         self.drawable = tmp.colliderect(window)
@@ -339,7 +334,9 @@ class Cell():
         
         self.drawable_io = tmp.colliderect(window)
         self.border = tmp
-        
+
+        if self.drawable or self.draw_io():
+            drawable_list.append(self)        
         
 class Invisible(Cell):
     def __init__(self, parent):
@@ -355,7 +352,7 @@ class Invisible(Cell):
     def draw_io(self):
         pass
     
-    def solve_drawable(self, window):
+    def solve_drawable(self, window, drawable_list):
         pass
 
 class High(Invisible):

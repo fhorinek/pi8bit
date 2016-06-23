@@ -1,0 +1,55 @@
+__module_1	module	80x0 inc/full_adder.txt A0.Y F.Y C_in.Y
+__module_2	module	80x210 inc/full_adder.txt A2.Y LOW.Y __node_49.Y
+__module_3	module	80x420 inc/full_adder.txt A4.Y LOW.Y __node_73.Y
+__module_4	module	680x420 inc/full_adder.txt A5.Y LOW.Y __node_76.Y
+__module_5	module	680x210 inc/full_adder.txt A3.Y LOW.Y __node_63.Y
+__module_6	module	680x0 inc/full_adder.txt A1.Y LOW.Y __node_55.Y
+__module_7	module	80x630 inc/full_adder.txt A6.Y LOW.Y __node_92.Y
+__module_8	module	680x630 inc/full_adder.txt A7.Y LOW.Y __node_98.Y
+A0	input	0x0
+A1	input	600x0
+A2	input	0x210
+A3	input	600x210
+A4	input	0x420
+A5	input	600x420
+A6	input	0x630
+A7	input	600x630
+Y0	output	600x20 __node_58.Y
+Y1	output	1160x0 __module_6.S
+Y2	output	600x230 __node_83.Y
+Y3	output	1160x210 __module_5.S
+Y4	output	600x440 __node_79.Y
+Y5	output	1160x420 __module_4.S
+Y6	output	600x650 __node_95.Y
+Y7	output	1160x630 __module_8.S
+__node_46	node	1150x20 __net_17 __module_6.C_out
+__node_47	node	1150x190 __net_17 __node_46
+__node_48	node	60x190 __net_17 __node_47
+__node_49	node	60x250 __net_17 __node_48
+__node_53	node	550x20 __net_20 __module_1.C_out __node_55
+__node_55	node	550x40 __net_20 __node_53
+__node_57	node	570x0 __net_22 __module_1.S
+__node_58	node	570x20 __net_22 __node_57
+__node_61	node	550x230 __net_24 __module_2.C_out __node_63
+__node_63	node	550x250 __net_24 __node_61
+C_out	output	1160x650 __module_8.C_out
+F	input	0x20
+C_in	input	0x40
+__node_70	node	1150x230 __net_28 __module_5.C_out
+__node_71	node	1150x400 __net_28 __node_70
+__node_72	node	60x400 __net_28 __node_71
+__node_73	node	60x460 __net_28 __node_72
+__node_75	node	550x440 __net_29 __module_3.C_out
+__node_76	node	550x460 __net_29 __node_75
+__node_78	node	570x420 __net_30 __module_3.S
+__node_79	node	570x440 __net_30 __node_78
+__node_82	node	570x210 __net_31 __module_2.S
+__node_83	node	570x230 __net_31 __node_82
+__node_89	node	1150x440 __net_36 __module_4.C_out
+__node_90	node	1150x610 __net_36 __node_89
+__node_91	node	60x610 __net_36 __node_90
+__node_92	node	60x670 __net_36 __node_91
+__node_94	node	570x630 __net_37 __module_7.S
+__node_95	node	570x650 __net_37 __node_94
+__node_97	node	550x650 __net_38 __module_7.C_out
+__node_98	node	550x670 __net_38 __node_97

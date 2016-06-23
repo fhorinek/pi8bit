@@ -75,6 +75,9 @@ class Controller():
         self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_font"] * self.zoom))
         self.label_font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_label_font"] * self.zoom))
         
+        self.need_solve_drawable = True
+        self.drawable = []
+        
         
     def highlight(self, mode, pos = False):
         self.highlight_mode = mode
@@ -374,20 +377,26 @@ class Controller():
             self.new_node.update_body()
         
     def solve_drawable(self):
-        window = Rect(-self.pan_offset_x, -self.pan_offset_y, self.canvas.size[0] / self.zoom, self.canvas.size[1] / self.zoom)
-        
-#         print window
-        
-        for k in self.objects:
-            self.objects[k].solve_drawable(window)
+        print "need_solve_drawable"
+        self.need_solve_drawable = True
                 
     def draw(self, mode):
+
+        if self.need_solve_drawable:
+            print "solving drawable"
+            self.need_solve_drawable = False
+            window = Rect(-self.pan_offset_x, -self.pan_offset_y, self.canvas.size[0] / self.zoom, self.canvas.size[1] / self.zoom)
+            self.drawable = []
+            
+            for k in self.objects:
+                self.objects[k].solve_drawable(window, self.drawable)      
+        
         if mode == MODE_SELECT:
             self.canvas.request_io_redraw()
         
-        for k in self.objects:
-            self.objects[k].draw()
-            self.objects[k].draw_io()
+        for o in self.drawable:
+            o.draw()
+            o.draw_io()
        
         if mode == MODE_SELECT:
             self.select_rect.normalize()
@@ -421,11 +430,11 @@ class Controller():
             
     def get_object_pos(self, pos, exclude = []):
         pos = list(pos)
-        object_list = list(self.objects.keys())
+        
+        object_list = list(self.drawable)
         object_list.reverse()
-        for k in object_list:
-             
-            o = self.objects[k]
+        
+        for o in object_list:
             if o in exclude:
                 continue               
             if (o.rect.collidepoint(pos)):
@@ -435,9 +444,8 @@ class Controller():
     #wire form input / output
     def get_line_pos(self, pos, exclude = []):
         pos = list(pos)
-        object_list = list(self.objects.keys())
-        for k in object_list:
-            o = self.objects[k]
+        
+        for o in self.drawable:
             if o in exclude:
                 continue
             
@@ -451,9 +459,8 @@ class Controller():
     #wire form net
     def get_net_line_pos(self, pos, exclude=[]):
         pos = list(pos)
-        object_list = list(self.objects.keys())
-        for k in object_list:
-            o = self.objects[k]
+        
+        for o in self.drawable:
             if isinstance(o, wire.Node):
                 if o in exclude:
                     continue
@@ -468,10 +475,8 @@ class Controller():
     
     def get_output_pos(self, pos, exclude=[]):
         pos = list(pos)
-        object_list = list(self.objects.keys())
-        object_list.reverse()
-        for k in object_list:
-            o = self.objects[k]
+
+        for o in self.drawable:
             if o in exclude:
                 continue            
             
@@ -482,10 +487,8 @@ class Controller():
    
     def get_input_pos(self, pos, exclude=[]):
         pos = list(pos)
-        object_list = list(self.objects.keys())
-        object_list.reverse()
-        for k in object_list:
-            o = self.objects[k]
+        
+        for o in self.drawable:
             if o in exclude:
                 continue               
             pin = o.check_input_collision(pos)
@@ -503,6 +506,7 @@ class Controller():
         pos = "%dx%d" % (pos[0], pos[1])
         o.parse([name, fcs, pos] + params)
         self.canvas.request_io_redraw() 
+        self.solve_drawable()
         return o     
 
     def add_node(self, pos, net = False):
@@ -516,8 +520,7 @@ class Controller():
             net = self.add_net()
         o.parse([name, "node", pos, net.name])
         self.canvas.request_io_redraw() 
-        o.drawable = True
-        o.drawable_io = True
+        self.solve_drawable()
         return o     
     
     def add_net(self, net_name = False):
@@ -542,7 +545,8 @@ class Controller():
         if name in self.objects:
             self.objects[name].disconnect()
             del self.objects[name]
-        self.canvas.request_io_redraw()
+            self.canvas.request_io_redraw()
+            self.solve_drawable()
             
     def select_obj(self, objs):
         for o in objs:
@@ -811,6 +815,7 @@ class Controller():
                     self.new_node.add_sibling(hover_object)
 
                     self.new_node_direction = NODE_DIR_FROM_NODE
+                    self.solve_drawable()
                     return                
                 
                 target = self.get_input_pos([mouse_x, mouse_y])
@@ -820,6 +825,7 @@ class Controller():
                     self.new_node = self.add_node([mouse_x, mouse_y])
                     obj.assign_input(pin, self.new_node, "Y")
                     self.new_node_direction = NODE_DIR_FROM_INPUT
+                    self.solve_drawable()
                     return
                 
                 target = self.get_output_pos([mouse_x, mouse_y])
@@ -829,6 +835,7 @@ class Controller():
                     self.new_node = self.add_node([mouse_x, mouse_y])
                     self.new_node.assign_free_input(obj, pin)
                     self.new_node_direction = NODE_DIR_FROM_OUTPUT
+                    self.solve_drawable()
                     return                   
                 
                 target = self.get_line_pos([mouse_x, mouse_y])
@@ -874,6 +881,7 @@ class Controller():
                     self.new_node.add_sibling(start_node)      
                     
                     self.new_node_direction = NODE_DIR_FROM_NODE
+                    self.solve_drawable()
                     return     
   
                 else:
@@ -884,6 +892,7 @@ class Controller():
                         self.new_node = self.add_node([mouse_x, mouse_y], start_node.net)
                         self.new_node.add_sibling(start_node)      
                         self.new_node_direction = NODE_DIR_FROM_NODE
+                        self.solve_drawable()
             
             if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
                 if self.new_node is not False:
@@ -905,6 +914,7 @@ class Controller():
 
                                 self.delete(self.new_node.name)
                                 self.new_node = False
+                                self.solve_drawable()
                                 return
                     
                     target = self.get_input_pos([mouse_x, mouse_y], [self.new_node])
@@ -920,6 +930,7 @@ class Controller():
                         
                         self.delete(self.new_node.name)
                         self.new_node = False
+                        self.solve_drawable()
                         return
                     
                     target = self.get_output_pos([mouse_x, mouse_y], [self.new_node])
@@ -934,6 +945,7 @@ class Controller():
                                 
                         self.delete(self.new_node.name)
                         self.new_node = False
+                        self.solve_drawable()
                         return                    
                     
                     target = self.get_line_pos([mouse_x, mouse_y], [self.new_node])
@@ -954,6 +966,7 @@ class Controller():
                             obj.assign_input(obj_pin, self.new_node, "Y")        
                             
                         self.new_node = False
+                        self.solve_drawable()
                         return        
 
                     target = self.get_net_line_pos([mouse_x, mouse_y], [self.new_node])
@@ -966,6 +979,7 @@ class Controller():
                         node2.add_sibling(self.new_node)
                         self.new_node.net.asimilate(net)
                         self.new_node = False
+                        self.solve_drawable()
                         return        
 
                     self.new_node = False
@@ -997,6 +1011,7 @@ class Controller():
                         
                         self.delete(hover_object.name)
                         self.highlight(LIGHT_NONE)
+                        self.solve_drawable()
                         return
                     
                     target = self.get_line_pos([mouse_x, mouse_y])
@@ -1005,6 +1020,7 @@ class Controller():
                         obj, obj_pin, inp, inp_pin = target
                         obj.clear_input(obj_pin)
                         self.highlight(LIGHT_NONE)
+                        self.solve_drawable()
                         return                  
                     
                     target = self.get_net_line_pos([mouse_x, mouse_y], [self.new_node])
@@ -1016,6 +1032,7 @@ class Controller():
                         net.rebuild()
                         self.canvas.request_io_redraw()
                         self.highlight(LIGHT_NONE)
+                        self.solve_drawable()
                         return     
 
             if event.type == pygame.MOUSEMOTION:

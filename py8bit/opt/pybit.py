@@ -190,7 +190,6 @@ class Canvas():
     def run(self):
         self.running = True;
         self.controller.reset()
-        self.controller.solve_drawable()
         
         while (self.running):
             self.loop()    

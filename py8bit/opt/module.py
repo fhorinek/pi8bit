@@ -88,9 +88,6 @@ class module(Cell, Controller):
         self.surface.blit(surface, rect)
     
     def draw(self):
-        if not self.drawable:
-            return
-        
         if (self.update_request):
             self.update_request = False
             self.update_body()

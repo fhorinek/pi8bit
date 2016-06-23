@@ -60,7 +60,7 @@ class Node(cell.Cell):
         else:
             return 0
         
-    def solve_drawable(self, window):
+    def solve_drawable(self, window, drawable_list):
         x, y = self.output_xy["Y"]
         tmp = Rect(x, y, 0, 0)
         
@@ -77,6 +77,11 @@ class Node(cell.Cell):
                      
         self.border = tmp
         self.drawable = tmp.colliderect(window)
+        
+        if self.drawable:
+            drawable_list.append(self)
+            if self.net not in drawable_list:
+                drawable_list.append(self.net)
        
     def draw_node(self, state):
         if not self.drawable:
