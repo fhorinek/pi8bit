@@ -1,4 +1,4 @@
-__module_1	module	6100x1230 inc/8_bit_alu.txt __module_2.O0 __module_2.O1 __module_2.O2 __module_2.O3 __module_2.O4 __module_2.05 __module_2.06 __module_2.O7 __node_27.Y __node_32.Y __node_34.Y __node_38.Y __node_41.Y __node_49.Y __node_53.Y __node_55.Y LOW.Y LOW.Y LOW.Y
+__module_1	module	6100x1230 inc/8_bit_alu.txt __module_2.O0 __module_2.O1 __module_2.O2 __module_2.O3 __module_2.O4 __module_2.05 __module_2.06 __module_2.O7 __node_27.Y __node_32.Y __node_34.Y __node_38.Y __node_41.Y __node_49.Y __node_53.Y __node_55.Y __node_1450.Y __node_1451.Y __node_1452.Y
 __module_2	module	4910x1070 inc/register.txt __node_170.Y __node_171.Y __node_173.Y __node_174.Y __node_175.Y __node_176.Y __node_177.Y __node_178.Y __node_403.Y enable_a.Y
 __module_3	module	4910x2120 inc/register.txt __node_179.Y __node_180.Y __node_181.Y __node_182.Y __node_185.Y __node_186.Y __node_187.Y __node_188.Y __node_376.Y __node_426.Y
 __node_26	node	5810x2280 __net_20 __module_3.O0
@@ -547,10 +547,8 @@ __node_906	node	3020x1610 __net_450 enable_m.Y __node_923
 __node_907	node	3000x1650 __net_510 enable_j.Y __node_921
 __node_908	node	2980x1690 __net_507 enable_inc.Y __node_950
 __node_909	node	2960x1730 __net_444 enable_pc.Y __node_949
-__node_910	node	10720x990 __net_514
+__node_910	node	10720x990 __net_514 __node_1444
 __node_911	node	10720x1390 __net_514 __node_910
-__node_913	node	3210x990 __net_514 __node_910 __node_914
-__node_914	node	3210x1210 __net_514 enable_alu.Y
 __node_921	node	3000x9980 __net_510
 __node_922	node	3040x5310 __net_451
 __node_923	node	3020x5290 __net_450
@@ -767,29 +765,29 @@ __node_1345	node	7620x11570 __net_678 __memory_1296.Do3
 __node_1346	node	7630x11550 __net_679 __memory_1296.Do2
 __node_1347	node	7640x11530 __net_680 __memory_1296.Do1
 __node_1348	node	7650x11510 __net_681 __memory_1296.Do0
-__node_1349	node	7580x12030 __net_537 __node_1341 __node_1364
-__node_1350	node	7030x12100 __net_681 __node_1339
+__node_1349	node	7580x12050 __net_537 __node_1341 __node_1364
+__node_1350	node	7030x12120 __net_681 __node_1339
 __node_1351	node	7040x11850 __net_680 __node_1299
-__node_1352	node	7040x12090 __net_680 __node_1351
+__node_1352	node	7040x12110 __net_680 __node_1351
 __node_1353	node	7050x11870 __net_679 __node_1301
-__node_1354	node	7050x12080 __net_679 __node_1353
+__node_1354	node	7050x12100 __net_679 __node_1353
 __node_1355	node	7060x11890 __net_678 __node_1303
-__node_1356	node	7060x12070 __net_678 __node_1355
+__node_1356	node	7060x12090 __net_678 __node_1355
 __node_1357	node	7070x11910 __net_677 __node_1305
-__node_1358	node	7070x12060 __net_677 __node_1357
+__node_1358	node	7070x12080 __net_677 __node_1357
 __node_1359	node	7080x11930 __net_465 __node_1307
-__node_1360	node	7080x12050 __net_465 __node_1359
+__node_1360	node	7080x12070 __net_465 __node_1359
 __node_1361	node	7090x11950 __net_675 __node_1309
-__node_1362	node	7090x12040 __net_675 __node_1361
+__node_1362	node	7090x12060 __net_675 __node_1361
 __node_1363	node	7100x11970 __net_537 __node_1311
-__node_1364	node	7100x12030 __net_537 __node_1363
-__node_1368	node	7590x12040 __net_675 __node_1362 __node_1342
-__node_1369	node	7600x12050 __net_465 __node_1360
-__node_1370	node	7610x12060 __net_677 __node_1358 __node_1344
-__node_1371	node	7620x12070 __net_678 __node_1356 __node_1345
-__node_1373	node	7630x12080 __net_679 __node_1354 __node_1346
-__node_1374	node	7640x12090 __net_680 __node_1352 __node_1347
-__node_1375	node	7650x12100 __net_681 __node_1350 __node_1348
+__node_1364	node	7100x12050 __net_537 __node_1363
+__node_1368	node	7590x12060 __net_675 __node_1362 __node_1342
+__node_1369	node	7600x12070 __net_465 __node_1360
+__node_1370	node	7610x12080 __net_677 __node_1358 __node_1344
+__node_1371	node	7620x12090 __net_678 __node_1356 __node_1345
+__node_1373	node	7630x12100 __net_679 __node_1354 __node_1346
+__node_1374	node	7640x12110 __net_680 __node_1352 __node_1347
+__node_1375	node	7650x12120 __net_681 __node_1350 __node_1348
 enable_mem	tgl	2650x1770 0
 write_mem	tgl	2650x890 0
 __node_1385	node	3310x890 __net_691 write_mem.Y
@@ -826,3 +824,21 @@ __node_1434	node	1580x780 __net_704 __node_1436 __node_1439
 __node_1436	node	1580x600 __net_704
 __node_1438	node	2720x910 __net_704 __node_1431
 __node_1439	node	1580x910 __net_704 __node_1438
+__node_1444	node	3980x990 __net_514 __node_1466 __node_1466
+__node_1450	node	6070x1550 __net_708
+__node_1451	node	6050x1570 __net_709
+__node_1452	node	6030x1590 __net_710
+__node_1453	node	6070x910 __net_708 __node_1450
+__node_1454	node	6050x930 __net_709 __node_1451
+__node_1455	node	6030x950 __net_710 __node_1452
+__node_1456	node	3900x910 __net_708 __node_1453
+__node_1457	node	3920x930 __net_709 __node_1454
+__node_1458	node	3940x950 __net_710 __node_1455
+__node_1459	node	3940x1130 __net_710 alu_2.Y __node_1458
+__node_1460	node	3920x1090 __net_709 alu_1.Y __node_1457
+__node_1461	node	3900x1050 __net_708 alu_0.Y __node_1456
+__label_1465	label	2730x1000 ALU_control
+alu_0	tgl	2650x1050 0
+alu_1	tgl	2650x1090 0
+alu_2	tgl	2650x1130 0
+__node_1466	node	3980x1210 __net_514 enable_alu.Y
