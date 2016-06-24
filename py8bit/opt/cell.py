@@ -386,11 +386,8 @@ class Label(Cell):
         self.rect_rel.x = 0
         self.rect_rel.y = 0
      
-    def update_body(self):
-        self.surface = self.parent.mk_transparent_surface(self.rect)
-        self.parent.request_update()
-        
-        self.parent.draw_label(self.surface, self.label, self.rect_rel)       
+    def update_body(self, state=None):
+        self.surface = self.parent.draw_label(self.label, self.rect_rel)       
 
     def parse_cfg(self, arr):
         if len(arr) >= 4:

@@ -1,0 +1,43 @@
+load immediate (8-bin)
+	[next val] -> [A, B, C, D, M1, M2, X, Y, J1, J2]
+	[PC] += 2 
+
+load immediate (16-bit)
+	[next val] -> [M, XY, J]
+	[PC] += 3 
+
+move (8-bit)
+	[A, B, C, D, M1, M2, X, Y, J1, J2] -> [A, B, C, D, M1, M2, X, Y, J1, J2]
+	[PC] += 1
+
+move (16-bit)
+	[M, XY, J, INC] -> [XY]
+	[PC] += 1
+	
+alu	- ADD, INC, AND, OR, XOR, NOT 
+	[A, B] -> [C, D, M1, M2, X, Y, J1, J2]
+	[PC] += 1
+	
+load from memory (8-bit)
+	[mem(M)] -> [A, B, C, D, X, Y, J1, J2]
+	[PC] += 1
+	
+store to memory 
+	[A, B, C, D, X, Y, J1, J2] -> [mem(M)]
+	[PC] += 1
+	
+jump
+	[PC] -> [XY] 
+	[J] -> [PC]
+	[PC] += 1
+	
+return
+	[XY] -> PC
+	[PC] += 1
+	
+jump if flag
+	if flag
+		[PC] -> [XY] 
+		[J] -> [PC]
+	[PC] += 1
+	

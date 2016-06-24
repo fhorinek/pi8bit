@@ -40,9 +40,11 @@ class Memory(cell.Cell):
            
         try:
             if not os.path.exists(self.filename):
+                print "Creating file", self.filename
                 f = open(self.filename, "wb")
                 f.close()
             
+            print "Reading memory from file", self.filename
             f = open(self.filename, "rb")
             self.bin_data = map(ord, list(f.read()))
             f.close()            
@@ -52,6 +54,8 @@ class Memory(cell.Cell):
             
             if len(self.bin_data) > 0x10000:
                 self.bin_data = self.bin_data[0:0x10000]
+ 
+            self.data = self.bin_data[self.address]
  
             self.file = True
         except:
@@ -72,6 +76,7 @@ class Memory(cell.Cell):
 
         if adr <> self.address:
             self.data = self.bin_data[adr]
+            print "Reading %02X from %04X" % (self.data, adr)
             self.address = adr
             need_update = True
         
@@ -80,6 +85,7 @@ class Memory(cell.Cell):
             for i in range(8):
                 data_in += int(self.input("Di%u" % i)) * (1 << i)  
             if data_in <> self.data:
+                print "Writing %02X to %04X" % (data_in, adr)
                 self.bin_data[adr] = data_in
                 self.data = data_in
                 need_update = True
@@ -131,6 +137,7 @@ class Memory(cell.Cell):
 
     def get_params(self):
         if self.file:
+            print "Saving memory image to", self.filename
             f = open(self.filename, "wb")
             f.write("".join(map(chr, self.bin_data)))
             f.close()              

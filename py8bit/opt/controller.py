@@ -118,7 +118,7 @@ class Controller():
         
         self.normalize_positons()
         
-        print "Writing file", filename
+#         print "Writing file", filename
         line_n = 0
         for k in self.objects:
             if k in ["HIGH", "LOW"]:
@@ -134,13 +134,13 @@ class Controller():
             line = "\t".join([name, fcs, params])
             lines += "%s\n" % line
 
-            print " %5d: %s" % (line_n, line)  
+#             print " %5d: %s" % (line_n, line)  
             line_n += 1
         
         f = open(filename, "w")
         f.write(lines)
         f.close() 
-        print "done", filename
+#         print "done", filename
         
     def read_file(self, filename):
         print "Reading file", filename
@@ -301,13 +301,13 @@ class Controller():
         
         surface.blit(tmp,  rect)        
         
-    def draw_label(self, surface, text, rect):
+    def draw_label(self, text, rect):
         tmp = self.label_font.render(text, True, self.canvas.style["c_label"])
         rect2 = tmp.get_rect()
         rect = Rect([int(x * self.zoom) for x in rect]) 
         rect = [rect.x + rect.w / 2 - rect2.w / 2, rect.y + rect.h / 2 - rect2.h / 2]
         
-        surface.blit(tmp,  rect)            
+        return tmp
         
     def label_font_size(self, text):
         label_font = pygame.font.Font(pygame.font.get_default_font(), self.canvas.style["d_label_font"])
@@ -363,12 +363,6 @@ class Controller():
     def mk_surface(self, rect):
         size = [int(rect.w * self.zoom), int(rect.h * self.zoom)]
         return pygame.Surface(size, self.canvas.surface_flags)
-        
-    def mk_transparent_surface(self, rect):
-        size = [int(rect.w * self.zoom), int(rect.h * self.zoom)]
-        surface = pygame.Surface(size, self.canvas.surface_flags) 
-        surface.set_colorkey((0, 0, 0))
-        return surface      
         
     def update_zoom(self):
         self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_font"] * self.zoom))

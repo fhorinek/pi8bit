@@ -206,9 +206,10 @@ if filename is not False:
     a = Canvas()
     a.controller.read_file(filename)
     if profile:
-        cProfile.run("a.run()", sort="tottime")
+        res = cProfile.run("a.run()", sort="tottime")
     else:
         a.run()
+    
     a.controller.write_file(filename)
 else:
     print "No file"
