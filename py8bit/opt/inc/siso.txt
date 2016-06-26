@@ -1,0 +1,43 @@
+__module_1	module	200x0 inc/d.txt __and_43.Y __node_45.Y
+__module_2	module	200x210 inc/d.txt __node_23.Y __node_16.Y
+__not_6	not	200x160 __node_10.Y
+__and_7	and	300x140 __node_21.Y __node_13.Y
+__node_9	node	170x40 __net_18 C.Y __node_45 __node_67
+__node_10	node	170x160 __net_18 __node_67
+__node_13	node	270x160 __net_19 __not_6.Y
+__node_14	node	270x180 __net_19 __node_13 __node_68
+__node_15	node	170x180 __net_19 __node_68
+__node_16	node	170x230 __net_19 __node_15
+__node_18	node	630x0 __net_5 __module_1.Q
+__node_19	node	630x120 __net_5 __node_18 __node_35
+__node_20	node	280x120 __net_5 __node_35
+__node_21	node	280x140 __net_5 __node_20
+__node_23	node	180x210 __net_6
+__node_24	node	180x190 __net_6 __node_23
+__node_25	node	380x190 __net_6 __node_24
+__node_26	node	380x140 __net_6 __and_7.Y __node_25
+__node_32	node	630x210 __net_8 __module_2.Q
+__node_33	node	630x190 __net_8 __node_32
+__node_34	node	550x190 __net_8 __node_33
+__node_35	node	550x120 __net_5
+__node_36	node	550x140 __net_5 __node_35
+__node_39	node	550x170 __net_8 __node_34
+Ti	input	0x0
+C	input	0x40
+R	input	0x100
+S	output	580x140 __node_36.Y
+To	output	580x170 __node_39.Y
+__not_42	not	90x100 __node_55.Y
+__and_43	and	90x0 Ti.Y __node_65.Y
+__node_45	node	170x20 __net_18 __node_9.Y
+__diode_53	diode	90x180 __node_58.Y
+__diode_54	diode	90x120 __node_60.Y
+__node_55	node	60x100 __net_16 R.Y __node_60
+__node_58	node	60x180 __net_16 __node_60
+__node_60	node	60x120 __net_16
+__node_62	node	150x100 __net_17 __not_42.Y
+__node_63	node	150x80 __net_17 __node_62
+__node_64	node	60x80 __net_17 __node_63
+__node_65	node	60x20 __net_17 __node_64
+__node_67	node	170x120 __net_18 __diode_54.Y
+__node_68	node	170x180 __net_19 __diode_53.Y

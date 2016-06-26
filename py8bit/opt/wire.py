@@ -161,6 +161,9 @@ class Node(cell.Cell):
                             return self, p, obj, pin
         
         return False 
+    
+    def clear_input(self, name):
+        del self.inputs[name]
         
     def check_net_line_collision(self, pos):
         for node in self.siblings:

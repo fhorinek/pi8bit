@@ -223,6 +223,7 @@ class Controller():
         
         o = self.find_cell(o_name)
         if o == False:
+            print name, "not found!"
             return False
         
         if o_pin == False:
