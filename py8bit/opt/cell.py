@@ -27,9 +27,10 @@ class Cell():
         self.drawable = False
         self.drawable_io = False
         self.border = Rect(0,0,0,0)
+        
+        self.need_redraw = False
+        self.zoom = False
 
-            
-    def done_drag(self): pass
     def click(self): pass          
             
     def add_input(self, name):
@@ -215,9 +216,15 @@ class Cell():
                 self.parent.draw_text(self.surface, c, rect)
  
         self.parent.request_update()
+        self.request_redraw()
+        
+    def request_redraw(self):
+        self.need_redraw = True
     
     def draw(self):
-        self.parent.blit(self.surface, self.rect)
+        if self.need_redraw:
+            self.parent.blit(self.surface, self.rect)
+            self.need_redraw = False
     
     def draw_io(self):   
         for c in self.inputs:
@@ -343,17 +350,11 @@ class Invisible(Cell):
         Cell.__init__(self, parent)
         self.add_output("Y")
     
-    def update_body(self, state=None):
-        pass
-    
-    def draw(self):
-        pass
-    
-    def draw_io(self):
-        pass
-    
-    def solve_drawable(self, window, drawable_list):
-        pass
+    def update_body(self, state=None): pass
+    def draw(self): pass
+    def draw_io(self): pass
+    def request_redraw(self): pass
+    def solve_drawable(self, window, drawable_list): pass
 
 class High(Invisible):
     def __init__(self, parent):

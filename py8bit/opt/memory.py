@@ -76,10 +76,10 @@ class Memory(cell.Cell):
 
         if adr <> self.address:
             self.data = self.bin_data[adr]
-            print "Reading %02X from %04X" % (self.data, adr)
+            print "Address change %02X at %04X" % (self.data, adr)
             self.address = adr
             need_update = True
-        
+            
         if self.input("W"):
             data_in = 0
             for i in range(8):

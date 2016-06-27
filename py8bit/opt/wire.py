@@ -49,6 +49,7 @@ class Node(cell.Cell):
     def draw(self): pass
     def draw_io(self): pass
     def calc(self, pin): pass
+    def request_redraw(self): pass
 
     def update_io_xy(self):
         self.output_xy["Y"] = [self.rect.x + self.rect.w / 2, self.rect.y + self.rect.h / 2]
@@ -226,6 +227,7 @@ class Net(cell.Invisible):
     def draw(self): pass  
     def parse_cfg(self, arr): pass
     def check_input_line_collision(self, pos): return False
+    def request_redraw(self): pass
     
     def list_node_sibling(self, node):
         ret = list(node.siblings)
@@ -295,9 +297,8 @@ class Net(cell.Invisible):
     def draw_io(self):   
         state = self.output("Y")        
         if self.input_cache == state:
-            pass
+            return
         self.input_cache = state
         
         for node in self.nodes:
             node.draw_node(state)
-        

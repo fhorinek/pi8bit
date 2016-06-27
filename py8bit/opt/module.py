@@ -91,6 +91,7 @@ class module(Cell, Controller):
         if (self.update_request):
             self.update_request = False
             self.update_body()
+            self.canvas.request_io_redraw()
             
         Cell.draw(self)
         

@@ -372,9 +372,19 @@ class Controller():
         self.solve_drawable()
 
         for k in self.objects:
-            self.objects[k].update_body()     
+            self.objects[k].update_body()
+#         for o in self.drawable:
+#             o.update_body()   
+              
         if self.canvas.mode == MODE_ADD:
             self.new_node.update_body()
+            
+        self.canvas.request_redraw()
+        self.canvas.request_io_redraw()
+        
+    def request_redraw(self):
+        for k in self.objects:
+            self.objects[k].request_redraw()     
         
     def solve_drawable(self):
         self.need_solve_drawable = True
@@ -390,6 +400,7 @@ class Controller():
                 self.objects[k].solve_drawable(window, self.drawable)      
         
         if mode == MODE_SELECT:
+            self.canvas.request_redraw()
             self.canvas.request_io_redraw()
         
         for o in self.drawable:
@@ -413,14 +424,13 @@ class Controller():
         
     def tick(self):
         for k in self.objects:
-            self.objects[k].tick()    
+            self.objects[k].tick()        
          
     def reset(self):
         for k in self.objects:
             self.objects[k].reset()     
             
-    def request_update(self):
-        pass
+    def request_update(self): pass
             
     def clear_io_cache(self):
         for k in self.objects:
@@ -653,18 +663,22 @@ class Controller():
         
         #PAN is woring allways
         #RIGHT DOWN => START PAN
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == RIGHT:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == MID:
             self.pan_x = event.pos[0] / self.zoom
             self.pan_y = event.pos[1] / self.zoom
             self.pan = True
+            self.mode_before = mode
+            self.canvas.set_mode(MODE_PAN)
         
         if self.pan:
             #RIGHT UP => STOP PAN
-            if event.type == pygame.MOUSEBUTTONUP and event.button == RIGHT:
+            if event.type == pygame.MOUSEBUTTONUP and event.button == MID:
                 self.pan_offset_x += event.pos[0] / self.zoom - self.pan_x
                 self.pan_offset_y += event.pos[1] / self.zoom - self.pan_y
                 self.solve_drawable()
+                self.canvas.request_redraw()
                 self.pan = False
+                self.canvas.set_mode(self.mode_before)
             
             if event.type == pygame.MOUSEMOTION:
                 self.pan_offset_x += event.pos[0] / self.zoom - self.pan_x
@@ -673,7 +687,8 @@ class Controller():
                 self.pan_y = event.pos[1] / self.zoom
                 
                 self.solve_drawable()
-                self.canvas.request_io_redraw()    
+                self.canvas.request_redraw()
+                self.canvas.request_io_redraw()
       
             
         #ZOOM is working allways
@@ -685,9 +700,6 @@ class Controller():
                 self.zoom += self.zoom_step                 
 
                 self.update_zoom()
-                self.canvas.request_io_redraw()
-                
-
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_DOWN:   
             if self.zoom > 0.2:
@@ -696,8 +708,6 @@ class Controller():
                 
                            
                 self.update_zoom()
-                self.canvas.request_io_redraw()
-          
           
         if mode == MODE_IDLE or mode == MODE_STEP:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
@@ -794,10 +804,10 @@ class Controller():
 
         if mode == MODE_MOVE:           
             if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
+                self.canvas.request_redraw()
                 for o in self.selected:
                     o.set_pos(mouse_x, mouse_y)
                     self.apply_grid(o)
-                    o.done_drag()
                 
                 if (len(self.selected) == 1):
                     self.clear_selection()
@@ -805,6 +815,7 @@ class Controller():
                 self.canvas.set_mode(MODE_EDIT);
         
             if event.type == pygame.MOUSEMOTION:
+                self.canvas.request_redraw()
                 for o in self.selected:
                     o.set_pos(mouse_x, mouse_y)
 

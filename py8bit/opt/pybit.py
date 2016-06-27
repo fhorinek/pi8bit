@@ -3,8 +3,6 @@ import cProfile
 from controller import Controller, MODE_ADD_MODULE, MODE_STEP, MODE_RENAME
 from collections import OrderedDict
 
-import os
-
 import basic_logic
 import outputs
 import module
@@ -14,8 +12,9 @@ import wire
 import memory
 
 
-from controller import MODE_IDLE, MODE_MOVE, MODE_ADD, MODE_WIRE, MODE_SELECT, MODE_EDIT
+from controller import MODE_IDLE, MODE_MOVE, MODE_ADD, MODE_WIRE, MODE_SELECT, MODE_EDIT, MODE_PAN
 from utils import file_opendialog
+from pygame.rect import Rect
 
 class Canvas():
     def __init__(self):
@@ -58,6 +57,7 @@ class Canvas():
 
         self.update_surfaces()
         self.need_io_redraw = True
+        self.need_redraw = True
         
         self.cells = OrderedDict()
 
@@ -99,8 +99,9 @@ class Canvas():
     def update_surfaces(self):
         self.screen = pygame.display.set_mode(self.size, self.screen_flags)
         self.rect = self.screen.get_rect()
-        self.surface_io = pygame.Surface(self.size, self.surface_flags)
-        self.surface_io.set_colorkey((0, 0, 0))
+        self.surface_io = self.screen
+#         self.surface_io = pygame.Surface(self.size, self.surface_flags)
+#         self.surface_io.set_colorkey((0, 0, 0))
         
         self.controller.solve_drawable()
   
@@ -127,8 +128,9 @@ class Canvas():
     def draw_status(self, text):
         tmp = self.status_font.render(text, True, self.style["c_status"])
         rect2 = tmp.get_rect();
-        rect = [0, self.size[1] - rect2.h]
+        rect = Rect(0, self.size[1] - rect2.h, rect2.w, rect2.h)
         
+        pygame.draw.rect(self.screen, (0, 0, 0), rect)
         self.screen.blit(tmp,  rect)        
         
     def events(self):
@@ -146,28 +148,42 @@ class Canvas():
             self.controller.event(event, self.mode)
         
     def reset_mode(self):
-        self.mode = MODE_IDLE
+        self.set_mode(MODE_IDLE)
 
     def set_mode(self, mode):
         self.mode = mode
+        self.request_redraw()
+        self.request_io_redraw()
         
     def request_io_redraw(self):
         self.need_io_redraw = True
 
+    def request_redraw(self):
+        self.need_redraw = True
+
     def loop(self):
-        self.screen.fill((0, 0, 0))
         self.events()
 #         for i in range(20):
         if self.mode is MODE_IDLE:
             self.controller.tick()
             
+#         self.surface_io.lock()
+        
+        if self.need_redraw:
+            self.screen.fill((0, 0, 0))
+            self.controller.request_redraw()
+            self.need_redraw = False
+            
         if self.need_io_redraw:
-            self.surface_io.fill((0, 0, 0))
+#             self.surface_io.fill((0, 0, 0))
             self.controller.clear_io_cache()
             self.need_io_redraw = False
             
         self.controller.draw(self.mode)
-        self.screen.blit(self.surface_io, [0, 0])
+#         self.surface_io.unlock()        
+        
+#         self.screen.blit(self.surface_io, [0, 0])
+        
         
         if self.mode is MODE_IDLE:
             self.draw_status("run")
@@ -187,6 +203,8 @@ class Canvas():
             self.draw_status("step")   
         if self.mode == MODE_RENAME:
             self.draw_status("rename") 
+        if self.mode == MODE_PAN:
+            self.draw_status("pan") 
                                     
         pygame.display.flip()
         
