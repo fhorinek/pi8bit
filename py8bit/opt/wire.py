@@ -47,9 +47,16 @@ class Node(cell.Cell):
       
     def update_body(self, state=None): pass
     def draw(self): pass
-    def draw_io(self): pass
     def calc(self, pin): pass
     def request_redraw(self): pass
+
+    def draw_io(self):   
+        state = self.net.output("Y")        
+        if self.input_cache == state:
+            return
+        self.input_cache = state
+        
+        self.draw_node(state)
 
     def update_io_xy(self):
         self.output_xy["Y"] = [self.rect.x + self.rect.w / 2, self.rect.y + self.rect.h / 2]
@@ -61,28 +68,27 @@ class Node(cell.Cell):
         else:
             return 0
         
-    def solve_drawable(self, window, drawable_list):
+    def calc_border(self):
         x, y = self.output_xy["Y"]
-        tmp = Rect(x, y, 0, 0)
+        self.border = Rect(x, y, 0, 0)
         
         for n in self.siblings:
             x, y = n.output_xy["Y"]
-            tmp = tmp.union(Rect(x, y, 0, 0))
+            self.border = self.border.union(Rect(x, y, 0, 0))
         
         for c in self.inputs:
             if self.inputs[c] is not False:
                 in_obj, in_pin = self.inputs[c]
                 if not isinstance(in_obj, Invisible):
                     x, y = in_obj.output_xy[in_pin]
-                    tmp = tmp.union(Rect(x, y, 0, 0))
-                     
-        self.border = tmp
-        self.drawable = tmp.colliderect(window)
+                    self.border = self.border.union(Rect(x, y, 0, 0))
+        
+    def solve_drawable(self, window, drawable_list):
+        self.calc_border()
+        self.drawable = self.border.colliderect(window)
         
         if self.drawable:
             drawable_list.append(self)
-            if self.net not in drawable_list:
-                drawable_list.append(self.net)
        
     def draw_node(self, state):
         if not self.drawable:
@@ -295,10 +301,4 @@ class Net(cell.Invisible):
         return ret
             
     def draw_io(self):   
-        state = self.output("Y")        
-        if self.input_cache == state:
-            return
-        self.input_cache = state
-        
-        for node in self.nodes:
-            node.draw_node(state)
+        pass

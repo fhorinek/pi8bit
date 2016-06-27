@@ -889,7 +889,7 @@ __node_1914	node	4520x660 __net_1668 enable_j.Y __node_3348
 __node_1918	node	4580x600 __net_1617 __node_2196
 __node_1922	node	4660x520 __net_1615 __node_2192
 __node_1924	node	4700x480 __net_1613 enable_b.Y
-__module_1949	module	250x1670 inc/siso.txt __diode_2822.Y __node_2832.Y LOW.Y
+__module_1949	module	250x1670 inc/siso.txt __node_3645.Y __node_2832.Y LOW.Y
 __module_1950	module	250x2090 inc/siso.txt __node_2805.Y __node_2050.Y __node_2819.Y
 __node_1951	node	970x1690 __net_1300 __module_1949.To
 __node_1952	node	970x2030 __net_1300 __node_1951
@@ -902,8 +902,8 @@ __node_2020	node	4980x640 __net_1404 __node_2169
 __node_2033	node	1100x1090 __net_1636 __node_1460 __node_2681
 __node_2034	node	1120x1110 __net_1633 __node_1850 __node_2682
 __node_2036	node	1080x1070 __net_1638 __node_1461 __node_2680
-__node_2049	node	200x1690 __net_1468 __node_2049 __node_2828 __node_2832
-__node_2050	node	200x2110 __net_1468 __node_2828
+__node_2049	node	200x1690 __net_1679 __node_2049 __node_2828 __node_2832
+__node_2050	node	200x2110 __net_1679 __node_3634
 __node_2062	node	4880x12070 __net_1419 __node_3067
 __node_2063	node	5160x12070 __net_1512 __node_3304
 __node_2066	node	5140x12070 __net_1513 __node_3305
@@ -1003,12 +1003,12 @@ __node_2220	node	5040x580 __net_1400 write_x.Y __node_3022
 __node_2221	node	4880x740 __net_1419 write_flags.Y
 __node_2223	node	4740x990 __net_1412 __node_3055
 __node_2224	node	5180x1470 __net_1176 __node_2923
-__node_2225	node	5280x340 __net_1467 __node_2230 __node_2230 __node_2512
+__node_2225	node	5280x340 __net_1681 __node_2230 __node_2230 __node_2512
 __not_2227	not	5200x360 __node_2231.Y
 __node_2228	node	5260x360 __net_1163 __not_2227.Y __node_2235
 __node_2229	node	5260x12070 __net_1163 __node_2441
-__node_2230	node	5160x340 __net_1467 RESET.Y
-__node_2231	node	5160x360 __net_1467 __node_2230
+__node_2230	node	5160x340 __net_1681 RESET.Y
+__node_2231	node	5160x360 __net_1681 __node_2230
 __and_2234	and	5310x990 __node_2223.Y __node_2235.Y
 __node_2235	node	5260x1010 __net_1163 __node_2280
 __or_2242	or	5310x1210 __node_2291.Y __node_403.Y
@@ -1040,47 +1040,47 @@ __or_2271	or	5310x9840 __node_2440.Y __node_824.Y
 __node_2280	node	5260x1270 __net_1163 __node_2307
 __node_2283	node	5400x1230 __net_1048 __node_2289 __node_2289
 __node_2289	node	5400x1210 __net_1048 __or_2242.Y
-__node_2291	node	5280x1210 __net_1467 __node_2500 __node_2512
+__node_2291	node	5280x1210 __net_1681 __node_2500 __node_2512
 __node_2294	node	5400x2280 __net_1056
 __node_2300	node	5400x2260 __net_1056 __or_2258.Y __node_2294
-__node_2306	node	5280x2260 __net_1467 __node_2325 __node_2498
+__node_2306	node	5280x2260 __net_1681 __node_2325 __node_2498
 __node_2307	node	5260x2320 __net_1163 __node_2324
 __node_2310	node	5400x3320 __net_1073 __node_2322
 __node_2322	node	5400x3300 __net_1073 __or_2259.Y
 __node_2324	node	5260x3360 __net_1163 __node_2342
-__node_2325	node	5280x3300 __net_1467 __node_2339
+__node_2325	node	5280x3300 __net_1681 __node_2339
 __node_2331	node	5400x4370 __net_1081
 __node_2336	node	5400x4350 __net_1081 __or_2260.Y __node_2331
-__node_2339	node	5280x4350 __net_1467 __node_2453
+__node_2339	node	5280x4350 __net_1681 __node_2453
 __node_2342	node	5260x4410 __net_1163 __node_2469
 __node_2352	node	5400x5540 __net_1094
 __node_2355	node	5400x5520 __net_1094 __or_2265.Y __node_2352
-__node_2357	node	5280x5520 __net_1467 __node_2371 __node_2454
+__node_2357	node	5280x5520 __net_1681 __node_2371 __node_2454
 __node_2358	node	5260x5580 __net_1163 __node_2373 __node_2495
 __node_2364	node	5400x6580 __net_1103
 __node_2368	node	5400x6560 __net_1103 __or_2266.Y __node_2364
-__node_2371	node	5280x6560 __net_1467 __node_2407
+__node_2371	node	5280x6560 __net_1681 __node_2407
 __node_2373	node	5260x6620 __net_1163 __node_2392
 __node_2392	node	5260x7450 __net_1163 __node_2426
 __node_2394	node	4920x7390 __net_1667 __node_3613
 __node_2398	node	5500x7410 __net_1111 __node_2401 __node_2401
 __node_2401	node	5500x7370 __net_1111 __or_2267.Y
-__node_2406	node	5280x12070 __net_1467 __node_2451
-__node_2407	node	5280x7370 __net_1467 __node_2425
+__node_2406	node	5280x12070 __net_1681 __node_2451
+__node_2407	node	5280x7370 __net_1681 __node_2425
 __node_2414	node	5500x8530 __net_1125
 __node_2416	node	4920x8510 __net_1667
 __node_2420	node	5500x8490 __net_1125 __or_2268.Y __node_2414
-__node_2425	node	5280x8490 __net_1467 __node_2440
+__node_2425	node	5280x8490 __net_1681 __node_2440
 __node_2426	node	5260x8570 __net_1163 __node_2441
 __node_2431	node	5400x9860 __net_1134
 __node_2436	node	5400x9840 __net_1134 __or_2271.Y __node_2431
-__node_2440	node	5280x9840 __net_1467 __node_2451
+__node_2440	node	5280x9840 __net_1681 __node_2451
 __node_2441	node	5260x9900 __net_1163
 __or_2442	or	5310x10900 __node_2451.Y __node_2449.Y
 __node_2449	node	4980x10920 __net_1404 __node_3302
-__node_2451	node	5280x10900 __net_1467
-__node_2453	node	5280x5150 __net_1467 __node_2454
-__node_2454	node	5280x5190 __net_1467
+__node_2451	node	5280x10900 __net_1681
+__node_2453	node	5280x5150 __net_1681 __node_2454
+__node_2454	node	5280x5190 __net_1681
 __node_2455	node	4960x5170 __net_1676 __node_3454 __node_3615
 __node_2456	node	5420x5210 __net_1148
 __node_2457	node	5420x5150 __net_1148 __or_2263.Y __node_2456
@@ -1096,24 +1096,24 @@ __node_2492	node	5400x5310 __net_1161 __and_2249.Y
 __node_2494	node	5260x5330 __net_1163 __node_2495
 __node_2495	node	5260x5370 __net_1163
 __node_2496	node	5420x5350 __net_451 __and_2247.Y
-__node_2498	node	5280x1540 __net_1467 __node_2500 __node_2519
+__node_2498	node	5280x1540 __net_1681 __node_2500 __node_2519
 __or_2499	or	5310x1470 __node_2224.Y __node_2500.Y
-__node_2500	node	5280x1490 __net_1467
+__node_2500	node	5280x1490 __net_1681
 __node_2504	node	5400x1470 __net_1168 __or_2499.Y
 __node_2505	node	5400x1450 __net_1168 __node_2504 __node_981
 __or_2507	or	5310x910 __node_2004.Y __node_2512.Y
 __node_2508	node	5400x890 __net_1032
 __node_2509	node	5400x910 __net_1032 __or_2507.Y __node_2508
-__node_2512	node	5280x930 __net_1467
+__node_2512	node	5280x930 __net_1681
 __label_2513	label	260x2040 Step_2
-__node_2519	node	870x1540 __net_1467 __node_2802
-__node_2520	node	870x1650 __net_1467 __node_2519
-tick	tgl	110x1710 1
+__node_2519	node	870x1540 __net_1681 __node_2802
+__node_2520	node	870x1650 __net_1681 __node_2519
+tick	tgl	110x1710 0
 __module_2536	module	250x2510 inc/siso.txt __node_2808.Y __node_2543.Y __node_2816.Y
 __label_2537	label	250x2460 Step_3
 __node_2538	node	970x2110 __net_1181 __module_1950.To
 __node_2539	node	970x2450 __net_1181 __node_2538
-__node_2543	node	200x2530 __net_1468 __node_2050
+__node_2543	node	200x2530 __net_1679 __node_2050
 __module_2550	module	3060x2250 inc/3_to_8_decoder.txt __node_2680.Y __node_2681.Y __node_2682.Y
 __module_2551	module	3060x1870 inc/3_to_8_decoder.txt __node_2683.Y __node_2684.Y __node_2685.Y
 __module_2553	module	3770x2250 inc/enable.txt __module_2550.Y0 __module_2550.Y1 __module_2550.Y2 __module_2550.Y3 __module_2550.Y4 __module_2550.Y5 __module_2550.Y6 __module_2550.Y7 __node_2977.Y
@@ -1167,25 +1167,25 @@ __node_2748	node	970x2530 __net_1284 __module_2536.To
 __node_2749	node	970x2870 __net_1284 __node_2748
 __module_2751	module	250x2930 inc/siso.txt __node_2811.Y __node_2753.Y __node_2814.Y
 __label_2752	label	250x2880 Step_4
-__node_2753	node	200x2950 __net_1468 __node_2543
-__node_2802	node	180x1540 __net_1467 __node_2824
+__node_2753	node	200x2950 __net_1679 __node_2543
+__node_2802	node	180x1540 __net_1681 __node_2824
 __node_2804	node	220x2030 __net_1300 __node_1952 __node_2805
 __node_2805	node	220x2090 __net_1300
 __node_2807	node	220x2450 __net_1181 __node_2539
 __node_2808	node	220x2510 __net_1181 __node_2807
 __node_2810	node	220x2870 __net_1284 __node_2749
 __node_2811	node	220x2930 __net_1284 __node_2810
-__node_2814	node	180x2970 __net_1467 __node_2816 __node_2853
-__node_2816	node	180x2550 __net_1467 __node_2819
-__node_2819	node	180x2130 __net_1467
+__node_2814	node	180x2970 __net_1681 __node_2816 __node_2853
+__node_2816	node	180x2550 __net_1681 __node_2819
+__node_2819	node	180x2130 __net_1681
 __diode_2822	diode	110x1670 __node_2826.Y
-__node_2824	node	180x1640 __net_1467 __node_2819
-__node_2825	node	80x1640 __net_1467 __node_2824
-__node_2826	node	80x1670 __net_1467 __node_2825
-__node_2828	node	200x1710 __net_1468 tick.Y
+__node_2824	node	180x1640 __net_1681 __node_2819
+__node_2825	node	60x1640 __net_1681 __node_2824
+__node_2826	node	60x1670 __net_1681 __node_2825
+__node_2828	node	200x1710 __net_1679 tick.Y __node_3634
 __diode_2829	diode	110x1690 __node_2830.Y
-__node_2830	node	80x1690 __net_1467 __node_2826
-__node_2832	node	200x1690 __net_1468 __diode_2829.Y
+__node_2830	node	60x1690 __net_1681 __node_2826 __node_3636
+__node_2832	node	200x1690 __net_1679 __diode_2829.Y
 __module_2842	module	250x3770 inc/siso.txt __node_2858.Y __node_2860.Y __node_2862.Y
 __module_2843	module	250x3350 inc/siso.txt __node_2849.Y __node_2851.Y __node_2853.Y
 __label_2844	label	250x3300 Step_5
@@ -1194,14 +1194,14 @@ __node_2846	node	970x2950 __net_1320 __module_2751.To
 __node_2847	node	970x3290 __net_1320 __node_2846
 __node_2848	node	220x3290 __net_1320 __node_2847
 __node_2849	node	220x3350 __net_1320 __node_2848
-__node_2851	node	200x3370 __net_1468 __node_2753 __node_2860
-__node_2853	node	180x3390 __net_1467
+__node_2851	node	200x3370 __net_1679 __node_2753 __node_2860
+__node_2853	node	180x3390 __net_1681
 __node_2855	node	970x3370 __net_1322 __module_2843.To
 __node_2856	node	970x3710 __net_1322 __node_2855
 __node_2857	node	220x3710 __net_1322 __node_2856
 __node_2858	node	220x3770 __net_1322 __node_2857
-__node_2860	node	200x3790 __net_1468 __node_3087
-__node_2862	node	180x3810 __net_1467 __node_2853 __node_3086
+__node_2860	node	200x3790 __net_1679 __node_3087
+__node_2862	node	180x3810 __net_1681 __node_2853 __node_3086
 __node_2864	node	1540x1570 __net_1347 __node_2909
 __node_2865	node	1540x9550 __net_1347 __node_2917
 __node_2866	node	1560x1570 __net_1348 __node_2910
@@ -1348,10 +1348,10 @@ __node_3077	node	970x4210 __net_1421 __module_3068.To
 __node_3078	node	970x4550 __net_1421 __node_3077
 __node_3079	node	220x4550 __net_1421 __node_3078
 __node_3080	node	220x4610 __net_1421 __node_3079
-__node_3082	node	200x4630 __net_1468 __node_3087 __node_3196
-__node_3084	node	180x4650 __net_1467 __node_3086 __node_3195
-__node_3086	node	180x4230 __net_1467
-__node_3087	node	200x4210 __net_1468
+__node_3082	node	200x4630 __net_1679 __node_3087 __node_3196
+__node_3084	node	180x4650 __net_1681 __node_3086 __node_3195
+__node_3086	node	180x4230 __net_1681
+__node_3087	node	200x4210 __net_1679
 __node_3088	node	1660x4190 __net_1665 __module_3068.S __node_3241 __node_3598
 __node_3089	node	1680x4610 __net_1656 __module_3069.S __node_3221 __node_3599
 __label_3091	label	1800x3040 Instruction_Set-8
@@ -1417,14 +1417,14 @@ __node_3182	node	970x5890 __net_1462 __module_3166.To
 __node_3183	node	970x6230 __net_1462 __node_3182
 __node_3184	node	220x6230 __net_1462 __node_3183
 __node_3185	node	220x6290 __net_1462 __node_3184
-__node_3187	node	200x6310 __net_1468 __node_3191
-__node_3189	node	180x6330 __net_1467 __node_3192
-__node_3191	node	200x5890 __net_1468 __node_3194
-__node_3192	node	180x5910 __net_1467 __node_3193
-__node_3193	node	180x5490 __net_1467 __node_3195
-__node_3194	node	200x5470 __net_1468 __node_3196
-__node_3195	node	180x5070 __net_1467
-__node_3196	node	200x5050 __net_1468
+__node_3187	node	200x6310 __net_1679 __node_3191
+__node_3189	node	180x6330 __net_1681 __node_3192
+__node_3191	node	200x5890 __net_1679 __node_3194
+__node_3192	node	180x5910 __net_1681 __node_3193
+__node_3193	node	180x5490 __net_1681 __node_3195
+__node_3194	node	200x5470 __net_1679 __node_3196
+__node_3195	node	180x5070 __net_1681
+__node_3196	node	200x5050 __net_1679
 __node_3197	node	1700x5030 __net_1487 __module_3163.S __node_3242
 __node_3198	node	1720x5450 __net_1476 __module_3164.S __node_3219
 __node_3199	node	1740x5870 __net_1500 __module_3166.S __node_3278
@@ -1534,7 +1534,6 @@ __node_3367	node	8110x4600 __net_1558 __node_3368
 __node_3368	node	8110x4620 __net_1558 __node_3369
 __node_3369	node	8110x4640 __net_1558 __node_3370
 __node_3370	node	8110x4660 __net_1558
-__node_3374	node	6330x4750 __net_1546
 __node_3378	node	8110x5190 __net_1558 __node_3380 __node_3380 __node_3398 __node_3399
 __node_3380	node	5510x5190 __net_1558 __node_3382 __node_3382
 __node_3382	node	5510x4220 __net_1558 __module_3337.o5
@@ -1719,3 +1718,13 @@ __node_3629	node	4480x5630 __net_1675 __and_3617.Y
 __node_3630	node	4960x5670 __net_1676 __and_3618.Y
 __node_3631	node	1420x5690 __net_1677 __node_3624
 alu	led	1880x460 __node_2110.Y
+__clk_3633	clk	90x1730 __node_3636.Y auto.Y
+__node_3634	node	200x1730 __net_1679 __clk_3633.Y
+__node_3636	node	60x1730 __net_1681
+auto	tgl	0x1750 1
+__node_3640	node	970x6310 __net_1683 __module_3165.To
+__node_3641	node	970x6650 __net_1683 __node_3640
+__node_3642	node	160x6650 __net_1683 __node_3641
+__node_3643	node	160x1780 __net_1683 __node_3642
+__node_3644	node	220x1780 __net_1683 __node_3643
+__node_3645	node	220x1670 __net_1683 __diode_2822.Y __node_3644

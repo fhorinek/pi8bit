@@ -70,14 +70,13 @@ class Controller():
         self.highlight_pos = False
         
         self.add_index = 0
-        self.add_list = ["label", "and", "or", "nand", "nor", "xor", "not", "diode", "led", "hex", "tgl", "input", "output", "memory"]
+        self.add_list = ["label", "and", "or", "nand", "nor", "xor", "not", "diode", "led", "hex", "tgl", "clk", "input", "output", "memory"]
         
         self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_font"] * self.zoom))
         self.label_font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_label_font"] * self.zoom))
         
         self.need_solve_drawable = True
         self.drawable = []
-        
         
     def highlight(self, mode, pos = False):
         self.highlight_mode = mode
@@ -335,7 +334,7 @@ class Controller():
             
             if width > 0 and w == 0:
                 w = 1
-            pygame.draw.line(self.canvas.surface_io, self.canvas.style["c_highlight"], start, end, w)        
+            pygame.draw.line(self.canvas.screen, self.canvas.style["c_highlight"], start, end, w)        
 
         if self.highlight_mode == LIGHT_POINT:
             width = self.canvas.style["d_point"]
@@ -348,7 +347,7 @@ class Controller():
             
             if width > 0 and w == 0:
                 w = 1
-            pygame.draw.circle(self.canvas.surface_io, self.canvas.style["c_highlight"], point, w)        
+            pygame.draw.circle(self.canvas.screen, self.canvas.style["c_highlight"], point, w)        
         
     def draw_highlight_box(self, rect):
         rect = Rect(rect)
@@ -359,7 +358,7 @@ class Controller():
         rect = Rect([int(x * self.zoom) for x in rect]) 
         if width > 0 and w == 0:
             w = 1
-        pygame.draw.rect(self.canvas.surface_io, self.canvas.style["c_highlight"], rect, w)
+        pygame.draw.rect(self.canvas.screen, self.canvas.style["c_highlight"], rect, w)
         
     def mk_surface(self, rect):
         size = [int(rect.w * self.zoom), int(rect.h * self.zoom)]
@@ -513,6 +512,7 @@ class Controller():
         o.middle_offset()
         pos = "%dx%d" % (pos[0], pos[1])
         o.parse([name, fcs, pos] + params)
+        self.request_redraw()
         self.canvas.request_io_redraw() 
         self.solve_drawable()
         return o     
@@ -527,6 +527,7 @@ class Controller():
         if net is False:
             net = self.add_net()
         o.parse([name, "node", pos, net.name])
+        self.request_redraw()
         self.canvas.request_io_redraw() 
         self.solve_drawable()
         return o     
@@ -553,6 +554,7 @@ class Controller():
         if name in self.objects:
             self.objects[name].disconnect()
             del self.objects[name]
+            self.canvas.request_redraw()
             self.canvas.request_io_redraw()
             self.solve_drawable()
             
@@ -560,13 +562,13 @@ class Controller():
         for o in objs:
             if o not in self.selected and not isinstance(o, Invisible):
                 self.selected.append(o)
-                self.canvas.request_io_redraw()
+                #self.canvas.request_io_redraw()
                 
     def deselect_obj(self, objs):
         for o in objs:
             if o in self.selected:
                 self.selected.remove(o)
-                self.canvas.request_io_redraw()
+                #self.canvas.request_io_redraw()
     
     def tglselect_obj(self, obj):
         if obj in self.selected:
@@ -576,7 +578,7 @@ class Controller():
                         
     def clear_selection(self):
         self.selected = []
-        self.canvas.request_io_redraw()                
+        #self.canvas.request_io_redraw()                
             
     def rename_obj(self, obj, new_name):
         if new_name in self.objects:
@@ -998,6 +1000,7 @@ class Controller():
                         return        
 
                     self.new_node = False
+                    self.canvas.request_redraw()
                                
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == RIGHT:
                 if self.new_node is not False:
@@ -1036,6 +1039,7 @@ class Controller():
                         obj.clear_input(obj_pin)
                         self.highlight(LIGHT_NONE)
                         self.solve_drawable()
+                        self.canvas.request_redraw()
                         return                  
                     
                     target = self.get_net_line_pos([mouse_x, mouse_y], [self.new_node])
@@ -1046,6 +1050,7 @@ class Controller():
                         node2.remove_sibling(node1)
                         net.rebuild()
                         self.canvas.request_io_redraw()
+                        self.canvas.request_redraw()
                         self.highlight(LIGHT_NONE)
                         self.solve_drawable()
                         return     
@@ -1053,6 +1058,7 @@ class Controller():
             if event.type == pygame.MOUSEMOTION:
                 if self.new_node is not False:
                     self.new_node.set_pos(mouse_x, mouse_y)
+                    self.canvas.request_redraw()
 
                 target = self.get_object_pos([mouse_x, mouse_y], [self.new_node])
 #                 print "get_object_pos", target
@@ -1117,12 +1123,13 @@ class Controller():
                 self.new_node.middle_offset()
                 self.new_node.parse([name, fcs, pos])
                 self.new_node.drawable = True
-                self.new_node.drawable_io = True
-                
+                self.canvas.request_redraw()
+                                
             if event.type == pygame.MOUSEMOTION:
                 if self.new_node is not False:
                     self.new_node.set_pos(mouse_x, mouse_y)
                     self.new_node.clear_io_cache()
+                    self.canvas.request_redraw()
             
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
                 o = self.add_object(self.add_list[self.add_index], [mouse_x, mouse_y])
@@ -1139,7 +1146,6 @@ class Controller():
                 self.new_node.parse([name, fcs, pos])
                 self.new_node_filename = self.new_node.filename
                 self.new_node.drawable = True
-                self.new_node.drawable_io = True
             
             if event.type == pygame.MOUSEMOTION:
                 if self.new_node is not False:

@@ -18,7 +18,7 @@ from pygame.rect import Rect
 
 class Canvas():
     def __init__(self):
-        self.size = (800, 800)
+        self.size = (800 , 600)
         self.screen_flags = pygame.DOUBLEBUF | pygame.RESIZABLE | pygame.HWSURFACE
         self.surface_flags = pygame.HWSURFACE
         
@@ -56,8 +56,8 @@ class Canvas():
         self.controller = Controller(self, False)
 
         self.update_surfaces()
-        self.need_io_redraw = True
         self.need_redraw = True
+        self.need_io_redraw = True
         
         self.cells = OrderedDict()
 
@@ -78,6 +78,7 @@ class Canvas():
         self.add_cell("hex", outputs.HexDisplay)
  
         self.add_cell("tgl", inputs.Toggle)        
+        self.add_cell("clk", inputs.Clock)        
         
         self.add_cell("module", module.module)        
         self.add_cell("input", module.minput)        
@@ -99,10 +100,6 @@ class Canvas():
     def update_surfaces(self):
         self.screen = pygame.display.set_mode(self.size, self.screen_flags)
         self.rect = self.screen.get_rect()
-        self.surface_io = self.screen
-#         self.surface_io = pygame.Surface(self.size, self.surface_flags)
-#         self.surface_io.set_colorkey((0, 0, 0))
-        
         self.controller.solve_drawable()
   
     def add_cell(self, name, cell):
@@ -119,10 +116,10 @@ class Canvas():
         lines = (start, end)
         w = max(int(zoom * self.style["d_line_height"]), 1)
         
-        pygame.draw.lines(self.surface_io, color, False, lines, w)
+        pygame.draw.lines(self.screen, color, False, lines, w)
         
     def draw_circle(self, color, pos, zoom):
-        pygame.draw.circle(self.surface_io, color, pos, int(zoom * self.style["d_point"]))
+        pygame.draw.circle(self.screen, color, pos, int(zoom * self.style["d_point"]))
     
    
     def draw_status(self, text):
@@ -142,6 +139,7 @@ class Canvas():
             if event.type == pygame.VIDEORESIZE:
                 self.size = event.dict['size']
                 self.update_surfaces()
+                self.request_redraw()
                 self.request_io_redraw()
                 return
              
@@ -167,7 +165,6 @@ class Canvas():
         if self.mode is MODE_IDLE:
             self.controller.tick()
             
-#         self.surface_io.lock()
         
         if self.need_redraw:
             self.screen.fill((0, 0, 0))
@@ -175,15 +172,10 @@ class Canvas():
             self.need_redraw = False
             
         if self.need_io_redraw:
-#             self.surface_io.fill((0, 0, 0))
             self.controller.clear_io_cache()
             self.need_io_redraw = False
             
         self.controller.draw(self.mode)
-#         self.surface_io.unlock()        
-        
-#         self.screen.blit(self.surface_io, [0, 0])
-        
         
         if self.mode is MODE_IDLE:
             self.draw_status("run")

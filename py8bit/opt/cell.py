@@ -25,7 +25,6 @@ class Cell():
         self.fcs = "cell"    
         
         self.drawable = False
-        self.drawable_io = False
         self.border = Rect(0,0,0,0)
         
         self.need_redraw = False
@@ -103,6 +102,7 @@ class Cell():
         self.rect.x = x - self.move_offset_x
         self.rect.y = y - self.move_offset_y
         self.update_io_xy()
+        self.request_redraw()
         
     def clear_input(self, name):
         self.inputs[name] = False
@@ -327,22 +327,21 @@ class Cell():
                 else:
                     break
               
-    def solve_drawable(self, window, drawable_list):
-        tmp = Rect(self.rect)
-        
-        self.drawable = tmp.colliderect(window)
+    def calc_border(self):
+        self.border = Rect(self.rect)
             
         for c in self.inputs:
             if self.inputs[c] is not False:
                 in_obj, in_pin = self.inputs[c]
                 if not isinstance(in_obj, Invisible):
                     x, y = in_obj.output_xy[in_pin]
-                    tmp = tmp.union(Rect(x, y, 0, 0))
-        
-        self.drawable_io = tmp.colliderect(window)
-        self.border = tmp
+                    self.border = self.border.union(Rect(x, y, 0, 0))        
+              
+    def solve_drawable(self, window, drawable_list):
+        self.calc_border()
+        self.drawable = self.border.colliderect(window)
 
-        if self.drawable or self.drawable_io:
+        if self.drawable:
             drawable_list.append(self)        
         
 class Invisible(Cell):

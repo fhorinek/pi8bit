@@ -37,7 +37,6 @@ class module(Cell, Controller):
                 o.set_module(self)
                 
             o.drawable = True
-            o.drawable_io = True   
     
         del arr[3]
         Cell.parse_cfg(self, arr)
@@ -91,7 +90,7 @@ class module(Cell, Controller):
         if (self.update_request):
             self.update_request = False
             self.update_body()
-            self.canvas.request_io_redraw()
+            self.clear_io_cache()
             
         Cell.draw(self)
         
