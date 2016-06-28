@@ -4,6 +4,11 @@ import sys
 
 global line
 global line_n
+global labels
+global labels_adr
+global address
+global variabiles
+global variabiles_adr
 
 class CompileError(Exception):
     def __init__(self, value):
@@ -71,18 +76,27 @@ def cmd_load(params):
     'j1': 0b110,
     'j2': 0b111}
     
-    if len(params) <> 2:
-        raise CompileError("Exactly 2 parameters required!")
-    if params[0] in map_8:
-        
-        adr = parse_int(params[1])
-        a = 0b10111000         
-        lo = (adr & 0x00FF) >> 0
-        hi = (adr & 0xFF00) >> 8
-        b = 0b10100000 | map_8[params[0]]
-        return [a, hi, lo, b]
+    if len(params) < 1:
+        raise CompileError("At least 1 parameter required!")
     
-    raise CompileError("Invalid destination register")    
+    a = 0b10111000         
+    b = 0b10101000 | map_8[params[0]]
+    
+    if params[0] not in map_8:
+        raise CompileError("Invalid destination register")    
+    
+    if len(params) == 1:
+        return [b]
+    
+    if params[1] in variabiles:
+        variabiles_adr[address + 1] = params[1]
+        return [a, 0, 0, b]
+    
+    adr = parse_int(params[1])
+    lo = (adr & 0x00FF) >> 0
+    hi = (adr & 0xFF00) >> 8
+    return [a, lo, hi, b]
+
     
 def cmd_store(params):
     map_8 = {
@@ -92,21 +106,29 @@ def cmd_store(params):
     'd' : 0b011,
     'x' : 0b100,
     'y' : 0b101,
-    'j1': 0b110,
-    'j2': 0b111}
+    'ff': 0b110,
+    '00': 0b111}
     
-    if len(params) <> 2:
-        raise CompileError("Exactly 2 parameters required!")
+    if len(params) < 1:
+        raise CompileError("At least 1 parameter required!")
     
-    if params[0] in map_8:
-        adr = parse_int(params[1])
-        a = 0b10110000         
-        lo = (adr & 0x00FF) >> 0
-        hi = (adr & 0xFF00) >> 8
-        b = 0b10100000 | map_8[params[0]]
-        return [a, hi, lo, b]
-    
-    raise CompileError("Invalid source register")        
+    if params[0] not in map_8:
+        raise CompileError("Invalid source register")
+        
+    a = 0b10111000         
+    b = 0b10110000 | map_8[params[0]]
+        
+    if len(params) == 1:
+        return [b]
+   
+    if params[1] in variabiles:
+        variabiles_adr[address + 1] = params[1]
+        return [a, 0, 0, b]   
+   
+    adr = parse_int(params[1])
+    lo = (adr & 0x00FF) >> 0
+    hi = (adr & 0xFF00) >> 8
+    return [a, lo, hi, b]
     
 def cmd_set(params):
     map_8 = {
@@ -138,7 +160,7 @@ def cmd_set(params):
         val = parse_int(params[1])
         lo = (val & 0x00FF) >> 0
         hi = (val & 0xFF00) >> 8
-        return [a, hi, lo]
+        return [a, lo, hi]
     
     raise CompileError("Invalid destination register")
 
@@ -187,16 +209,25 @@ jump_op = {
 }
 
 def cmd_jump(op, params):
+    a = 0b10111010         
+    b = 0b10010000 | jump_op[op]
+
+    if len(params) == 0: 
+        return [b]
+    
+    labels_adr[address + 1] = params[0]
+    
+    return [a, 0, 0, b]
+
+def cmd_call(params):
     if len(params) <> 1: 
         raise CompileError("Exactly 1 parameter required!")
-    
-    adr = parse_int(params[0])
-    a = 0b10110010         
-    lo = (adr & 0x00FF) >> 0
-    hi = (adr & 0xFF00) >> 8
-        
-    b = 0b10010000 | jump_op[op]
-    return [a, hi, lo, b]
+
+    labels_adr[address + 1] = params[0]
+
+    a = 0b10111010         
+    b = 0b10111100
+    return [a, 0, 0, b]
 
 filename = "hello_world.asm"#sys.argv[1]
 output = "out.a"
@@ -206,15 +237,37 @@ b = open(output, "wb")
 
 
 line_n = 0
+address = 0
+labels = {}
+labels_adr = {}
+variabiles = {}
+variabiles_loc = {}
+variabiles_adr = {}
 
+program = []
 
 for line in f.readlines():
     data = line.lower().split()
     if len(data) == 0:
         continue
+    
+    if data[0][0] == "#":
+        continue
+    
+    if data[0][0] == ":":
+        labels[data[0][1:]] = address
+        print labels
+        continue    
+
     cmd = data[0]
     params = data[1:]
     print cmd, params
+
+    if cmd == "var":
+        if len(params) <> 2:
+            raise CompileError("Exactly 2 parameters required!")
+        variabiles[params[0]] = parse_int(params[1])
+        continue
     
     inst = ""
     if cmd == "set":
@@ -235,8 +288,14 @@ for line in f.readlines():
     if cmd in jump_op:
         inst = cmd_jump(cmd, params)
     
+    if cmd == "call":
+        inst = cmd_call(params)    
+    
     if cmd == "ret":
-        inst = [0b10111100]
+        inst = [0b10111101]
+        
+    if cmd == "halt":
+        inst = [0b10111110]        
     
     if len(inst) == 0:
         raise CompileError("Unknown command!")
@@ -246,10 +305,34 @@ for line in f.readlines():
         print "%02X" % i,
     print
     
-    inst = "".join(map(chr, inst))
-    b.write(inst)
+    program += inst
+    address += len(inst)
     line_n += 1
     
+    
+for loc in labels_adr:
+    if labels_adr[loc] not in labels:
+        raise Exception("Unknown label '%s'!" % labels_adr[loc])
+    
+    adr = labels[labels_adr[loc]]
+    lo = (adr & 0x00FF) >> 0
+    hi = (adr & 0xFF00) >> 8
+    program[loc + 0] = lo
+    program[loc + 1] = hi
+    
+for var_name in variabiles:
+    variabiles_loc[var_name] = len(program)
+    program.append(variabiles[var_name])
+    
+for loc in variabiles_adr:
+    adr = variabiles_loc[variabiles_adr[loc]]
+    lo = (adr & 0x00FF) >> 0
+    hi = (adr & 0xFF00) >> 8
+    program[loc + 0] = lo
+    program[loc + 1] = hi   
+
+b.write("".join(map(chr, program)))    
+
 f.close()
 b.close()
     

@@ -54,7 +54,8 @@ class Memory(cell.Cell):
             
             if len(self.bin_data) > 0x10000:
                 self.bin_data = self.bin_data[0:0x10000]
- 
+                
+            print "File change %02X at %04X" % (self.data, self.address)
             self.data = self.bin_data[self.address]
  
             self.file = True

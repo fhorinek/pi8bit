@@ -1,4 +1,5 @@
-set a 10
-set b 20
-inc c
-store c 0x20
+var test 1
+load A test
+inc C
+store C test
+halt

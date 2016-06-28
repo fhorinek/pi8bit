@@ -140,7 +140,6 @@ class Canvas():
                 self.size = event.dict['size']
                 self.update_surfaces()
                 self.request_redraw()
-                self.request_io_redraw()
                 return
              
             self.controller.event(event, self.mode)
@@ -151,7 +150,6 @@ class Canvas():
     def set_mode(self, mode):
         self.mode = mode
         self.request_redraw()
-        self.request_io_redraw()
         
     def request_io_redraw(self):
         self.need_io_redraw = True
@@ -170,6 +168,7 @@ class Canvas():
             self.screen.fill((0, 0, 0))
             self.controller.request_redraw()
             self.need_redraw = False
+            self.need_io_redraw = True
             
         if self.need_io_redraw:
             self.controller.clear_io_cache()

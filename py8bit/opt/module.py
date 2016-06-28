@@ -125,7 +125,9 @@ class module(Cell, Controller):
         
     def clear_io_cache(self):
         Cell.clear_io_cache(self)
-        Controller.clear_io_cache(self)
+        
+        for k in self.objects:
+            self.objects[k].clear_io_cache()   
         
 class minput(Cell):
     def __init__(self, parent):

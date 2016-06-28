@@ -379,11 +379,10 @@ class Controller():
             self.new_node.update_body()
             
         self.canvas.request_redraw()
-        self.canvas.request_io_redraw()
         
     def request_redraw(self):
-        for k in self.objects:
-            self.objects[k].request_redraw()     
+        for o in self.drawable:
+            o.request_redraw()     
         
     def solve_drawable(self):
         self.need_solve_drawable = True
@@ -432,8 +431,8 @@ class Controller():
     def request_update(self): pass
             
     def clear_io_cache(self):
-        for k in self.objects:
-            self.objects[k].clear_io_cache()              
+        for o in self.drawable:
+            o.clear_io_cache()              
             
     def get_object_pos(self, pos, exclude = []):
         pos = list(pos)
@@ -513,7 +512,6 @@ class Controller():
         pos = "%dx%d" % (pos[0], pos[1])
         o.parse([name, fcs, pos] + params)
         self.request_redraw()
-        self.canvas.request_io_redraw() 
         self.solve_drawable()
         return o     
 
@@ -528,7 +526,6 @@ class Controller():
             net = self.add_net()
         o.parse([name, "node", pos, net.name])
         self.request_redraw()
-        self.canvas.request_io_redraw() 
         self.solve_drawable()
         return o     
     
@@ -555,7 +552,6 @@ class Controller():
             self.objects[name].disconnect()
             del self.objects[name]
             self.canvas.request_redraw()
-            self.canvas.request_io_redraw()
             self.solve_drawable()
             
     def select_obj(self, objs):
@@ -568,7 +564,7 @@ class Controller():
         for o in objs:
             if o in self.selected:
                 self.selected.remove(o)
-                #self.canvas.request_io_redraw()
+                self.canvas.request_redraw()
     
     def tglselect_obj(self, obj):
         if obj in self.selected:
@@ -690,7 +686,6 @@ class Controller():
                 
                 self.solve_drawable()
                 self.canvas.request_redraw()
-                self.canvas.request_io_redraw()
       
             
         #ZOOM is working allways
@@ -1049,7 +1044,6 @@ class Controller():
                         node1.remove_sibling(node2)
                         node2.remove_sibling(node1)
                         net.rebuild()
-                        self.canvas.request_io_redraw()
                         self.canvas.request_redraw()
                         self.highlight(LIGHT_NONE)
                         self.solve_drawable()
