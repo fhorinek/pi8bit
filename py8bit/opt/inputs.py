@@ -32,7 +32,7 @@ class Clock(cell.Cell):
     def __init__(self, parent):
         cell.Cell.__init__(self, parent)
         self.clk = 0
-        self.max = 20
+        self.max = 10
         self.val = 0
         self.last_val = 1
         

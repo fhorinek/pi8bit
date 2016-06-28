@@ -94,7 +94,7 @@ store to memory
 	1 1 1	J2		
 	
 return
-	X X X X X X X X
+	1 0 1 1 1 1 0 0
 	[XY] -> PC
 	
 jump
@@ -103,7 +103,7 @@ jump
 	use this flags
 		Z - if zero
 		O - if overflow
-		S - if asign
+		S - if sign
 	[PC] += 1
 	if flag
 		[PC] -> [XY] 

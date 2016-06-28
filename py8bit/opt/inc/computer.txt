@@ -218,7 +218,7 @@ __node_327	node	7300x8660 __net_677 __module_248.B4
 __node_328	node	7310x8680 __net_465 __module_248.B5
 __node_329	node	7320x8700 __net_675 __module_248.B6
 __node_330	node	7330x8720 __net_537 __module_248.B7
-RESET	tgl	4810x340 1
+RESET	tgl	4810x340 0
 __node_337	node	5120x3320 __net_1197 __node_337 __node_2569
 __node_338	node	5100x4370 __net_1198 __node_338 __node_2570
 __node_339	node	5080x5540 __net_1508 __node_339 __node_3296
