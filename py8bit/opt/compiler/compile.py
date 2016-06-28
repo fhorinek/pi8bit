@@ -247,6 +247,7 @@ variabiles_adr = {}
 program = []
 
 for line in f.readlines():
+    print line.replace("\n", "")
     data = line.lower().split()
     if len(data) == 0:
         continue
@@ -256,12 +257,10 @@ for line in f.readlines():
     
     if data[0][0] == ":":
         labels[data[0][1:]] = address
-        print labels
         continue    
 
     cmd = data[0]
     params = data[1:]
-    print cmd, params
 
     if cmd == "var":
         if len(params) <> 2:
@@ -309,6 +308,7 @@ for line in f.readlines():
     address += len(inst)
     line_n += 1
     
+print "\nReplacing labels with address"    
     
 for loc in labels_adr:
     if labels_adr[loc] not in labels:
@@ -320,9 +320,14 @@ for loc in labels_adr:
     program[loc + 0] = lo
     program[loc + 1] = hi
     
+    print "\t0x%04X\t%s\t0x%02X" % (loc, labels_adr[loc], adr)
+    
+print "\nWriting variabiles section"    
+    
 for var_name in variabiles:
     variabiles_loc[var_name] = len(program)
     program.append(variabiles[var_name])
+    print "\t0x%04X\t%s\t0x%02X" % (variabiles_loc[var_name], var_name, variabiles[var_name])
     
 for loc in variabiles_adr:
     adr = variabiles_loc[variabiles_adr[loc]]
