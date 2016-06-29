@@ -28,6 +28,7 @@ class Cell():
         self.border = Rect(0,0,0,0)
         
         self.need_redraw = False
+        self.need_body_update = False
         self.zoom = False
 
     def click(self): pass          
@@ -141,7 +142,7 @@ class Cell():
         self.fcs = arr[1]
         self.parse_cfg(arr)
         self.update_rect()  
-        self.update_body()
+        self.request_update_body()
         try:
             x,y = map(int, arr[2].split("x"))
             self.set_pos(x, y)
@@ -179,7 +180,12 @@ class Cell():
     
     def update(self):
         self.update_rect()
-        self.update_body()
+        self.request_update_body()
+
+    def request_update_body(self):
+        self.need_body_update = True
+        self.parent.request_update()
+        self.request_redraw()
 
     def update_body(self, state = None):
         rect = Rect(0, 0, self.rect.w, self.rect.h)
@@ -214,8 +220,7 @@ class Cell():
             for c in self.outputs:
                 rect = self.get_output_rect(c)
                 self.parent.draw_text(self.surface, c, rect)
- 
-        self.parent.request_update()
+        
         self.request_redraw()
         
     def request_redraw(self):
@@ -223,6 +228,10 @@ class Cell():
     
     def draw(self):
         if self.need_redraw:
+            if self.need_body_update:
+                self.update_body()
+                self.need_body_update = False
+                
             self.parent.blit(self.surface, self.rect)
             self.need_redraw = False
     

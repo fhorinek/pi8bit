@@ -371,12 +371,10 @@ class Controller():
         self.solve_drawable()
 
         for k in self.objects:
-            self.objects[k].update_body()
-#         for o in self.drawable:
-#             o.update_body()   
+            self.objects[k].request_update_body()
               
         if self.canvas.mode == MODE_ADD:
-            self.new_node.update_body()
+            self.new_node.request_update_body()
             
         self.canvas.request_redraw()
         
@@ -1140,13 +1138,16 @@ class Controller():
                 self.new_node.parse([name, fcs, pos])
                 self.new_node_filename = self.new_node.filename
                 self.new_node.drawable = True
+                self.canvas.request_redraw()
             
             if event.type == pygame.MOUSEMOTION:
                 if self.new_node is not False:
                     self.new_node.set_pos(mouse_x, mouse_y)
                     self.new_node.clear_io_cache()
+                    self.canvas.request_redraw()
             
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
                 o = self.add_object("module", [mouse_x, mouse_y], [self.new_node_filename])
                 self.apply_grid(o)                
+                
                 

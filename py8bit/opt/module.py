@@ -2,7 +2,6 @@ from cell import Cell
 from controller import Controller
 from pygame import Rect
 from utils import file_opendialog
-import os
 
 class module(Cell, Controller):
     def __init__(self, parent):
@@ -11,6 +10,7 @@ class module(Cell, Controller):
         self.offset_x = 0
         self.offset_y = 0
         self.update_request = False
+        self.old_zoom = False
         
     def get_params(self):
         arr = Cell.get_params(self)
@@ -87,9 +87,9 @@ class module(Cell, Controller):
         self.surface.blit(surface, rect)
     
     def draw(self):
-        if (self.update_request):
+        if self.update_request:
             self.update_request = False
-            self.update_body()
+            self.request_update_body()
             self.clear_io_cache()
             
         Cell.draw(self)
@@ -108,9 +108,12 @@ class module(Cell, Controller):
         self.font = self.parent.font
         self.label_font = self.parent.label_font
         
-        Cell.update_body(self, state=state)
+        if self.old_zoom is not self.zoom:
+            Cell.update_body(self, state=state)
+            self.old_zoom = self.zoom
+            
         for k in self.objects:
-            self.objects[k].update_body()
+            self.objects[k].request_update_body()
             self.objects[k].draw()
             
         #update_request is invalid since all cell were allready redrawn (and it is triggered by Cell.update_body())
@@ -146,14 +149,14 @@ class minput(Cell):
             
         if (self.old_value is not self.val):
             self.old_value = self.val
-            self.update_body()       
+            self.request_update_body()       
                  
         return self.val
         
     def click(self):
         if self.module is None:
             self.val = not self.val
-            self.update_body()       
+            self.request_update_body()       
         
     def update_body(self, state=None):
         Cell.update_body(self, state=self.val)
@@ -168,7 +171,7 @@ class moutput(Cell):
     def tick(self):
         if (self.old_value is not self.input("A")):
             self.old_value = self.input("A")
-            self.update_body()
+            self.request_update_body()
                     
     def update_body(self, state=None):
         Cell.update_body(self, state=self.input("A"))

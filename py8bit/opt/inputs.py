@@ -22,7 +22,7 @@ class Toggle(cell.Cell):
 
     def click(self):
         self.val = not self.val
-        self.update_body()
+        self.request_update_body()
 
     def get_params(self):
         arr = cell.Cell.get_params(self)
@@ -52,7 +52,7 @@ class Clock(cell.Cell):
             
         self.val = int(self.clk > self.max)
         if self.val <> self.last_val:
-            self.update_body()
+            self.request_update_body()
             self.last_val = self.val
 
     def calc(self, pin):

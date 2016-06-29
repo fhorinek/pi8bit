@@ -1,3 +1,5 @@
-in1	input	0x20
-led2	led	310x20 __clk_44.Y
-__clk_44	clk	140x0 LOW.Y in1.Y
+in1	input	0x40
+led2	led	540x10 __module_1.__output_21
+__module_1	module	110x0 inc/select2.txt __node_2.Y __node_6.Y __node_6.Y
+__node_2	node	80x0 __net_1
+__node_6	node	80x40 __net_1 in1.Y __node_2

@@ -1,0 +1,172 @@
+Register descriptions
+
+	1-bit register
+		this bits are written after every ALU operation (ADD, INC, AND, OR, XOR, NOT, SHL, NOP) 
+		Zero		Set if every output bit of ALU is cleared   
+		Sign		Set if highest bit is set
+		Overflow	Set if ther is an overflow condition during ADD or INC operation
+
+	8-bit registers
+	name	access from 8-bit bus
+		A		RW - general purpose register, used by ALU as first operand   
+		B 		RW - general purpose register, used by ALU as first operand
+		C		RW  - general purpose register
+		D 		RW - general purpose register
+		M1		RW - lower byte of 16-bit register M
+		M2		RW - higher byte of 16-bit register M
+		X		RW - lower byte of 16-bit register XY
+		Y		RW - higher byte of 16-bit register XY
+		J1		W  - lower byte of 16-bit register J
+		J2 		W  - higher byte of 16-bit register J
+		Inst	NA - special register, storing active instruction, accessed only by controler
+		 
+	16-bit register
+	name	access from 16-bit bus
+ 		PC		RW - program counter, storing actual position in memory
+ 		M		R  - memory address, storing address for storing and loading variabiles from memory
+ 		XY		RW - general purpose register, used by call instruction as return address
+ 				   - only register with RW access from both 8-bit and 16-bit bus
+		J		R  - jump address, storing address for jump and call instruction
+		INC		R  - special register, used for incrementing any data enabled on 16-bit bus
+
+Command description
+
+	move	source	destination
+	Move data between registers
+		Write data from source register to destination register
+		Both source and the destination have to be either 8-bit or 16-bit registers
+		8-bit registers
+			Sources 		A, B, C, D, X, Y, M1, M2
+			Destinations	A, B, C4, D, X, Y, M1, M2
+		16-bit registers
+			Sourcers		PC, INC, J, M, XY, FFFF (1), 0000 (1)
+			Destinations	PC, XY
+			notes: 
+				(1) FFFF and 0000 are not real registers only hard wired fixed values
+				
+	load	destination		[address | variabile name]
+	Load data from memory
+		Load data to destination register from memory address stored in M register
+		If address or varaiabile name is specified, then M register is loded with specified address first
+		Destinations		A, B, C, D, X, Y, J1, J2
+		
+	store	source			[address | variabile name]
+	Instructions takes 8 clock cycles
+	Store data to memory
+		Write data from source register to memory address stored in M register
+		If address or varaiabile name is specified, then M register is loded with specified address first
+		Destinations		A, B, C, D, X, Y, FF (2), 00 (2)
+		notes:
+			(2) FF and 00 are not real registers only hard wired fixed values
+			
+	set		destination		value | label
+	Set register to specified value
+	Instructions takes 8 clock cycles
+		Set destination register to specified value
+		If label is secified instead of value, than label address is used (3) 
+		Destinations	8-bit	A, B, C, D, X, Y, M1, M2 
+						16-bit	M, XY, AB (4)
+		notes:
+			(3) Only avalible with 16-bit registers
+			(4) AB is not 16-bit register, this pseudo register can be used to quickly set A and B register
+				A will be loaded whith low byte and B with high byte
+				
+	add		destination
+	Add two values
+		Perform add operation with A and B register and store result in destination register
+		Destinations		C, D, X, Y, M1, M2, J1, J2
+		
+	inc		destination
+	Increment value
+		Increment A register by one and store result in destination register
+		Destinations		C, D, X, Y, M1, M2, J1, J2
+		
+	and		destination
+	Perform AND logic operation
+		Perform and operation with A and B register and store result in destination register
+		Destinations		C, D, X, Y, M1, M2, J1, J2
+		
+	or		destination
+	Perform OR logic operation
+		Perform or operation with A and B register and store result in destination register
+		Destinations		C, D, X, Y, M1, M2, J1, J2
+		
+	xor		destination
+	Perform XOR (exclusive or) logic operation
+		Perform xor operation with A and B register and store result in destination register
+		Destinations		C, D, X, Y, M1, M2, J1, J2
+		
+	not		destination
+	Negate value
+		Negate A register and store result in destination register
+		Destinations		C, D, X, Y, M1, M2, J1, J2
+		
+	shl		destination
+	Byte shift left
+		Shift A register to the left and store result in destination register
+		Destinations		C, D, X, Y, M1, M2, J1, J2
+		
+	nop
+	No operation
+		Perform dummy operation
+		
+	jmp		[address | label]
+	Jump
+		Set program counter to address stored in J register
+		If address or label is specifier than J register is loaded with address or label address first
+		This jump is unconditional
+			
+	jez		[address | label]
+	Jump if equal zero
+		Set program counter to address stored in J register
+		If address or label is specifier than J register is loaded with address or label address first
+		This jump will be executed only if zero flag is set
+			
+	jnz		[address | label]
+	Jump if not equal zero
+		Set program counter to address stored in J register
+		If address or label is specifier than J register is loaded with address or label address first
+		This jump will be executed only if zero flag is cleared
+			
+	jeo		[address | label]
+	Jump if overflow
+		Set program counter to address stored in J register
+		If address or label is specifier than J register is loaded with address or label address first
+		This jump will be executed only if overflow flag is set
+			
+	jno		[address | label]
+	Jump if not overflow
+		Set program counter to address stored in J register
+		If address or label is specifier than J register is loaded with address or label address first
+		This jump will be executed only if overflow flag is cleared
+		
+	jes		[address | label]
+	Jump if positive
+		Set program counter to address stored in J register
+		If address or label is specifier than J register is loaded with address or label address first
+		This jump will be executed only if sign flag is set
+			
+	jns		[address | label]
+	jump if negative
+		Set program counter to address stored in J register
+		If address or label is specifier than J register is loaded with address or label address first
+		This jump will be executed only if sign flag is cleared		
+		
+	call	[address | label]
+	call function
+		Store Program counter value to XY register and program counter to address stored in J register
+		If address or label is specifier than J register is loaded with address or label address first
+		This jump is unconditional	
+		
+	ret
+	return from function
+		Set program counter to value stored in XY register 
+		
+	halt
+	Stop execution
+		Disable automatic clock
+		
+	err
+	Rise error in execution
+		Disable automatic clock and set error flag
+	

@@ -25,7 +25,7 @@ class HexDisplay(cell.Cell):
         val += self.input("A7") * 128        
         if (self.old_value is not val):
             self.old_value = val
-            self.update_body()
+            self.request_update_body()
                     
     def update_body(self):
         cell.Cell.update_body(self)
@@ -50,7 +50,7 @@ class Led(cell.Cell):
     def tick(self):
         if (self.old_value is not self.input("A")):
             self.old_value = self.input("A")
-            self.update_body()
+            self.request_update_body()
         
     def update_body(self):
         cell.Cell.update_body(self, state = self.input("A"))

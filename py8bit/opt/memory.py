@@ -63,7 +63,7 @@ class Memory(cell.Cell):
             self.file = False
             self.filename = "[error]"
             
-        self.update_body()
+        self.request_update_body()
 
     def tick(self):
         if self.file == False:
@@ -92,7 +92,7 @@ class Memory(cell.Cell):
                 need_update = True
 
         if need_update:
-            self.update_body()
+            self.request_update_body()
             
         cell.Cell.tick(self)
         

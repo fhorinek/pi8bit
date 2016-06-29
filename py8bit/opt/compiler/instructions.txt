@@ -1,3 +1,16 @@
+bit alocation	
+
+0 0 S S S D D D		move-8
+0 1 O O O D D D		alu
+1 0 0 0 S S S D		move-16
+1 0 0 1 N Z O F		jump
+1 0 1 0 0 D D D		set-8
+1 0 1 0 1 D D D		load
+1 0 1 1 0 S S S		store
+1 0 1 1 1 0 D D    	set-16
+1 0 1 1 1 1 O O		call
+
+
 move-8
 	0 0 S S S D D D
 	[A, B, C, D, M1, M2, X, Y] -> [A, B, C, D, X, Y, M1, M2]
@@ -103,6 +116,7 @@ call
 	0 1		return
 		[XY] -> [PC]
 	1 0 	halt
+	1 1		error
 		
 jump
 	1 0 0 1 N Z O S
@@ -114,17 +128,3 @@ jump
 	[PC] += 1
 	if flag
 		[J] -> [PC]
-	
-
-	
-alocation	
-
-0 0 S S S D D D		move-8
-0 1 O O O D D D		alu
-1 0 0 0 S S S D		move-16
-1 0 0 1 N Z O F		jump
-1 0 1 0 0 D D D		set-8
-1 0 1 0 1 D D D		load
-1 0 1 1 0 S S S		store
-1 0 1 1 1 0 D D    	set-16
-1 0 1 1 1 1 O O		call

@@ -4,10 +4,15 @@ import sys
 
 global line
 global line_n
+
 global labels
+global labels_loc
 global labels_adr
+
 global address
+
 global variabiles
+global variabiles_loc
 global variabiles_adr
 
 class CompileError(Exception):
@@ -157,7 +162,13 @@ def cmd_set(params):
     
     if params[0] in map_16:
         a = 0b10111000 | map_16[params[0]]
-        val = parse_int(params[1])
+        
+        if params[1] in labels:
+            labels_adr[address + 1] = params[1]
+            val = 0
+        else:
+            val = parse_int(params[1])
+            
         lo = (val & 0x00FF) >> 0
         hi = (val & 0xFF00) >> 8
         return [a, lo, hi]
@@ -200,11 +211,11 @@ def cmd_alu(op, params):
 
 jump_op = {
     "jmp" : 0b0000,
-    "jze" : 0b0100,
+    "jez" : 0b0100,
     "jnz" : 0b1100,
-    "jov" : 0b0010,
+    "jeo" : 0b0010,
     "jno" : 0b1010,
-    "jsi" : 0b0001,
+    "jes" : 0b0001,
     "jns" : 0b1001,
 }
 
@@ -214,19 +225,26 @@ def cmd_jump(op, params):
 
     if len(params) == 0: 
         return [b]
+
+    if params[0] not in labels: 
+        raise Exception("Unknown label '%s'!" % params[0])
     
     labels_adr[address + 1] = params[0]
     
     return [a, 0, 0, b]
 
 def cmd_call(params):
-    if len(params) <> 1: 
-        raise CompileError("Exactly 1 parameter required!")
+    a = 0b10111010         
+    b = 0b10111100
+
+    if len(params) == 0: 
+        return [b]
+
+    if params[0] not in labels: 
+        raise Exception("Unknown label '%s'!" % params[0])
 
     labels_adr[address + 1] = params[0]
 
-    a = 0b10111010         
-    b = 0b10111100
     return [a, 0, 0, b]
 
 filename = "hello_world.asm"#sys.argv[1]
@@ -238,7 +256,8 @@ b = open(output, "wb")
 
 line_n = 0
 address = 0
-labels = {}
+labels = []
+labels_loc = {}
 labels_adr = {}
 variabiles = {}
 variabiles_loc = {}
@@ -246,7 +265,15 @@ variabiles_adr = {}
 
 program = []
 
-for line in f.readlines():
+lines = f.readlines()
+
+for line in lines:
+    data = line.lower().split()
+    if data[0][-1] == ":":
+        labels.append(data[0][:-1])
+    
+
+for line in lines:
     print line.replace("\n", "")
     data = line.lower().split()
     if len(data) == 0:
@@ -255,8 +282,8 @@ for line in f.readlines():
     if data[0][0] == "#":
         continue
     
-    if data[0][0] == ":":
-        labels[data[0][1:]] = address
+    if data[0][-1] == ":":
+        labels_loc[data[0][:-1]] = address
         continue    
 
     cmd = data[0]
@@ -295,11 +322,14 @@ for line in f.readlines():
         
     if cmd == "halt":
         inst = [0b10111110]        
+
+    if cmd == "err":
+        inst = [0b10111111]        
     
     if len(inst) == 0:
         raise CompileError("Unknown command!")
     
-    print ">",
+    print " >\t0x%04X" % address,
     for i in inst:
         print "%02X" % i,
     print
@@ -314,13 +344,13 @@ for loc in labels_adr:
     if labels_adr[loc] not in labels:
         raise Exception("Unknown label '%s'!" % labels_adr[loc])
     
-    adr = labels[labels_adr[loc]]
+    adr = labels_loc[labels_adr[loc]]
     lo = (adr & 0x00FF) >> 0
     hi = (adr & 0xFF00) >> 8
     program[loc + 0] = lo
     program[loc + 1] = hi
     
-    print "\t0x%04X\t%s\t0x%02X" % (loc, labels_adr[loc], adr)
+    print "\t0x%04X\t%s\t0x%04X" % (loc, labels_adr[loc], adr)
     
 print "\nWriting variabiles section"    
     

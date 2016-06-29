@@ -1,8 +1,14 @@
-var test 1
-call sub
-halt
-:sub
-load A test
-inc C
-store C test
-ret
+start:
+	set M2	1
+	set	M1	0
+	set B 20
+loop:
+	move M1 A
+	inc M1
+	move M1 A
+	store A
+	xor C
+	jez end
+	jmp loop
+end:
+	halt
