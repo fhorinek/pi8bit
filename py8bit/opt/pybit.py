@@ -87,6 +87,10 @@ class Canvas():
         self.add_cell("memory", memory.Memory)    
         
         self.mode = MODE_IDLE
+        
+        self.draw_clock = pygame.time.Clock()
+        
+        self.fps = 0
 
     def inc_cell_index(self):
         self.add_cell_index = (self.add_cell_index + 1) % len(self.cells)
@@ -123,6 +127,7 @@ class Canvas():
     
    
     def draw_status(self, text):
+        text = "[%03d] %s" % (self.fps, text)
         tmp = self.status_font.render(text, True, self.style["c_status"])
         rect2 = tmp.get_rect();
         rect = Rect(0, self.size[1] - rect2.h, rect2.w, rect2.h)
@@ -159,10 +164,9 @@ class Canvas():
 
     def loop(self):
         self.events()
-#         for i in range(20):
+        
         if self.mode is MODE_IDLE:
             self.controller.tick()
-            
         
         if self.need_redraw:
             self.screen.fill((0, 0, 0))
@@ -204,8 +208,10 @@ class Canvas():
         self.controller.reset()
         
         while (self.running):
+            delta = self.draw_clock.tick()
             self.loop()    
-
+            if delta is not 0:
+                self.fps = 1000 / delta
 
 profile = False
 filename = file_opendialog()

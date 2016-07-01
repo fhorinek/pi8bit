@@ -3,10 +3,10 @@ B	input	0x40
 S	input	0x60
 __and_4	and	180x0 A.Y __not_23.Y
 __and_5	and	180x40 B.Y __node_28.Y
-__output_21	output	280x20 __node_31.Y
 __not_23	not	100x20 __node_27.Y
 __node_27	node	70x20 __net_3
 __node_28	node	70x60 __net_3 S.Y __node_27
 __node_29	node	260x0 __net_5 __and_4.Y __node_31
 __node_30	node	260x40 __net_5 __and_5.Y
 __node_31	node	260x20 __net_5 __node_30
+O	output	280x20 __node_31.Y

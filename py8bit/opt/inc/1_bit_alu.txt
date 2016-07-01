@@ -21,7 +21,7 @@ __or_78	or	360x220 __or_77.Y __node_178.Y
 __and_102	and	550x230 __node_187.Y __node_201.Y
 __node_145	node	70x470 __net_33 __node_150
 __node_150	node	70x0 __net_33 A.Y
-__node_153	node	520x330 __net_35 __module_16.__output_21
+__node_153	node	520x330 __net_35 __module_16.O
 __node_154	node	520x430 __net_35 __node_153
 __node_155	node	100x430 __net_35 __node_154
 __node_156	node	100x450 __net_35 __node_155

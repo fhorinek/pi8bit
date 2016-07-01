@@ -111,9 +111,10 @@ class module(Cell, Controller):
         if self.old_zoom is not self.zoom:
             Cell.update_body(self, state=state)
             self.old_zoom = self.zoom
+            for k in self.objects:
+                self.objects[k].request_update_body()
             
         for k in self.objects:
-            self.objects[k].request_update_body()
             self.objects[k].draw()
             
         #update_request is invalid since all cell were allready redrawn (and it is triggered by Cell.update_body())

@@ -1,5 +1,9 @@
-in1	input	0x40
-led2	led	540x10 __module_1.__output_21
-__module_1	module	110x0 inc/select2.txt __node_2.Y __node_6.Y __node_6.Y
-__node_2	node	80x0 __net_1
-__node_6	node	80x40 __net_1 in1.Y __node_2
+__tgl_32	tgl	100x0 1
+__tgl_33	tgl	100x20 1
+__and_34	and	220x0 __tgl_32.Y __tgl_33.Y
+__led_35	led	370x0 __and_34.Y
+__module_41	module	120x100 inc/select2.txt __tgl_43.Y __tgl_44.Y __tgl_45.Y
+__led_42	led	580x100 __module_41.__output_21
+__tgl_43	tgl	0x100 1
+__tgl_44	tgl	0x120 1
+__tgl_45	tgl	0x140 1

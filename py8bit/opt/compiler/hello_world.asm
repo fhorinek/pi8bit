@@ -1,7 +1,7 @@
 start:
 	set M2	1
 	set	M1	0
-	set B 20
+	set B 2
 loop:
 	move M1 A
 	inc M1

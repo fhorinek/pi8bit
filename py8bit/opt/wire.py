@@ -293,12 +293,12 @@ class Net(cell.Invisible):
         return False
     
     def calc(self, pin):
-        ret = 0
         for node in self.nodes:
             for pin in node.inputs:
-                ret = ret | node.input(pin)
+                if node.input(pin):
+                    return 1
         
-        return ret
+        return 0
             
     def draw_io(self):   
         pass
