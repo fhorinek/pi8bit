@@ -152,8 +152,10 @@ class Controller():
             self.create_objects(data)
     
             print "done", filename
+            return True
         except IOError:
             print "not found"
+            return False
         
     def create_objects(self, data):
         params = OrderedDict()

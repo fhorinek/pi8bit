@@ -15,6 +15,8 @@ global variabiles
 global variabiles_loc
 global variabiles_adr
 
+global constants
+
 class CompileError(Exception):
     def __init__(self, value):
         self.value = value
@@ -157,7 +159,11 @@ def cmd_set(params):
     
     if params[0] in map_8:
         a = 0b10100000 | map_8[params[0]]
-        val = parse_int(params[1])
+        if params[1] in constants:
+            val = 0xFF & constants[params[1]]
+        else:                
+            val = parse_int(params[1])
+            
         return [a, val]
     
     if params[0] in map_16:
@@ -166,6 +172,11 @@ def cmd_set(params):
         if params[1] in labels:
             labels_adr[address + 1] = params[1]
             val = 0
+        elif params[1] in variabiles:
+            variabiles_adr[address + 1] = params[1]
+            val = 0
+        elif params[1] in constants:
+            val = 0xFFFF & constants[params[1]]
         else:
             val = parse_int(params[1])
             
@@ -226,12 +237,18 @@ def cmd_jump(op, params):
     if len(params) == 0: 
         return [b]
 
-    if params[0] not in labels: 
-        raise Exception("Unknown label '%s'!" % params[0])
-    
-    labels_adr[address + 1] = params[0]
-    
-    return [a, 0, 0, b]
+    if params[0] in labels: 
+        labels_adr[address + 1] = params[0]
+        val = 0
+    elif params[0] in constants:
+        val = constants[params[0]]
+    else:
+        val = parse_int(params[0])
+        
+    lo = (val & 0x00FF) >> 0
+    hi = (val & 0xFF00) >> 8   
+     
+    return [a, lo, hi, b]
 
 def cmd_call(params):
     a = 0b10111010         
@@ -240,14 +257,24 @@ def cmd_call(params):
     if len(params) == 0: 
         return [b]
 
-    if params[0] not in labels: 
-        raise Exception("Unknown label '%s'!" % params[0])
+    if params[0] in labels: 
+        labels_adr[address + 1] = params[0]
+        val = 0
+    elif params[0] in constants:
+        val = constants[params[0]]
+    else:
+        val = parse_int(params[0])
 
-    labels_adr[address + 1] = params[0]
+    lo = (val & 0x00FF) >> 0
+    hi = (val & 0xFF00) >> 8   
+    
+    return [a, lo, hi, b]
 
-    return [a, 0, 0, b]
-
-filename = "hello_world.asm"#sys.argv[1]
+if len(sys.argv) > 1:
+    filename = sys.argv[1]
+else:
+    filename = "hello_world.asm"
+    
 output = "out.a"
 
 f = open(filename, "r")
@@ -262,20 +289,32 @@ labels_adr = {}
 variabiles = {}
 variabiles_loc = {}
 variabiles_adr = {}
+constants = {}
+
 
 program = []
+
+print "compiling file", filename
+print "output file is", output
+print
 
 lines = f.readlines()
 
 for line in lines:
     data = line.lower().split()
+    
+    if len(data) == 0:
+        continue
+    
     if data[0][-1] == ":":
         labels.append(data[0][:-1])
     
 
 for line in lines:
     print line.replace("\n", "")
+    
     data = line.lower().split()
+    
     if len(data) == 0:
         continue
     
@@ -292,7 +331,24 @@ for line in lines:
     if cmd == "var":
         if len(params) <> 2:
             raise CompileError("Exactly 2 parameters required!")
-        variabiles[params[0]] = parse_int(params[1])
+        if params[0] in variabiles:
+            raise CompileError("Variabile '%s' already defined!" % params[0])
+        
+        val = parse_int(params[1])
+        
+        if val > 0xFF or val < 0:
+            raise CompileError("Variabile must be in range 0 - 255!")
+        
+        variabiles[params[0]] = val
+        continue
+    
+    if cmd == "const":
+        if len(params) <> 2:
+            raise CompileError("Exactly 2 parameters required!")
+        if params[0] in constants:
+            print "Redeclarating constant '%s' from 0x%04X to 0x%04X" % (params[0], constants[params[0]], parse_int(params[1]))
+                    
+        constants[params[0]] = parse_int(params[1])
         continue
     
     inst = ""
@@ -365,6 +421,12 @@ for loc in variabiles_adr:
     hi = (adr & 0xFF00) >> 8
     program[loc + 0] = lo
     program[loc + 1] = hi   
+
+print "\nDefined constants (at the end of the program)"    
+    
+for const_name in constants:
+    print "\t%s\t0x%04X" % (const_name, constants[const_name])
+    
 
 b.write("".join(map(chr, program)))    
 

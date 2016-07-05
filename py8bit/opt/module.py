@@ -26,7 +26,9 @@ class module(Cell, Controller):
             arr.append(path)
             
         self.filename = arr[3]
-        self.read_file(self.filename)
+        res = self.read_file(self.filename)
+        if not res:
+            raise Exception("Module source '%s' not found!" % self.filename)
         
         for k in self.objects:
             o = self.objects[k]

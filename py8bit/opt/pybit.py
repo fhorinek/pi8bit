@@ -19,8 +19,8 @@ from pygame.rect import Rect
 class Canvas():
     def __init__(self):
         self.size = (800 , 600)
-        self.screen_flags = pygame.DOUBLEBUF | pygame.RESIZABLE | pygame.HWSURFACE
-        self.surface_flags = pygame.HWSURFACE
+        self.screen_flags = pygame.RESIZABLE
+        self.surface_flags = 0
         
         pygame.font.init()
         self.status_font = pygame.font.Font(pygame.font.get_default_font(), 20)
@@ -201,7 +201,7 @@ class Canvas():
         if self.mode == MODE_PAN:
             self.draw_status("pan") 
                                     
-        pygame.display.flip()
+        pygame.display.update()
         
     def run(self):
         self.running = True;

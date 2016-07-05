@@ -1,8 +1,0 @@
-in	input	0x50
-__module_2	module	90x30 inc/d.txt __node_139.Y in.Y
-__input_121	input	0x30
-__node_137	node	530x30 __net_4 __module_2.Q
-__node_139	node	70x30 __net_5 __input_121.Y
-__node_140	node	70x0 __net_5 __node_139
-__node_141	node	550x0 __net_5 __node_140
-__node_142	node	550x50 __net_5 __module_2.Q' __node_141

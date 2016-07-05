@@ -29,6 +29,52 @@ Register descriptions
 		J		R  - jump address, storing address for jump and call instruction
 		INC		R  - special register, used for incrementing any data enabled on 16-bit bus
 
+Variabiles definition
+	
+	var		name	init_value
+	Allocate 8-bit variabile at the end of the programm with initialised value defined by init_value
+	Memory address of the variabile is used to load M register, when used in load or store instruction, 
+	or can be direcly loaded into any 16-bit register using set comman
+	
+	Usage
+		#declare variabile 'foo' with init value 0x10 (dec 16)
+		var foo	0x10
+		#load value of 'foo' into A register
+		load A	foo
+		#store value of A register into 'foo' 
+		store A foo
+		#set XY register to memory address of 'foo' 
+		set XY foo
+		
+	const	name	value
+	Define value constant. Constants can be used in set, jump and call instructions
+	
+	
+	Usage
+		#declare constant 'foo' with value 0x20
+		const foo	0x20
+		#declare constant 'bar' with value 0x1234
+		const bar	0x1234
+		set A	foo
+		set J	bar
+		jump bar
+		
+		
+	label_name:
+	Define memory address in program flow used as detination for jump and cal instructions
+	Jump and call instruction can refer to this address via label_name
+	Label memory address can be also loaded to 16-bit registers via set instructions
+	
+	Usage
+		set A 10
+		#define label 'start'
+		start:
+		inc C
+		move C A
+		#jump to the 'start' label
+		jump start
+			
+
 Command description
 
 	move	source	destination
@@ -37,7 +83,7 @@ Command description
 		Both source and the destination have to be either 8-bit or 16-bit registers
 		8-bit registers
 			Sources 		A, B, C, D, X, Y, M1, M2
-			Destinations	A, B, C4, D, X, Y, M1, M2
+			Destinations	A, B, C, D, X, Y, M1, M2
 		16-bit registers
 			Sourcers		PC, INC, J, M, XY, FFFF (1), 0000 (1)
 			Destinations	PC, XY

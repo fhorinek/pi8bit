@@ -38,6 +38,7 @@ class Cell():
     
     def add_output(self, name):
         self.outputs.append(name)
+        self.res[name] = 0
                
     def update_rect(self): 
         self.rect.w = self.parent.canvas.style["d_width"]
@@ -151,6 +152,8 @@ class Cell():
         
     def reset(self):
         self.res = {}
+        for pin in self.outputs:
+            self.res[pin] = 0
     
     def clear_io_cache(self):
         self.input_cache = {}
@@ -164,8 +167,6 @@ class Cell():
             self.res[i] = self.calc(i) 
     
     def output(self, pin):
-        if pin not in self.res:
-            return 0
         return self.res[pin]
     
     def input(self, pin):
@@ -173,10 +174,7 @@ class Cell():
             return 0
             
         in_obj, in_pin = self.inputs[pin]
-        if in_obj is None:
-            return in_pin
-        else:
-            return in_obj.output(in_pin)
+        return in_obj.output(in_pin)
     
     def update(self):
         self.update_rect()
