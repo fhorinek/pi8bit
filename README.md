@@ -9,12 +9,13 @@
 
 ## app
 * logic simulator is **opt/pybit.py**
-..* you can load existing circuits or create new (using not existing filename)
+ * you can load existing circuits or create new (using not existing filename)
 * main file of the computer is **opt/inc/8_bit_computer.txt**
+ * press RESET toggle in Clock control before doing anything!
 * compiler is **opt/compiler/compile.py**
-..* assembler command description **opt/compiler/asm_commands.txt**
-..* binary instruction description **opt/compiler/instructions.txt**
-..* standard output is **a.out** (you can load it by clicking on memory cell)
+ * assembler command description **opt/compiler/asm_commands.txt**
+ * binary instruction description **opt/compiler/instructions.txt**
+ * standard output memory image with name **a.out** (you can load it by clicking on memory cell)
 
 ## controls
 * left mouse - change state of inputs and tgl
