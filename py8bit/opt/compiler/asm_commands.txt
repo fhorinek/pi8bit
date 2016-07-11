@@ -1,7 +1,6 @@
 Register descriptions
-
 	1-bit register
-		this bits are written after every ALU operation (ADD, INC, AND, OR, XOR, NOT, SHL, NOP) 
+		this bits are rewritten after every ALU operation (ADD, INC, AND, OR, XOR, NOT, SHL, NOP) 
 		Zero		Set if every output bit of ALU is cleared   
 		Sign		Set if highest bit is set
 		Overflow	Set if ther is an overflow condition during ADD or INC operation
@@ -9,8 +8,8 @@ Register descriptions
 	8-bit registers
 	name	access from 8-bit bus
 		A		RW - general purpose register, used by ALU as first operand   
-		B 		RW - general purpose register, used by ALU as first operand
-		C		RW  - general purpose register
+		B 		RW - general purpose register, used by ALU as second operand
+		C		RW - general purpose register
 		D 		RW - general purpose register
 		M1		RW - lower byte of 16-bit register M
 		M2		RW - higher byte of 16-bit register M
@@ -29,12 +28,18 @@ Register descriptions
 		J		R  - jump address, storing address for jump and call instruction
 		INC		R  - special register, used for incrementing any data enabled on 16-bit bus
 
+Memory structure
+	Program is stored in memory from 0x0000 where the execution will start after reset
+	Variabile section start at the end of the program.
+	The memory is not protected so you can modify the instructions on fly with store instruction. 
+
 Variabiles definition
-	
 	var		name	init_value
 	Allocate 8-bit variabile at the end of the programm with initialised value defined by init_value
 	Memory address of the variabile is used to load M register, when used in load or store instruction, 
-	or can be direcly loaded into any 16-bit register using set comman
+	or can be direcly loaded into any 16-bit register using set command
+	Arrays can be created specifining multiple values
+	String are null terminated
 	
 	Usage
 		#declare variabile 'foo' with init value 0x10 (dec 16)
@@ -43,12 +48,18 @@ Variabiles definition
 		load A	foo
 		#store value of A register into 'foo' 
 		store A foo
-		#set XY register to memory address of 'foo' 
-		set XY foo
+		
+		#set M register to memory address of 'foo' 
+		set M foo
+		#store A register to 'foo' variabile
+		store A
+		
+		#arrays and strings
+		var arr	0x10 0x20 0x30
+		var txt	"Hello"
 		
 	const	name	value
 	Define value constant. Constants can be used in set, jump and call instructions
-	
 	
 	Usage
 		#declare constant 'foo' with value 0x20
@@ -76,7 +87,6 @@ Variabiles definition
 			
 
 Command description
-
 	move	source	destination
 	Move data between registers
 		Write data from source register to destination register
@@ -89,6 +99,12 @@ Command description
 			Destinations	PC, XY
 			notes: 
 				(1) FFFF and 0000 are not real registers only hard wired fixed values
+				
+	clear	register
+	Clear register
+	Variant of move command where both source and destination register are the same.
+	This configuration will set the register to 0x00
+		registes 		A, B, C, D, X, Y, M1, M2				
 				
 	load	destination		[address | variabile name]
 	Load data from memory
@@ -187,13 +203,13 @@ Command description
 		This jump will be executed only if overflow flag is cleared
 		
 	jes		[address | label]
-	Jump if positive
+	Jump if negative
 		Set program counter to address stored in J register
 		If address or label is specifier than J register is loaded with address or label address first
 		This jump will be executed only if sign flag is set
 			
 	jns		[address | label]
-	jump if negative
+	jump if positive
 		Set program counter to address stored in J register
 		If address or label is specifier than J register is loaded with address or label address first
 		This jump will be executed only if sign flag is cleared		

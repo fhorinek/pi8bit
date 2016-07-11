@@ -25,15 +25,15 @@ Y4	output	4340x80 __node_388.Y
 Y5	output	4340x100 __node_380.Y
 Y6	output	4340x120 __node_379.Y
 Y7	output	4340x140 __node_378.Y
-__module_1	module	70x530 inc/3_to_8_decoder.txt O0.Y O1.Y O2.Y
-__module_5	module	860x720 inc/1_bit_alu.txt __node_45.Y __node_43.Y high.Y low.Y __node_50.Y __node_53.Y __node_55.Y __node_58.Y __node_60.Y __node_63.Y
-__module_6	module	1780x720 inc/1_bit_alu.txt __node_125.Y __node_128.Y LOW.Y __node_112.Y __node_130.Y __node_133.Y __node_135.Y __node_138.Y __node_140.Y __node_143.Y
-__module_7	module	2700x720 inc/1_bit_alu.txt __node_175.Y __node_173.Y LOW.Y __node_177.Y __node_181.Y __node_183.Y __node_188.Y __node_190.Y __node_193.Y __node_195.Y
-__module_8	module	3620x720 inc/1_bit_alu.txt __node_227.Y __node_229.Y LOW.Y __node_225.Y __node_232.Y __node_234.Y __node_237.Y __node_239.Y __node_242.Y __node_244.Y
-__module_9	module	860x1420 inc/1_bit_alu.txt __node_71.Y __node_65.Y LOW.Y __node_102.Y __node_96.Y __node_97.Y __node_98.Y __node_99.Y __node_100.Y __node_101.Y
-__module_10	module	1780x1420 inc/1_bit_alu.txt __node_161.Y __node_160.Y LOW.Y __node_158.Y __node_145.Y __node_147.Y __node_149.Y __node_151.Y __node_153.Y __node_155.Y
-__module_11	module	2700x1420 inc/1_bit_alu.txt __node_200.Y __node_197.Y LOW.Y __node_166.Y __node_204.Y __node_206.Y __node_208.Y __node_210.Y __node_212.Y __node_214.Y
-__module_12	module	3620x1420 inc/1_bit_alu.txt __node_247.Y __node_248.Y LOW.Y __node_217.Y __node_252.Y __node_254.Y __node_255.Y __node_256.Y __node_257.Y __node_265.Y
+__module_1	module	70x530 computer/3_to_8_decoder.txt O0.Y O1.Y O2.Y
+__module_5	module	860x720 computer/1_bit_alu.txt __node_45.Y __node_43.Y high.Y low.Y __node_50.Y __node_53.Y __node_55.Y __node_58.Y __node_60.Y __node_63.Y
+__module_6	module	1780x720 computer/1_bit_alu.txt __node_125.Y __node_128.Y LOW.Y __node_112.Y __node_130.Y __node_133.Y __node_135.Y __node_138.Y __node_140.Y __node_143.Y
+__module_7	module	2700x720 computer/1_bit_alu.txt __node_175.Y __node_173.Y LOW.Y __node_177.Y __node_181.Y __node_183.Y __node_188.Y __node_190.Y __node_193.Y __node_195.Y
+__module_8	module	3620x720 computer/1_bit_alu.txt __node_227.Y __node_229.Y LOW.Y __node_225.Y __node_232.Y __node_234.Y __node_237.Y __node_239.Y __node_242.Y __node_244.Y
+__module_9	module	860x1420 computer/1_bit_alu.txt __node_71.Y __node_65.Y LOW.Y __node_102.Y __node_96.Y __node_97.Y __node_98.Y __node_99.Y __node_100.Y __node_101.Y
+__module_10	module	1780x1420 computer/1_bit_alu.txt __node_161.Y __node_160.Y LOW.Y __node_158.Y __node_145.Y __node_147.Y __node_149.Y __node_151.Y __node_153.Y __node_155.Y
+__module_11	module	2700x1420 computer/1_bit_alu.txt __node_200.Y __node_197.Y LOW.Y __node_166.Y __node_204.Y __node_206.Y __node_208.Y __node_210.Y __node_212.Y __node_214.Y
+__module_12	module	3620x1420 computer/1_bit_alu.txt __node_247.Y __node_248.Y LOW.Y __node_217.Y __node_252.Y __node_254.Y __node_255.Y __node_256.Y __node_257.Y __node_265.Y
 __node_24	node	830x350 __net_32 B0.Y __node_43
 __node_25	node	1750x370 __net_16 B1.Y
 __node_26	node	2670x390 __net_17 B2.Y
@@ -182,7 +182,7 @@ __node_307	node	4380x1420 __net_136 __module_12.O
 __node_308	node	4380x670 __net_136 __node_307 __node_352
 __node_309	node	4390x1440 __net_122 __module_12.C_out
 __node_310	node	4390x650 __net_122 __node_309
-__module_312	module	3800x0 inc/8_bit_select.txt __node_292.Y __node_298.Y __node_221.Y __node_354.Y __node_121.Y __node_169.Y __node_220.Y __node_453.Y __node_330.Y __node_332.Y __node_334.Y __node_336.Y __node_338.Y __node_340.Y __node_342.Y __node_344.Y __node_427.Y
+__module_312	module	3800x0 computer/8_bit_select.txt __node_292.Y __node_298.Y __node_221.Y __node_354.Y __node_121.Y __node_169.Y __node_220.Y __node_453.Y __node_330.Y __node_332.Y __node_334.Y __node_336.Y __node_338.Y __node_340.Y __node_342.Y __node_344.Y __node_427.Y
 __node_321	node	3630x330 __net_33 __node_28
 __node_322	node	3710x330 __net_33 __node_321
 __node_330	node	3640x160 __net_56 __node_29

@@ -33,6 +33,25 @@ def parse_int(text):
     else:
         return int(text)
     
+def cmd_clear(params):
+    map_8 = {
+    'a' : 0b000,
+    'b' : 0b001,
+    'c' : 0b010,
+    'd' : 0b011,
+    'x' : 0b100,
+    'y' : 0b101,
+    'm1': 0b110,
+    'm2': 0b111}
+    
+    if len(params) <> 1:
+        raise CompileError("Exactly 1 parameter is required!")
+    
+    if params[0] in map_8:
+        a = 0b00000000 | map_8[params[0]] << 3 | map_8[params[0]]
+        return [a]
+    
+    raise CompileError("Invalid source or destination register")    
    
 def cmd_move(params):
     map_8 = {
@@ -329,22 +348,41 @@ for line in lines:
     params = data[1:]
 
     if cmd == "var":
-        if len(params) <> 2:
-            raise CompileError("Exactly 2 parameters required!")
+        if len(params) < 2:
+            raise CompileError("At least 2 parameters are required!")
         if params[0] in variabiles:
             raise CompileError("Variabile '%s' already defined!" % params[0])
         
-        val = parse_int(params[1])
+        val = []
         
-        if val > 0xFF or val < 0:
-            raise CompileError("Variabile must be in range 0 - 255!")
-        
+        if params[1][0] == '"':
+            i1 = line.find('"')
+            i2 = line.find('"', 1)
+            txt = line[i1 + 1:i1 + i2 + 2]
+            end = line[i1 + i2 + 3:].split()
+            if len(end) > 0:
+                raise CompileError("Unexpected parameter")
+
+            for c in txt:
+                val.append(ord(c))
+            
+            val.append(0)
+
+        else:
+            for i in range(len(params) - 1):
+                a = parse_int(params[1 + i])
+            
+                if a > 0xFF or a < 0:
+                    raise CompileError("Variabile must be in range 0 - 255!")
+                
+                val.append(a)
+            
         variabiles[params[0]] = val
         continue
     
     if cmd == "const":
         if len(params) <> 2:
-            raise CompileError("Exactly 2 parameters required!")
+            raise CompileError("Exactly 2 parameters are required!")
         if params[0] in constants:
             print "Redeclarating constant '%s' from 0x%04X to 0x%04X" % (params[0], constants[params[0]], parse_int(params[1]))
                     
@@ -354,6 +392,9 @@ for line in lines:
     inst = ""
     if cmd == "set":
         inst = cmd_set(params)
+
+    if cmd == "clear":
+        inst = cmd_clear(params)
 
     if cmd == "move":
         inst = cmd_move(params)
@@ -393,7 +434,7 @@ for line in lines:
     program += inst
     address += len(inst)
     line_n += 1
-    
+
 print "\nReplacing labels with address"    
     
 for loc in labels_adr:
@@ -412,8 +453,12 @@ print "\nWriting variabiles section"
     
 for var_name in variabiles:
     variabiles_loc[var_name] = len(program)
-    program.append(variabiles[var_name])
-    print "\t0x%04X\t%s\t0x%02X" % (variabiles_loc[var_name], var_name, variabiles[var_name])
+    
+    print "\t0x%04X\t%s\t" % (variabiles_loc[var_name], var_name),
+    for val in variabiles[var_name]:
+        print "0x%02X" % val,
+        program.append(val)
+    print 
     
 for loc in variabiles_adr:
     adr = variabiles_loc[variabiles_adr[loc]]
@@ -425,8 +470,7 @@ for loc in variabiles_adr:
 print "\nDefined constants (at the end of the program)"    
     
 for const_name in constants:
-    print "\t%s\t0x%04X" % (const_name, constants[const_name])
-    
+    print "\t%s\t%d" % (const_name, constants[const_name])
 
 b.write("".join(map(chr, program)))    
 

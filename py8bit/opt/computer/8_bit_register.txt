@@ -16,14 +16,14 @@ B4	output	630x480 __module_5.O
 B5	output	630x600 __module_6.O
 B6	output	630x720 __module_8.O
 B7	output	630x840 __module_7.O
-__module_1	module	100x0 inc/sr.txt A0.Y __node_14.Y __node_11.Y
-__module_2	module	100x120 inc/sr.txt A1.Y __node_18.Y __node_20.Y
-__module_3	module	100x240 inc/sr.txt A2.Y __node_22.Y __node_24.Y
-__module_4	module	100x360 inc/sr.txt A3.Y __node_26.Y __node_25.Y
-__module_5	module	100x480 inc/sr.txt A4.Y __node_27.Y __node_28.Y
-__module_6	module	100x600 inc/sr.txt A5.Y __node_29.Y __node_30.Y
-__module_7	module	100x840 inc/sr.txt A7.Y __node_33.Y __node_34.Y
-__module_8	module	100x720 inc/sr.txt A6.Y __node_31.Y __node_32.Y
+__module_1	module	100x0 computer/sr.txt A0.Y __node_14.Y __node_11.Y
+__module_2	module	100x120 computer/sr.txt A1.Y __node_18.Y __node_20.Y
+__module_3	module	100x240 computer/sr.txt A2.Y __node_22.Y __node_24.Y
+__module_4	module	100x360 computer/sr.txt A3.Y __node_26.Y __node_25.Y
+__module_5	module	100x480 computer/sr.txt A4.Y __node_27.Y __node_28.Y
+__module_6	module	100x600 computer/sr.txt A5.Y __node_29.Y __node_30.Y
+__module_7	module	100x840 computer/sr.txt A7.Y __node_33.Y __node_34.Y
+__module_8	module	100x720 computer/sr.txt A6.Y __node_31.Y __node_32.Y
 O0	output	630x20 __module_1.S
 O1	output	630x140 __module_2.S
 O2	output	630x260 __module_3.S

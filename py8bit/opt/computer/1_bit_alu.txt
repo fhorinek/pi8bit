@@ -9,9 +9,9 @@ OR	input	0x60
 XOR	input	0x80
 NOT	input	0x100
 O	output	620x340 __node_208.Y
-__module_1	module	120x450 inc/full_adder.txt __node_156.Y __node_145.Y C_in.Y
-__module_16	module	120x330 inc/select2.txt __node_190.Y F.Y __node_181.Y
-__module_19	module	160x0 inc/logic_unit.txt __node_150.Y __node_189.Y __node_162.Y __node_165.Y __node_168.Y __node_175.Y
+__module_1	module	120x450 computer/full_adder.txt __node_156.Y __node_145.Y C_in.Y
+__module_16	module	120x330 computer/select2.txt __node_190.Y F.Y __node_181.Y
+__module_19	module	160x0 computer/logic_unit.txt __node_150.Y __node_189.Y __node_162.Y __node_165.Y __node_168.Y __node_175.Y
 C_out	output	620x470 __module_1.C_out
 __or_58	or	360x280 ADD.Y __node_182.Y
 __and_66	and	550x280 __or_58.Y __node_198.Y

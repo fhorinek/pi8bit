@@ -24,6 +24,7 @@ move-8
 		1 0 1	Y			|	1 0 1	Y
 		1 1 0	M1			|	1 1 0	M1
 		1 1 1	M2			|	1 1 1	M2
+	Note when SSS and DDD are the same the register will be cleared
 
 load
 	1 0 1 0 1 D D D

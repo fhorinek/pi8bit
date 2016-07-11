@@ -1,11 +1,11 @@
-__module_1	module	80x0 inc/full_adder.txt A0.Y F.Y C_in.Y
-__module_2	module	80x210 inc/full_adder.txt A2.Y LOW.Y __node_49.Y
-__module_3	module	80x420 inc/full_adder.txt A4.Y LOW.Y __node_73.Y
-__module_4	module	680x420 inc/full_adder.txt A5.Y LOW.Y __node_76.Y
-__module_5	module	680x210 inc/full_adder.txt A3.Y LOW.Y __node_63.Y
-__module_6	module	680x0 inc/full_adder.txt A1.Y LOW.Y __node_55.Y
-__module_7	module	80x630 inc/full_adder.txt A6.Y LOW.Y __node_92.Y
-__module_8	module	680x630 inc/full_adder.txt A7.Y LOW.Y __node_98.Y
+__module_1	module	80x0 computer/full_adder.txt A0.Y F.Y C_in.Y
+__module_2	module	80x210 computer/full_adder.txt A2.Y LOW.Y __node_49.Y
+__module_3	module	80x420 computer/full_adder.txt A4.Y LOW.Y __node_73.Y
+__module_4	module	680x420 computer/full_adder.txt A5.Y LOW.Y __node_76.Y
+__module_5	module	680x210 computer/full_adder.txt A3.Y LOW.Y __node_63.Y
+__module_6	module	680x0 computer/full_adder.txt A1.Y LOW.Y __node_55.Y
+__module_7	module	80x630 computer/full_adder.txt A6.Y LOW.Y __node_92.Y
+__module_8	module	680x630 computer/full_adder.txt A7.Y LOW.Y __node_98.Y
 A0	input	0x0
 A1	input	600x0
 A2	input	0x210

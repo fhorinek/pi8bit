@@ -1,5 +1,5 @@
-__module_1	module	200x0 inc/d.txt __and_43.Y __node_45.Y
-__module_2	module	200x210 inc/d.txt __node_23.Y __node_16.Y
+__module_1	module	200x0 computer/d.txt __and_43.Y __node_45.Y
+__module_2	module	200x210 computer/d.txt __node_23.Y __node_16.Y
 __not_6	not	200x160 __node_10.Y
 __and_7	and	300x140 __node_21.Y __node_13.Y
 __node_9	node	170x40 __net_18 C.Y __node_45 __node_67
