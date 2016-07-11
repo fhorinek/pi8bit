@@ -153,8 +153,8 @@ class Controller():
     
             print "done", filename
             return True
-        except IOError:
-            print "not found"
+        except IOError as e:
+            print "not found", e
             return False
         
     def create_objects(self, data):

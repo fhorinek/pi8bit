@@ -10,7 +10,7 @@
 ## app
 * logic simulator is **opt/pybit.py**
  * you can load existing circuits or create new (using not existing filename)
-* main file of the computer is **opt/inc/8_bit_computer.txt**
+* main file of the computer is **opt/computer/8_bit_computer.txt**
  * press RESET toggle in Clock control before doing anything!
 * compiler is **opt/compiler/compile.py**
  * assembler command description **opt/compiler/asm_commands.txt**

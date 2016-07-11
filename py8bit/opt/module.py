@@ -28,7 +28,7 @@ class module(Cell, Controller):
         self.filename = arr[3]
         res = self.read_file(self.filename)
         if not res:
-            raise Exception("Module source '%s' not found!" % self.filename)
+            raise Exception("Unable to open module source file '%s'" % self.filename)
         
         for k in self.objects:
             o = self.objects[k]

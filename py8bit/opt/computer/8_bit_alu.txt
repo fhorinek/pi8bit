@@ -258,4 +258,4 @@ __node_444	node	4310x650 __net_122 __node_310
 __node_445	node	4310x630 __net_122 __node_444
 __node_447	node	4210x610 __net_154 __node_417
 __node_453	node	3770x140 __net_136 __node_352
-__label_455	label	70x480 Instruction_decoder
+__label_455	label	70x480 ALU_instruction_decoder
