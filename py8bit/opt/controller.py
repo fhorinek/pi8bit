@@ -694,15 +694,27 @@ class Controller():
                              
                 self.pan_offset_x -= mouse_x + self.pan_offset_x - event.pos[0] / self.zoom
                 self.pan_offset_y -= mouse_y + self.pan_offset_y - event.pos[1] / self.zoom
+                
+                pan_x = event.pos[0] / self.zoom
+                pan_y = event.pos[1] / self.zoom    
+                
                 self.zoom += self.zoom_step                 
 
+                self.pan_offset_x += event.pos[0] / self.zoom - pan_x
+                self.pan_offset_y += event.pos[1] / self.zoom - pan_y
+       
                 self.update_zoom()
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == WHEEL_DOWN:   
             if self.zoom > 0.2:
                 
+                pan_x = event.pos[0] / self.zoom
+                pan_y = event.pos[1] / self.zoom    
+                            
                 self.zoom -= self.zoom_step
-                
+
+                self.pan_offset_x += event.pos[0] / self.zoom - pan_x
+                self.pan_offset_y += event.pos[1] / self.zoom - pan_y
                            
                 self.update_zoom()
           

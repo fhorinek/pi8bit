@@ -1,0 +1,1 @@
+test	fmemory	0x0	0	100

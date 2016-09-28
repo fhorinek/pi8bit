@@ -15,6 +15,7 @@ import memory
 from controller import MODE_IDLE, MODE_MOVE, MODE_ADD, MODE_WIRE, MODE_SELECT, MODE_EDIT, MODE_PAN
 from utils import file_opendialog
 from pygame.rect import Rect
+import fmemory
 
 class Canvas():
     def __init__(self):
@@ -86,6 +87,8 @@ class Canvas():
         
         self.add_cell("memory", memory.Memory)    
         
+        self.add_cell("fmemory", fmemory.Fmemory)
+        
         self.mode = MODE_IDLE
         
         self.draw_clock = pygame.time.Clock()
@@ -127,7 +130,7 @@ class Canvas():
     
    
     def draw_status(self, text):
-        text = "[%03d] %s" % (self.fps, text)
+        text = "[%04d] %s" % (self.fps, text)
         tmp = self.status_font.render(text, True, self.style["c_status"])
         rect2 = tmp.get_rect();
         rect = Rect(0, self.size[1] - rect2.h, rect2.w, rect2.h)
