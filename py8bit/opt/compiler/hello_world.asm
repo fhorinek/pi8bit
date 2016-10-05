@@ -1,13 +1,12 @@
-#B - A = res
-var	res	0
-const	A_in	10
-const	B_in	5
-set A	A_in
-set	B	B_in
-not C
-move C A
+move A B
 inc C
-move C A
-add C
-store C res
+move M XY
+jmp end
+jnz end
+end:
 halt
+set A 10
+set B 0
+load A
+store B
+

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys
+from collections import OrderedDict
 
 global line
 global line_n
@@ -30,8 +31,13 @@ def parse_int(text):
     
     if text[:2] == "0b":
         return int(text[2:], 2)
+    
+    val = int(text)
+    
+    if val < 0:
+        return val + 256
     else:
-        return int(text)
+        return val
     
 def cmd_clear(params):
     map_8 = {
@@ -85,7 +91,7 @@ def cmd_move(params):
         return [a]
     
     if params[0] in map_16_src and params[1] in map_16_dst:
-        a = 0b10111000 | map_16_src[params[0]] | map_16_dst[params[1]]
+        a = 0b10000000 | map_16_src[params[0]] << 1 | map_16_dst[params[1]]
         return [a]
     
     raise CompileError("Invalid source or destination register")
@@ -305,7 +311,7 @@ address = 0
 labels = []
 labels_loc = {}
 labels_adr = {}
-variabiles = {}
+variabiles = OrderedDict()
 variabiles_loc = {}
 variabiles_adr = {}
 constants = {}
@@ -471,6 +477,151 @@ print "\nDefined constants (at the end of the program)"
     
 for const_name in constants:
     print "\t%s\t%d" % (const_name, constants[const_name])
+
+print "\nDisassemble"    
+
+pos = 0
+while pos < len(program):
+    cmd = program[pos] 
+    
+    print "0x%04X\t%02X\t" % (pos, cmd),
+    
+    if cmd & 0b11000000 == 0b00000000:
+        map_r = {
+        0b000 : 'A',
+        0b001 : 'B',
+        0b010 : 'C',
+        0b011 : 'D',
+        0b100 : 'X',
+        0b101 : 'Y',
+        0b110 : 'M1',
+        0b111 : 'M2'}        
+        
+        print map_r[(cmd & 0b00111000) >> 3], "->", map_r[cmd & 0b00000111]
+        
+    if cmd & 0b11000000 == 0b01000000:
+        map_op = {
+        0b000 : 'A + B',
+        0b001 : 'A + 1',
+        0b010 : 'A & B',
+        0b011 : 'A | B',
+        0b100 : 'A ^ B',
+        0b101 : '~A',
+        0b110 : 'A >> 1',
+        0b111 : 'NOP'}        
+
+        map_r = {
+        0b000 : 'J1',
+        0b001 : 'J2',
+        0b010 : 'C',
+        0b011 : 'D',
+        0b100 : 'X',
+        0b101 : 'Y',
+        0b110 : 'M1',
+        0b111 : 'M2'}      
+        
+        print map_op[(cmd & 0b00111000) >> 3], "->", map_r[cmd & 0b00000111]
+ 
+    if cmd & 0b11110000 == 0b10000000:
+        map_s = {
+        0b000 : 'PC',
+        0b001 : 'INC',
+        0b010 : 'J',
+        0b011 : 'M',
+        0b100 : 'XY',
+        0b101 : '0xFFFF',
+        0b110 : '0x0000',
+        0b111 : '0x0000'}        
+        
+        map_d = {
+        0b0 : 'PC',
+        0b1 : 'XY'}
+
+        print map_s[(cmd & 0b00001110) >> 1], "->", map_d[cmd & 0b00000001]
+ 
+    if cmd & 0b11110000 == 0b10010000:
+        if cmd & 0b00000111:
+            if cmd & 0b00001000:
+                print "if not",
+            else:
+                print "if",
+
+            if cmd & 0b00000100:
+                print "zero",
+            if cmd & 0b00000010:
+                print "overflow",
+            if cmd & 0b00000001:
+                print "sign",
+            
+            print "then",
+                
+        print "J -> PC"
+        
+    if cmd & 0b11111000 == 0b10100000:
+        map_r = {
+        0b000 : 'A',
+        0b001 : 'B',
+        0b010 : 'C',
+        0b011 : 'D',
+        0b100 : 'X',
+        0b101 : 'Y',
+        0b110 : 'M1',
+        0b111 : 'M2'}        
+        
+        print "0x%02X" % program[pos + 1], "->", map_r[cmd & 0b00000111]
+        pos += 1        
+        
+    if cmd & 0b11111000 == 0b10101000:
+        map_r = {
+        0b000 : 'A',
+        0b001 : 'B',
+        0b010 : 'C',
+        0b011 : 'D',
+        0b100 : 'X',
+        0b101 : 'Y',
+        0b110 : 'J1',
+        0b111 : 'J2'}        
+        
+        print "mem(M) ->", map_r[cmd & 0b00000111]
+
+    if cmd & 0b11111000 == 0b10110000:
+        map_r = {
+        0b000 : 'A',
+        0b001 : 'B',
+        0b010 : 'C',
+        0b011 : 'D',
+        0b100 : 'X',
+        0b101 : 'Y',
+        0b110 : '0xFF',
+        0b111 : '0x00'}        
+        
+        print  map_r[cmd & 0b00000111], "-> mem(M)"
+      
+    if cmd & 0b11111100 == 0b10111000:
+        map_r = {
+        0b00 : 'M',
+        0b01 : 'XY',
+        0b10 : 'J',
+        0b11 : 'AB'}        
+        
+        lo = program[pos + 1]
+        hi = program[pos + 2]
+        
+        val = (hi << 8) + lo 
+        
+        print "0x%04X ->" % val, map_r[cmd & 0b00000011]
+        pos += 2
+
+    if cmd & 0b11111100 == 0b10111100:
+        map_op = {
+        0b00 : 'PC -> XY, J -> PC',
+        0b01 : 'XY -> PC',
+        0b10 : 'HALT',
+        0b11 : 'ERROR'}        
+        
+        print map_op[cmd & 0b00000011]
+        
+    pos += 1
 
 b.write("".join(map(chr, program)))    
 

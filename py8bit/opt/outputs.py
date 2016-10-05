@@ -1,5 +1,5 @@
 import cell
-
+from pygame import Rect
 
 class HexDisplay(cell.Cell):
     def __init__(self, parent):
@@ -39,7 +39,25 @@ class HexDisplay(cell.Cell):
         val += self.input("A6") * 64
         val += self.input("A7") * 128
                 
-        self.parent.draw_text(self.surface, "%02X" % val, self.rect_rel)
+        h = int(self.rect_rel.height / 3);
+        pos = Rect(self.rect_rel)
+        pos.height = h
+        self.parent.draw_text(self.surface, "%02X" % val, pos)
+        
+        pos = Rect(self.rect_rel)
+        pos.y = h * 1
+        pos.height = h
+        self.parent.draw_text(self.surface, "%03u" % val, pos)
+        
+        if (val < 0b01111111):
+            sig = val
+        else:
+            sig = -(256 - val)
+        
+        pos = Rect(self.rect_rel)
+        pos.y = h * 2
+        pos.height = h
+        self.parent.draw_text(self.surface, "%+04d" % sig, pos)
         
 class Led(cell.Cell):
     def __init__(self, parent):
