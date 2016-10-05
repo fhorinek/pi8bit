@@ -210,7 +210,7 @@ __node_371	node	4380x170 __net_140 __or_359.Y
 __node_372	node	4380x210 __net_140 __node_371
 __node_373	node	4280x210 __net_140 __node_372
 __node_374	node	4280x230 __net_140 __node_373
-__node_378	node	4280x140 __net_141 __module_312.Y7 __node_367
+__node_378	node	4280x140 __net_141 __node_457.Y __node_367 __node_457
 __node_379	node	4270x120 __net_139 __module_312.Y6 __node_369
 __node_380	node	4260x100 __net_144 __module_312.Y5
 __node_381	node	4260x250 __net_144 __node_380
@@ -256,6 +256,7 @@ __node_441	node	4230x570 __net_163 __node_439
 __node_442	node	4230x590 __net_163 __node_441
 __node_444	node	4310x650 __net_122 __node_310
 __node_445	node	4310x630 __net_122 __node_444
-__node_447	node	4210x610 __net_154 __node_417
+__node_447	node	4200x610 __net_141 __node_457
 __node_453	node	3770x140 __net_136 __node_352
 __label_455	label	70x480 ALU_instruction_decoder
+__node_457	node	4200x140 __net_141 __module_312.Y7
