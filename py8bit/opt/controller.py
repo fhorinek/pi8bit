@@ -70,7 +70,7 @@ class Controller():
         self.highlight_pos = False
         
         self.add_index = 0
-        self.add_list = ["label", "and", "or", "nand", "nor", "xor", "not", "diode", "led", "hex", "tgl", "clk", "input", "output", "memory"]
+        self.add_list = ["label", "and", "or", "nand", "nor", "xor", "not", "diode", "led", "hex", "tgl", "push", "clk", "input", "output", "memory"]
         
         self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_font"] * self.zoom))
         self.label_font = pygame.font.Font(pygame.font.get_default_font(), int(self.canvas.style["d_label_font"] * self.zoom))

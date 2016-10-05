@@ -28,6 +28,39 @@ class Toggle(cell.Cell):
         arr = cell.Cell.get_params(self)
         return [arr[0], str(int(self.val))]
     
+class Push(cell.Cell):
+    def __init__(self, parent):
+        cell.Cell.__init__(self, parent)
+        self.val = 0
+        self.clk = 0
+        self.max = 10    
+        
+        self.add_output("Y")
+
+    def calc(self, pin):
+        if pin == "Y":
+            return self.val
+        
+    def update_body(self):
+        cell.Cell.update_body(self, self.val)
+        self.parent.draw_text(self.surface, self.name, self.rect_rel)         
+
+    def click(self):
+        if self.clk == 0:
+            self.val = 1
+            self.clk = self.max * 2
+            self.request_update_body()
+
+    def tick(self):
+        cell.Cell.tick(self)
+            
+        if self.clk > 0:
+            self.clk -= 1
+            
+            if self.clk < self.max:
+                self.request_update_body()
+                self.val = 0
+                
 class Clock(cell.Cell):
     def __init__(self, parent):
         cell.Cell.__init__(self, parent)

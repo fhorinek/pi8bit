@@ -79,6 +79,7 @@ class Canvas():
         self.add_cell("hex", outputs.HexDisplay)
  
         self.add_cell("tgl", inputs.Toggle)        
+        self.add_cell("push", inputs.Push)        
         self.add_cell("clk", inputs.Clock)        
         
         self.add_cell("module", module.module)        
