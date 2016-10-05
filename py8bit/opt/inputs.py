@@ -31,9 +31,9 @@ class Toggle(cell.Cell):
 class Push(cell.Cell):
     def __init__(self, parent):
         cell.Cell.__init__(self, parent)
-        self.val = 0
-        self.clk = 0
+        self.val = 1
         self.max = 10    
+        self.clk = self.max * 2
         
         self.add_output("Y")
 

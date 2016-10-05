@@ -1,0 +1,8 @@
+__and_3	or	100x30 __node_12.Y __node_8.Y
+__node_8	node	70x50 __net_4 __node_10.Y __node_10
+__node_10	node	70x80 __net_4 B.Y
+__node_12	node	70x30 __net_6 __node_14.Y __node_14
+__node_14	node	70x0 __net_6 A.Y
+A	tgl	0x0 1
+B	tgl	0x80 0
+C	led	220x30 __and_3.Y

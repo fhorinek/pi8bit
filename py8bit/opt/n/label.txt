@@ -1,2 +1,0 @@
-__and_1	and	0x60 LOW.Y LOW.Y
-__label_3	label	0x0 kotko_asdf_as_df_sa_df_sa_f_sad_g_asf_s_grw_e_fas_d_as_df_as

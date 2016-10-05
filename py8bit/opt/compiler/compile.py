@@ -300,7 +300,7 @@ if len(sys.argv) > 1:
 else:
     filename = "hello_world.asm"
     
-output = "out.a"
+output = "a.out"
 
 f = open(filename, "r")
 b = open(output, "wb")
@@ -481,7 +481,7 @@ for const_name in constants:
 print "\nDisassemble"    
 
 pos = 0
-while pos < len(program):
+while pos < len(program) - len(variabiles):
     cmd = program[pos] 
     
     print "0x%04X\t%02X\t" % (pos, cmd),

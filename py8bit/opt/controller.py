@@ -78,6 +78,8 @@ class Controller():
         self.need_solve_drawable = True
         self.drawable = []
         
+        self.read_only = True
+        
     def highlight(self, mode, pos = False):
         self.highlight_mode = mode
         self.highlight_pos = pos
@@ -113,6 +115,9 @@ class Controller():
         
                
     def write_file(self, filename):
+        if self.read_only:
+            return
+        
         lines = ""
         
         self.normalize_positons()
@@ -630,7 +635,11 @@ class Controller():
                 self.canvas.set_mode(MODE_WIRE)  
                  
             if event.key == ord('r') and self.canvas.mode == MODE_EDIT:
-                self.canvas.set_mode(MODE_RENAME)                   
+                self.canvas.set_mode(MODE_RENAME)     
+                              
+            if event.key == ord('s'):
+                self.read_only = not self.read_only
+                self.canvas.request_redraw()     
                  
             if event.key == pygame.K_SPACE and self.canvas.mode == MODE_STEP:
                 self.tick()

@@ -132,6 +132,8 @@ class Canvas():
    
     def draw_status(self, text):
         text = "[%04d] %s" % (self.fps, text)
+        if self.controller.read_only:
+            text += " [read only]"
         tmp = self.status_font.render(text, True, self.style["c_status"])
         rect2 = tmp.get_rect();
         rect = Rect(0, self.size[1] - rect2.h, rect2.w, rect2.h)

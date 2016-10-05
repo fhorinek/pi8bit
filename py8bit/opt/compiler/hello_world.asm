@@ -1,12 +1,13 @@
-move A B
+var val 10
+var val1 10
+var val2 10
+
+load A val
+loop:
 inc C
-move M XY
-jmp end
-jnz end
-end:
+move C A
+jmp loop
+jez loop
+
 halt
-set A 10
-set B 0
-load A
-store B
 
