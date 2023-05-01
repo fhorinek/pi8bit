@@ -50,7 +50,7 @@ def cmd_clear(params):
     'm1': 0b110,
     'm2': 0b111}
     
-    if len(params) <> 1:
+    if len(params) != 1:
         raise CompileError("Exactly 1 parameter is required!")
     
     if params[0] in map_8:
@@ -83,7 +83,7 @@ def cmd_move(params):
     'pc' : 0b0,
     'xy': 0b1}
     
-    if len(params) <> 2:
+    if len(params) != 2:
         raise CompileError("Exactly 2 parameters required!")
     
     if params[0] in map_8 and params[1] in map_8:
@@ -179,7 +179,7 @@ def cmd_set(params):
     'j' : 0b10,
     'ab': 0b11}
     
-    if len(params) <> 2:
+    if len(params) != 2:
         raise CompileError("Exactly 2 parameters required!")
     
     if params[0] in map_8:
@@ -234,10 +234,10 @@ def cmd_alu(op, params):
     'm2': 0b111}    
 
     
-    if op <> "nop" and len(params) <> 1: 
+    if op != "nop" and len(params) != 1: 
         raise CompileError("Exactly 1 parameter required!")
     
-    if op == "nop" and len(params) <> 0:
+    if op == "nop" and len(params) != 0:
         raise CompileError("No parameter required!")
 
     if op == "nop" and len(params) == 0:
@@ -319,9 +319,9 @@ constants = {}
 
 program = []
 
-print "compiling file", filename
-print "output file is", output
-print
+print("compiling file", filename)
+print("output file is", output)
+print()
 
 lines = f.readlines()
 
@@ -336,7 +336,7 @@ for line in lines:
     
 
 for line in lines:
-    print line.replace("\n", "")
+    print(line.replace("\n", ""))
     
     data = line.lower().split()
     
@@ -387,10 +387,10 @@ for line in lines:
         continue
     
     if cmd == "const":
-        if len(params) <> 2:
+        if len(params) != 2:
             raise CompileError("Exactly 2 parameters are required!")
         if params[0] in constants:
-            print "Redeclarating constant '%s' from 0x%04X to 0x%04X" % (params[0], constants[params[0]], parse_int(params[1]))
+            print("Redeclarating constant '%s' from 0x%04X to 0x%04X" % (params[0], constants[params[0]], parse_int(params[1])))
                     
         constants[params[0]] = parse_int(params[1])
         continue
@@ -432,16 +432,16 @@ for line in lines:
     if len(inst) == 0:
         raise CompileError("Unknown command!")
     
-    print " >\t0x%04X" % address,
+    print(" >\t0x%04X" % address, end=' ')
     for i in inst:
-        print "%02X" % i,
-    print
+        print("%02X" % i, end=' ')
+    print()
     
     program += inst
     address += len(inst)
     line_n += 1
 
-print "\nReplacing labels with address"    
+print("\nReplacing labels with address")    
     
 for loc in labels_adr:
     if labels_adr[loc] not in labels:
@@ -453,18 +453,18 @@ for loc in labels_adr:
     program[loc + 0] = lo
     program[loc + 1] = hi
     
-    print "\t0x%04X\t%s\t0x%04X" % (loc, labels_adr[loc], adr)
+    print("\t0x%04X\t%s\t0x%04X" % (loc, labels_adr[loc], adr))
     
-print "\nWriting variabiles section"    
+print("\nWriting variabiles section")    
     
 for var_name in variabiles:
     variabiles_loc[var_name] = len(program)
     
-    print "\t0x%04X\t%s\t" % (variabiles_loc[var_name], var_name),
+    print("\t0x%04X\t%s\t" % (variabiles_loc[var_name], var_name), end=' ')
     for val in variabiles[var_name]:
-        print "0x%02X" % val,
+        print("0x%02X" % val, end=' ')
         program.append(val)
-    print 
+    print() 
     
 for loc in variabiles_adr:
     adr = variabiles_loc[variabiles_adr[loc]]
@@ -473,18 +473,18 @@ for loc in variabiles_adr:
     program[loc + 0] = lo
     program[loc + 1] = hi   
 
-print "\nDefined constants (at the end of the program)"    
+print("\nDefined constants (at the end of the program)")    
     
 for const_name in constants:
-    print "\t%s\t%d" % (const_name, constants[const_name])
+    print("\t%s\t%d" % (const_name, constants[const_name]))
 
-print "\nDisassemble"    
+print("\nDisassemble")    
 
 pos = 0
 while pos < len(program) - len(variabiles):
     cmd = program[pos] 
     
-    print "0x%04X\t%02X\t" % (pos, cmd),
+    print("0x%04X\t%02X\t" % (pos, cmd), end=' ')
     
     if cmd & 0b11000000 == 0b00000000:
         map_r = {
@@ -497,7 +497,7 @@ while pos < len(program) - len(variabiles):
         0b110 : 'M1',
         0b111 : 'M2'}        
         
-        print map_r[(cmd & 0b00111000) >> 3], "->", map_r[cmd & 0b00000111]
+        print(map_r[(cmd & 0b00111000) >> 3], "->", map_r[cmd & 0b00000111])
         
     if cmd & 0b11000000 == 0b01000000:
         map_op = {
@@ -520,7 +520,7 @@ while pos < len(program) - len(variabiles):
         0b110 : 'M1',
         0b111 : 'M2'}      
         
-        print map_op[(cmd & 0b00111000) >> 3], "->", map_r[cmd & 0b00000111]
+        print(map_op[(cmd & 0b00111000) >> 3], "->", map_r[cmd & 0b00000111])
  
     if cmd & 0b11110000 == 0b10000000:
         map_s = {
@@ -537,25 +537,25 @@ while pos < len(program) - len(variabiles):
         0b0 : 'PC',
         0b1 : 'XY'}
 
-        print map_s[(cmd & 0b00001110) >> 1], "->", map_d[cmd & 0b00000001]
+        print(map_s[(cmd & 0b00001110) >> 1], "->", map_d[cmd & 0b00000001])
  
     if cmd & 0b11110000 == 0b10010000:
         if cmd & 0b00000111:
             if cmd & 0b00001000:
-                print "if not",
+                print("if not", end=' ')
             else:
-                print "if",
+                print("if", end=' ')
 
             if cmd & 0b00000100:
-                print "zero",
+                print("zero", end=' ')
             if cmd & 0b00000010:
-                print "overflow",
+                print("overflow", end=' ')
             if cmd & 0b00000001:
-                print "sign",
+                print("sign", end=' ')
             
-            print "then",
+            print("then", end=' ')
                 
-        print "J -> PC"
+        print("J -> PC")
         
     if cmd & 0b11111000 == 0b10100000:
         map_r = {
@@ -568,7 +568,7 @@ while pos < len(program) - len(variabiles):
         0b110 : 'M1',
         0b111 : 'M2'}        
         
-        print "0x%02X" % program[pos + 1], "->", map_r[cmd & 0b00000111]
+        print("0x%02X" % program[pos + 1], "->", map_r[cmd & 0b00000111])
         pos += 1        
         
     if cmd & 0b11111000 == 0b10101000:
@@ -582,7 +582,7 @@ while pos < len(program) - len(variabiles):
         0b110 : 'J1',
         0b111 : 'J2'}        
         
-        print "mem(M) ->", map_r[cmd & 0b00000111]
+        print("mem(M) ->", map_r[cmd & 0b00000111])
 
     if cmd & 0b11111000 == 0b10110000:
         map_r = {
@@ -595,7 +595,7 @@ while pos < len(program) - len(variabiles):
         0b110 : '0xFF',
         0b111 : '0x00'}        
         
-        print  map_r[cmd & 0b00000111], "-> mem(M)"
+        print(map_r[cmd & 0b00000111], "-> mem(M)")
       
     if cmd & 0b11111100 == 0b10111000:
         map_r = {
@@ -609,7 +609,7 @@ while pos < len(program) - len(variabiles):
         
         val = (hi << 8) + lo 
         
-        print "0x%04X ->" % val, map_r[cmd & 0b00000011]
+        print("0x%04X ->" % val, map_r[cmd & 0b00000011])
         pos += 2
 
     if cmd & 0b11111100 == 0b10111100:
@@ -619,11 +619,11 @@ while pos < len(program) - len(variabiles):
         0b10 : 'HALT',
         0b11 : 'ERROR'}        
         
-        print map_op[cmd & 0b00000011]
+        print(map_op[cmd & 0b00000011])
         
     pos += 1
 
-b.write("".join(map(chr, program)))    
+b.write(bytes(program))    
 
 f.close()
 b.close()

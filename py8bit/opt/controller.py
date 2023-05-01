@@ -147,7 +147,7 @@ class Controller():
 #         print "done", filename
         
     def read_file(self, filename):
-        print "Reading file", filename
+        print("Reading file", filename)
         
         try:        
             f = open(filename, "r")
@@ -156,10 +156,10 @@ class Controller():
             
             self.create_objects(data)
     
-            print "done", filename
+            print("done", filename)
             return True
         except IOError as e:
-            print "not found", e
+            print("not found", e)
             return False
         
     def create_objects(self, data):
@@ -171,7 +171,7 @@ class Controller():
             
             arr = line.split()
             
-            print " %5d: %s" % (line_n, " ".join(arr))
+            print(" %5d: %s" % (line_n, " ".join(arr)))
             
             if (len(arr) < 2):
                 continue
@@ -229,7 +229,7 @@ class Controller():
         
         o = self.find_cell(o_name)
         if o == False:
-            print name, "not found!"
+            print(name, "not found!")
             return False
         
         if o_pin == False:
@@ -839,10 +839,10 @@ class Controller():
 
         if mode == MODE_WIRE:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT:
-                print 
-                print "<<"
+                print() 
+                print("<<")
                 
-                print "get_object_pos", hover_object
+                print("get_object_pos", hover_object)
                 if isinstance(hover_object, wire.Node):
                     self.new_node = self.add_node([mouse_x, mouse_y], hover_object.net)
                     self.new_node.add_sibling(hover_object)
@@ -852,7 +852,7 @@ class Controller():
                     return                
                 
                 target = self.get_input_pos([mouse_x, mouse_y])
-                print "get_input_pos", target
+                print("get_input_pos", target)
                 if target is not False:
                     obj, pin = target
                     self.new_node = self.add_node([mouse_x, mouse_y])
@@ -862,7 +862,7 @@ class Controller():
                     return
                 
                 target = self.get_output_pos([mouse_x, mouse_y])
-                print "get_output_pos", target
+                print("get_output_pos", target)
                 if target is not False:
                     obj, pin = target
                     self.new_node = self.add_node([mouse_x, mouse_y])
@@ -872,7 +872,7 @@ class Controller():
                     return                   
                 
                 target = self.get_line_pos([mouse_x, mouse_y])
-                print "get_line_pos", target
+                print("get_line_pos", target)
                 if target is not False:
                     obj, obj_pin, inp, inp_pin = target
                     start_node = self.add_node([mouse_x, mouse_y])
@@ -900,7 +900,7 @@ class Controller():
                     return                   
                 
                 target = self.get_net_line_pos([mouse_x, mouse_y])
-                print "get_net_line_pos", target
+                print("get_net_line_pos", target)
                 if target is not False:
                     node1, node2, net = target
                     start_node = self.add_node([mouse_x, mouse_y], net)
@@ -932,11 +932,11 @@ class Controller():
                     self.new_node.set_pos(mouse_x, mouse_y)
                     self.apply_grid(self.new_node)
 
-                    print 
-                    print ">>"
+                    print() 
+                    print(">>")
 
                     target = self.get_object_pos([mouse_x, mouse_y], [self.new_node])
-                    print "get_object_pos", target
+                    print("get_object_pos", target)
                     if target is not False:
                         if isinstance(target, wire.Node):
                             #FROM_INPUT / FROM_OUTPUT will be handeled lower
@@ -951,13 +951,13 @@ class Controller():
                                 return
                     
                     target = self.get_input_pos([mouse_x, mouse_y], [self.new_node])
-                    print "get_input_pos", target
+                    print("get_input_pos", target)
                     if target is not False and self.new_node_direction is not NODE_DIR_FROM_INPUT:
                         obj, pin = target
                         if self.new_node_direction == NODE_DIR_FROM_NODE:
                             obj.assign_input(pin, self.new_node.siblings[0], "Y")
                         if self.new_node_direction == NODE_DIR_FROM_OUTPUT:
-                            key = self.new_node.inputs.keys()[0]
+                            key = list(self.new_node.inputs.keys())[0]
                             inp, inp_pin = self.new_node.inputs[key]
                             obj.assign_input(pin, inp, inp_pin)
                         
@@ -967,7 +967,7 @@ class Controller():
                         return
                     
                     target = self.get_output_pos([mouse_x, mouse_y], [self.new_node])
-                    print "get_output_pos", target
+                    print("get_output_pos", target)
                     if target is not False and self.new_node_direction is not NODE_DIR_FROM_OUTPUT:
                         obj, pin = target
                         if self.new_node_direction == NODE_DIR_FROM_NODE:
@@ -982,7 +982,7 @@ class Controller():
                         return                    
                     
                     target = self.get_line_pos([mouse_x, mouse_y], [self.new_node])
-                    print "get_line_pos", target
+                    print("get_line_pos", target)
                     if target is not False:
                         obj, obj_pin, inp, inp_pin = target
                         if isinstance(inp, wire.Node):
@@ -1003,7 +1003,7 @@ class Controller():
                         return        
 
                     target = self.get_net_line_pos([mouse_x, mouse_y], [self.new_node])
-                    print "get_net_line_pos", target
+                    print("get_net_line_pos", target)
                     if target is not False:
                         node1, node2, net = target
                         node1.remove_sibling(node2)
@@ -1033,7 +1033,7 @@ class Controller():
                                 successor.add_sibling(node)
                                 
                             for k in hover_object.inputs:
-                                print "hover_object.input", k, hover_object, hover_object.inputs
+                                print("hover_object.input", k, hover_object, hover_object.inputs)
                                 obj, pin = hover_object.inputs[k]
                                 successor.assign_free_input(obj, pin)
                                 
@@ -1049,7 +1049,7 @@ class Controller():
                         return
                     
                     target = self.get_line_pos([mouse_x, mouse_y])
-                    print "get_line_pos", target
+                    print("get_line_pos", target)
                     if target is not False:
                         obj, obj_pin, inp, inp_pin = target
                         obj.clear_input(obj_pin)
@@ -1059,7 +1059,7 @@ class Controller():
                         return                  
                     
                     target = self.get_net_line_pos([mouse_x, mouse_y], [self.new_node])
-                    print "get_net_line_pos", target
+                    print("get_net_line_pos", target)
                     if target is not False:
                         node1, node2, net = target
                         node1.remove_sibling(node2)

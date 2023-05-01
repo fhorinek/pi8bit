@@ -84,7 +84,7 @@ class Clock(cell.Cell):
             self.clk = 0
             
         self.val = int(self.clk > self.max)
-        if self.val <> self.last_val:
+        if self.val != self.last_val:
             self.request_update_body()
             self.last_val = self.val
 

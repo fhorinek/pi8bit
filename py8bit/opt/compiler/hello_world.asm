@@ -1,13 +1,14 @@
-var val 10
-var val1 10
-var val2 10
+var val 1
+var ans 0
 
-load A val
+clear A
+load B val
 loop:
 inc C
 move C A
-jmp loop
-jez loop
+xor C
+jnz loop
+store A ans
 
 halt
 

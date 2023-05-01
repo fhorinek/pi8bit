@@ -2,50 +2,52 @@ import pygame
 from collections import OrderedDict
 from pygame.rect import Rect
 
+
 class Cell():
     def __init__(self, parent):
         self.parent = parent
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.rect_rel = pygame.Rect(0, 0, 0, 0)
-        
+
         self.move_offset_x = 0
         self.move_offset_y = 0
-        
+
         self.input_xy = OrderedDict()
         self.output_xy = OrderedDict()
-        
+
         self.inputs = OrderedDict()
         self.outputs = []
-        
+
         self.output_cache = {}
         self.input_cache = {}
         self.res = {}
-        
-        self.name = "cell"    
-        self.fcs = "cell"    
-        
+
+        self.name = "cell"
+        self.fcs = "cell"
+
         self.drawable = False
-        self.border = Rect(0,0,0,0)
-        
+        self.border = Rect(0, 0, 0, 0)
+
         self.need_redraw = False
         self.need_body_update = False
         self.zoom = False
 
-    def click(self): pass          
-            
+    def click(self):
+        pass
+
     def add_input(self, name):
         self.inputs[name] = False
-    
+
     def add_output(self, name):
         self.outputs.append(name)
         self.res[name] = 0
-               
-    def update_rect(self): 
+
+    def update_rect(self):
         self.rect.w = self.parent.canvas.style["d_width"]
-        
+
         h = max((len(self.inputs), len(self.outputs)))
         self.rect.h = self.parent.canvas.style["d_line"] * h
-        
+
         if len(self.inputs) > 1:
             self.rect.w += self.parent.canvas.style["d_input"]
 
@@ -59,39 +61,39 @@ class Cell():
 
     def update_io_xy(self):
         for pin in self.inputs:
-            i = self.inputs.keys().index(pin)
+            i = list(self.inputs.keys()).index(pin)
             x = self.rect.x
             y = int(self.rect.y + self.parent.canvas.style["d_line"] * (i + 0.5))
-            self.input_xy[pin] = [x, y]      
-            
+            self.input_xy[pin] = [x, y]
+
         for pin in self.outputs:
             i = self.outputs.index(pin)
             x = self.rect.x + self.rect.w
-            y = int(self.rect.y + self.parent.canvas.style["d_line"] * (i + 0.5))    
+            y = int(self.rect.y + self.parent.canvas.style["d_line"] * (i + 0.5))
             self.output_xy[pin] = [x, y]
-              
-        self.parent.canvas.request_io_redraw()     
+
+        self.parent.canvas.request_io_redraw()
 
     def get_input_rect(self, pin):
-        i = self.inputs.keys().index(pin)
+        i = list(self.inputs.keys()).index(pin)
         x = 0
         y = self.parent.canvas.style["d_line"] * i
         w = self.parent.canvas.style["d_input"]
         h = self.parent.canvas.style["d_line"]
         return pygame.Rect((x, y, w, h))
-    
+
     def get_output_rect(self, pin):
         i = self.outputs.index(pin)
         x = self.rect.w - self.parent.canvas.style["d_output"]
         y = self.parent.canvas.style["d_line"] * i
         w = self.parent.canvas.style["d_output"]
         h = self.parent.canvas.style["d_line"]
-        return pygame.Rect((x, y, w, h))    
+        return pygame.Rect((x, y, w, h))
 
     def middle_offset(self):
         self.move_offset_x = self.rect.w / 2
         self.move_offset_y = self.rect.h / 2
-    
+
     def set_offset(self, x, y):
         self.move_offset_x = x
         self.move_offset_y = y
@@ -105,10 +107,10 @@ class Cell():
         self.rect.y = y - self.move_offset_y
         self.update_io_xy()
         self.request_redraw()
-        
+
     def clear_input(self, name):
         self.inputs[name] = False
-        
+
     def assign_input(self, name, in_cell, in_pin):
         if name in self.inputs:
             self.inputs[name] = [in_cell, in_pin]
@@ -118,15 +120,15 @@ class Cell():
             if self.inputs[pin] == False:
                 self.assign_input(pin, in_cell, in_pin)
                 return
-            
+
     def parse_cfg(self, arr):
         for i in range(len(arr) - 3):
             name = arr[3 + i]
-            conn = self.parent.find_cell_pin(name)    
+            conn = self.parent.find_cell_pin(name)
             self.assign_free_input(*conn)
- 
+
     def get_params(self):
-        p = [] 
+        p = []
         p.append("%dx%d" % (self.rect.x, self.rect.y))
 
         for k in self.inputs:
@@ -135,47 +137,47 @@ class Cell():
                 p.append("%s.%s" % (o.name, o_pin))
             else:
                 p.append("LOW.Y")
-        
-        return p 
-                        
+
+        return p
+
     def parse(self, arr):
         self.name = arr[0]
         self.fcs = arr[1]
         self.parse_cfg(arr)
-        self.update_rect()  
+        self.update_rect()
         self.request_update_body()
         try:
-            x,y = map(int, arr[2].split("x"))
+            x, y = list(map(int, arr[2].split("x")))
             self.set_pos(x, y)
         except:
             self.set_pos(0, 0)
-        
+
     def reset(self):
         self.res = {}
         for pin in self.outputs:
             self.res[pin] = 0
-    
+
     def clear_io_cache(self):
         self.input_cache = {}
         self.output_cache = {}
-        
+
     def calc(self, pin):
         return 0
-    
+
     def tick(self):
         for i in self.outputs:
-            self.res[i] = self.calc(i) 
-    
+            self.res[i] = self.calc(i)
+
     def output(self, pin):
         return self.res[pin]
-    
+
     def input(self, pin):
         if self.inputs[pin] is False:
             return 0
-            
+
         in_obj, in_pin = self.inputs[pin]
         return in_obj.output(in_pin)
-    
+
     def update(self):
         self.update_rect()
         self.request_update_body()
@@ -185,9 +187,9 @@ class Cell():
         self.parent.request_update()
         self.request_redraw()
 
-    def update_body(self, state = None):
+    def update_body(self, state=None):
         rect = Rect(0, 0, self.rect.w, self.rect.h)
-        
+
         self.surface = self.parent.mk_surface(self.rect)
         if state is None:
             color = "c_fill"
@@ -196,19 +198,19 @@ class Cell():
                 color = "c_high"
             else:
                 color = "c_low"
-                
+
         self.parent.draw_rect(self.surface, self.parent.canvas.style[color], rect)
         self.parent.draw_rect(self.surface, self.parent.canvas.style["c_border"], rect, 2)
-        
+
         if len(self.inputs) > 1:
-            in_rect = Rect(0, 0, self.parent.canvas.style["d_input"], self.rect.h) 
+            in_rect = Rect(0, 0, self.parent.canvas.style["d_input"], self.rect.h)
             self.parent.draw_rect(self.surface, self.parent.canvas.style["c_border"], in_rect, 1)
-            
+
         if len(self.outputs) > 1:
             a = self.parent.canvas.style["d_output"]
-            out_rect = Rect(self.rect.w - a, 0, a, self.rect.h) 
+            out_rect = Rect(self.rect.w - a, 0, a, self.rect.h)
             self.parent.draw_rect(self.surface, self.parent.canvas.style["c_border"], out_rect, 1)
- 
+
         if len(self.inputs) > 1:
             for c in self.inputs:
                 rect = self.get_input_rect(c)
@@ -218,51 +220,51 @@ class Cell():
             for c in self.outputs:
                 rect = self.get_output_rect(c)
                 self.parent.draw_text(self.surface, c, rect)
-        
+
         self.request_redraw()
-        
+
     def request_redraw(self):
         self.need_redraw = True
-    
+
     def draw(self):
         if self.need_redraw:
             if self.need_body_update:
                 self.update_body()
                 self.need_body_update = False
-                
+
             self.parent.blit(self.surface, self.rect)
             self.need_redraw = False
-    
-    def draw_io(self):   
+
+    def draw_io(self):
         for c in self.inputs:
             state = self.input(c)
             if c in self.input_cache:
                 if self.input_cache[c] == state:
                     continue
-            
+
             self.input_cache[c] = state
-                
+
             pos_xy = self.input_xy[c]
             self.parent.draw_circle(pos_xy, state)
-              
+
             if self.inputs[c] is not False:
                 in_obj, in_pin = self.inputs[c]
                 if not isinstance(in_obj, Invisible):
                     start = pos_xy
                     end = in_obj.output_xy[in_pin]
-                    self.parent.draw_line(start, end, state) 
-        
+                    self.parent.draw_line(start, end, state)
+
         for c in self.outputs:
             state = self.output(c)
             if c in self.output_cache:
                 if self.output_cache[c] == state:
                     continue
-            
-            self.output_cache[c] = state       
-                 
+
+            self.output_cache[c] = state
+
             pos_xy = self.output_xy[c]
             self.parent.draw_circle(pos_xy, state)
-             
+
     def check_output_collision(self, pos):
         for pin in self.outputs:
             if pin in self.output_xy:
@@ -272,7 +274,7 @@ class Cell():
                 if (rect.collidepoint(pos)):
                     return pin
         return False
-    
+
     def check_input_collision(self, pos):
         for pin in self.inputs:
             if pin in self.input_xy:
@@ -281,8 +283,8 @@ class Cell():
                 rect = pygame.Rect(out_pos[0] - p, out_pos[1] - p, p * 2, p * 2)
                 if (rect.collidepoint(pos)):
                     return pin
-        return False    
-     
+        return False
+
     def check_input_line_collision(self, pos):
         for p in self.inputs:
             if self.inputs[p]:
@@ -292,38 +294,38 @@ class Cell():
 
                 start = self.input_xy[p]
                 end = obj.output_xy[pin]
-                #basic rect TODO
+                # basic rect TODO
                 offset = self.parent.canvas.style["d_line_col"]
-                
+
                 x = min((start[0], end[0])) - offset
                 y = min((start[1], end[1])) - offset
                 w = abs(start[0] - end[0]) + offset * 2
                 h = abs(start[1] - end[1]) + offset * 2
-                
+
                 basic = Rect(x, y, w, h)
-                
+
                 if basic.collidepoint(pos):
-                
+
                     dx = end[0] - start[0]
                     dy = end[1] - start[1]
-                    
+
                     if dx == 0 and dy == 0:
                         return False
-                    
+
                     if abs(dx) < abs(dy):
                         k = float(dx) / float(dy)
                         x = start[0] + k * (pos[1] - start[1])
-                
+
                         if abs(x - pos[0]) < offset:
-                            return self, p, obj, pin                      
+                            return self, p, obj, pin
                     else:
                         k = float(dy) / float(dx)
                         y = start[1] + k * (pos[0] - start[0])
-                        
+
                         if abs(y - pos[1]) < offset:
                             return self, p, obj, pin
-        return False 
-    
+        return False
+
     def disconnect(self):
         for wire_output in self.outputs:
             while True:
@@ -333,78 +335,85 @@ class Cell():
                     obj.clear_input(pin)
                 else:
                     break
-              
+
     def calc_border(self):
         self.border = Rect(self.rect)
-            
+
         for c in self.inputs:
             if self.inputs[c] is not False:
                 in_obj, in_pin = self.inputs[c]
                 if not isinstance(in_obj, Invisible):
                     x, y = in_obj.output_xy[in_pin]
-                    self.border = self.border.union(Rect(x, y, 0, 0))        
-              
+                    self.border = self.border.union(Rect(x, y, 0, 0))
+
     def solve_drawable(self, window, drawable_list):
         self.calc_border()
         self.drawable = self.border.colliderect(window)
 
         if self.drawable:
-            drawable_list.append(self)        
-        
+            drawable_list.append(self)
+
+
 class Invisible(Cell):
     def __init__(self, parent):
         Cell.__init__(self, parent)
         self.add_output("Y")
-    
+
     def update_body(self, state=None): pass
+
     def draw(self): pass
+
     def draw_io(self): pass
+
     def request_redraw(self): pass
+
     def solve_drawable(self, window, drawable_list): pass
+
 
 class High(Invisible):
     def __init__(self, parent):
         Invisible.__init__(self, parent)
         self.name = "HIGH"
-    
+
     def calc(self, pin):
         return 1
-    
+
+
 class Low(Invisible):
     def __init__(self, parent):
         Invisible.__init__(self, parent)
         self.name = "LOW"
-        
+
     def calc(self, pin):
-        return 0    
+        return 0
+
 
 class Label(Cell):
     def __init__(self, parent):
         Cell.__init__(self, parent)
         self.label = "New label"
-               
+
     def update_rect(self):
         rect = self.parent.label_font_size(self.label)
-        
+
         self.rect.w = rect.w
         self.rect.h = rect.h
 
         self.rect_rel = Rect(self.rect)
         self.rect_rel.x = 0
         self.rect_rel.y = 0
-     
+
     def update_body(self, state=None):
-        self.surface = self.parent.draw_label(self.label, self.rect_rel)       
+        self.surface = self.parent.draw_label(self.label, self.rect_rel)
 
     def parse_cfg(self, arr):
         if len(arr) >= 4:
             label = arr[3]
             self.label = label.replace("_", " ")
-        
-        
+
     def get_params(self):
         p = Cell.get_params(self)
         label = self.label.replace(" ", "_")
         p.append(label)
-        
+
         return p
